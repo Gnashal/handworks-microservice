@@ -1,0 +1,12 @@
+go 1.22.2
+
+use (
+	./api-gateway
+	./services/account
+	./services/admin
+	./services/booking
+	./services/employee
+	./services/inventory
+	./services/notification
+	./services/payment
+)
