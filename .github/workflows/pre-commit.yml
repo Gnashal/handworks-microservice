@@ -1,3 +1,6 @@
+# name: Pre Commit Checks
+# on: [workflow_dispatch]
+
 name: Pre Commit Checks
 
 on:
