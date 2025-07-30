@@ -39,3 +39,4 @@ jobs:
         with:
           version: latest # or specify like v1.58.2
           args: --timeout=5m
+          working-directory: ./
