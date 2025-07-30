@@ -1,0 +1,21 @@
+basePath: /
+host: localhost:8080
+info:
+  contact: {}
+  description: Gateway for client requests to services
+  title: Handworks API Gateway
+  version: "1.0"
+paths:
+  /health:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Health Check
+      tags:
+      - Health
+swagger: "2.0"
