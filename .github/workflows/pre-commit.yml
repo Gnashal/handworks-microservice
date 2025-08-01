@@ -1,15 +1,15 @@
-# name: Pre Commit Checks
-# on: [workflow_dispatch]
-
 name: Pre Commit Checks
+on: [workflow_dispatch]
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+# name: Pre Commit Checks
+
+# on:
+#   push:
+#     branches:
+#       - main
+#   pull_request:
+#     branches:
+#       - main
 
 jobs:
   golangci-lint:
