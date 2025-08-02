@@ -2,8 +2,8 @@ package handlers
 
 import (
 	"context"
-	"handworks/services/account/graph"
-	"handworks/services/account/utils"
+	"handworks/services/admin/graph"
+	"handworks/services/admin/utils"
 	"net/http"
 	"os"
 	"sync"
@@ -17,13 +17,13 @@ import (
 	"github.com/vektah/gqlparser/v2/ast"
 )
 
-// grpc handlers for the account service
+// grpc handlers for the  admin service
 func StartGQlServer(l *utils.Logger, wg *sync.WaitGroup, stop <-chan struct{}) {
 	defer wg.Done()
 
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8080"
+		port = "8081"
 	}
 
 	srv := handler.New(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
