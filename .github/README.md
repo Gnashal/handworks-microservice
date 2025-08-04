@@ -6,7 +6,7 @@ A centralized, scalable service platform designed to optimize booking, schedulin
 
 ## System Diagram
 
-![Handworks Cleaning System Diagram](https://raw.githubusercontent.com/Gnashal/handworks-microservice/D14N6C0/.github/diagrams/handwords_system_backend_diagram.png)
+![Handworks Cleaning System Diagram](https://github.com/Gnashal/handworks-microservice/blob/D14N6C0/.github/diagrams/handwords_system_backend_diagram.png)
 
 ---
 
