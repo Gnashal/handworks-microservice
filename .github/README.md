@@ -1,12 +1,17 @@
-# 🧹 Handworks Cleaning Services System
+# Handworks Cleaning Services System
 
 A centralized, scalable service platform designed to optimize booking, scheduling, operations, and administration for Handworks Cleaning Services. Built on distributed microservices, the system supports cross-platform access and automates key workflows across clients, cleaners, and admin roles.
 
 ---
 
-## 📦 Overview
+## System Diagram
 
-<Add the github link of the diagram here located on .github/diagrams/.png>
+![Handworks Cleaning System Diagram](https://raw.githubusercontent.com/Gnashal/handworks-microservice/D14N6C0/.github/diagrams/handwords_system_backend_diagram.png)
+
+---
+
+## Overview
+
 This system is built using a **distributed microservices architecture**, breaking down complex business functions (e.g. bookings, workforce, payments, inventory) into independently developed and scalable services. It supports three user roles:
 - **Clients** (web/mobile bookings)
 - **Cleaners/Employees** (mobile operations)
@@ -14,7 +19,7 @@ This system is built using a **distributed microservices architecture**, breakin
 
 ---
 
-## 🧭 System Architecture
+## System Architecture
 
 ### 🔹 Client-Facing Applications
 - **Mobile App** (React Native)
@@ -41,7 +46,7 @@ This system is built using a **distributed microservices architecture**, breakin
 
 ---
 
-## 🛠️ Backend Microservices
+## Backend Microservices
 
 Each domain (e.g. bookings, payments, inventory) runs as an independent Go (Golang) microservice connected to a dedicated PostgreSQL database (on Neon). Core backend features:
 
@@ -51,9 +56,9 @@ Each domain (e.g. bookings, payments, inventory) runs as an independent Go (Gola
 
 ---
 
-## 🔗 Communication & Data Flow
+## Communication & Data Flow
 
-### 🧰 API Gateway
+### API Gateway
 - Built in **Go (Gin framework)**
 - Performs:
   - Request validation
@@ -61,18 +66,18 @@ Each domain (e.g. bookings, payments, inventory) runs as an independent Go (Gola
   - Rate limiting
   - Routing to internal services
 
-### 🧠 GraphQL Domain Services
+### GraphQL Domain Services
 - **GraphQL endpoints** per business domain
 - Precision queries and dashboards
 - Strong typing with `gqlgen`
 
-### 🔄 gRPC Inter-Service Communication
+### gRPC Inter-Service Communication
 - Used for high-performance operations like:
   - Cleaner assignments
   - Inventory status updates
 - Powered by **Protocol Buffers**
 
-### 📡 Event-Driven Messaging
+### Event-Driven Messaging
 - **NATS + JetStream**
   - Publish-subscribe architecture
   - Used for:
@@ -81,7 +86,7 @@ Each domain (e.g. bookings, payments, inventory) runs as an independent Go (Gola
     - Inventory updates
   - Adds fault tolerance and durability
 
-### 🔐 Integrated TLS Security
+### Integrated TLS Security
 - TLS on all communication layers:
   - REST
   - GraphQL
@@ -92,7 +97,7 @@ Each domain (e.g. bookings, payments, inventory) runs as an independent Go (Gola
 
 ---
 
-## ⚙️ Technology Stack Summary
+## Technology Stack Summary
 
 | Tool                     | Purpose |
 |--------------------------|---------|
@@ -112,7 +117,7 @@ Each domain (e.g. bookings, payments, inventory) runs as an independent Go (Gola
 
 ---
 
-## 🔐 Security Model
+## Security Model
 
 - All client and inter-service communication is encrypted (TLS).
 - API Gateway manages:
@@ -123,7 +128,7 @@ Each domain (e.g. bookings, payments, inventory) runs as an independent Go (Gola
 
 ---
 
-## 🧪 Quality Assurance
+## Quality Assurance
 
 - **Unit tests** per microservice
 - **Integration tests** for workflows (e.g. booking + assignment)
@@ -132,7 +137,7 @@ Each domain (e.g. bookings, payments, inventory) runs as an independent Go (Gola
 
 ---
 
-## 🚀 Technical Highlights
+## Technical Highlights
 
 - **Scalability** via microservices and independent deployments
 - **Cross-platform**: mobile (iOS/Android), desktop, and browser-based access
@@ -142,7 +147,7 @@ Each domain (e.g. bookings, payments, inventory) runs as an independent Go (Gola
 
 ---
 
-## 🧰 Development Tools & Practices
+## Development Tools & Practices
 
 - **Version control**: Git + GitHub
 - **Formatting/linting**: ESLint, Prettier
@@ -153,7 +158,7 @@ Each domain (e.g. bookings, payments, inventory) runs as an independent Go (Gola
 
 ---
 
-## 💡 Final Considerations
+## Final Considerations
 
 The Handworks Cleaning Services platform delivers a robust, scalable architecture optimized for fast booking, real-time cleaner coordination, admin analytics, and cross-platform access. Its modular design ensures future updates, expansion, and third-party integrations can be done without disrupting core operations.
 
