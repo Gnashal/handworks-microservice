@@ -1,8 +1,8 @@
 package main
 
 import (
+	"handworks/common/utils"
 	"handworks/services/inventory/handlers"
-	"handworks/services/inventory/utils"
 	"os"
 	"os/signal"
 	"sync"

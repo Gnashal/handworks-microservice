@@ -2,7 +2,7 @@ package router
 
 import (
 	"handworks/api-gateway/internal/handlers"
-	"handworks/api-gateway/utils"
+	"handworks/common/utils"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
