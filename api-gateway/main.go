@@ -4,7 +4,7 @@ import (
 	"handworks/api-gateway/config"
 	_ "handworks/api-gateway/docs"
 	"handworks/api-gateway/internal/router"
-	"handworks/api-gateway/utils"
+	"handworks/common/utils"
 	"os"
 )
 

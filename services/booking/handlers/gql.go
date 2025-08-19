@@ -2,8 +2,8 @@ package handlers
 
 import (
 	"context"
+	"handworks/common/utils"
 	"handworks/services/booking/graph"
-	"handworks/services/booking/utils"
 	"net/http"
 	"os"
 	"sync"
