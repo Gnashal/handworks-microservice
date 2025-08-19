@@ -71,7 +71,6 @@ jobs:
           - services/account
           - services/admin
           - services/employee
-          - services/client
           - services/inventory
           - services/notification
           - services/payment
