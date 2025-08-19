@@ -53,91 +53,91 @@
 #           version: latest
 #           args: --timeout=5m --out-format=colored-line-number
 #           working-directory: ${{ matrix.module }}
-# name: Lint
-
-# on:
-#   pull_request:
-#   push:
-#     branches: [ "main" ]
-
-# jobs:
-#   golangci-lint:
-#     name: Run golangci-lint
-#     runs-on: ubuntu-latest
-#     strategy:
-#       matrix:
-#         service:
-#           - common
-#           - services/account
-#           - services/admin
-#           - services/employee
-#           - services/client
-#           - services/inventory
-#           - services/notification
-#           - services/payment
-#           - api-gateway
-
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v4
-
-#       - name: Set up Go
-#         uses: actions/setup-go@v5
-#         with:
-#           go-version: "1.23.11"
-#           cache: true
-
-#       - name: Run golangci-lint in ${{ matrix.service }}
-#         uses: golangci/golangci-lint-action@v6
-#         with:
-#           version: latest
-#           working-directory: ${{ matrix.service }}
-#           args: --timeout=5m ./...
 name: Lint
 
 on:
   pull_request:
-    branches: [ "*" ]
   push:
-    branches: [ "main", "develop" ]
+    branches: [ "main" ]
 
 jobs:
-  lint:
+  golangci-lint:
+    name: Run golangci-lint
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service:
+          - common
+          - services/account
+          - services/admin
+          - services/employee
+          - services/client
+          - services/inventory
+          - services/notification
+          - services/payment
+          - api-gateway
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.23"
+          go-version: "1.23.11"
+          cache: true
 
-      - name: Install golangci-lint
-        run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+      - name: Run golangci-lint in ${{ matrix.service }}
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: latest
+          working-directory: ${{ matrix.service }}
+          args: --timeout=5m ./...
+# name: Lint
 
-      - name: Determine services to lint
-        id: services
-        run: |
-          if [[ "${{ github.event_name }}" == "push" ]]; then
-            # On push to main/develop → lint all services
-            echo "services=$(ls -d services/* | xargs)" >> $GITHUB_OUTPUT
-          else
-            # On PR → lint only changed services
-            CHANGED=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep "^services/" | cut -d/ -f1-2 | sort -u || true)
-            if [ -z "$CHANGED" ]; then
-              echo "services=" >> $GITHUB_OUTPUT
-            else
-              echo "services=$CHANGED" >> $GITHUB_OUTPUT
-            fi
-          fi
+# on:
+#   pull_request:
+#     branches: [ "*" ]
+#   push:
+#     branches: [ "main", "develop" ]
 
-      - name: Run linter
-        if: steps.services.outputs.services != ''
-        run: |
-          for dir in ${{ steps.services.outputs.services }}; do
-            echo "🔍 Linting $dir"
-            (cd $dir && golangci-lint run ./...)
-          done
+# jobs:
+#   lint:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - uses: actions/checkout@v4
+
+#       - name: Set up Go
+#         uses: actions/setup-go@v5
+#         with:
+#           go-version: "1.23"
+
+#       - name: Install golangci-lint
+#         run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+
+#       - name: Determine services to lint
+#         id: services
+#         run: |
+#           if [[ "${{ github.event_name }}" == "push" ]]; then
+#             # On push to main/develop → lint all services
+#             echo "services=$(ls -d services/* | xargs)" >> $GITHUB_OUTPUT
+#           else
+#             # On PR → lint only changed services
+#             CHANGED=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep "^services/" | cut -d/ -f1-2 | sort -u || true)
+#             if [ -z "$CHANGED" ]; then
+#               echo "services=" >> $GITHUB_OUTPUT
+#             else
+#               echo "services=$CHANGED" >> $GITHUB_OUTPUT
+#             fi
+#           fi
+
+#       - name: Run linter
+#         if: steps.services.outputs.services != ''
+#         run: |
+#           for dir in ${{ steps.services.outputs.services }}; do
+#             echo "🔍 Linting $dir"
+#             (cd $dir && golangci-lint run ./...)
+#           done
 
 
