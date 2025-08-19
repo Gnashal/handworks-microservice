@@ -16,6 +16,7 @@ import (
 
 func main() {
 	logger, err := utils.NewLogger()
+	var unused int
 	_ = config.NewCors()
 	r := router.SetupRouter(logger)
 	if err != nil {
