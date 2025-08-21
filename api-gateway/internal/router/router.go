@@ -2,6 +2,7 @@ package router
 
 import (
 	"handworks/api-gateway/internal/handlers"
+	"handworks/api-gateway/internal/types"
 	"handworks/common/utils"
 
 	"github.com/gin-gonic/gin"
@@ -9,14 +10,35 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func SetupRouter(l *utils.Logger) *gin.Engine {
-	r := gin.New()
+type ApiGatewayRouter struct {
+	s *types.ApiGatewayServices
+	r *gin.RouterGroup
+	l *utils.Logger
+}
 
-	// Health check
-	r.GET("/health", handlers.HealthCheck)
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+func NewRouter(l *utils.Logger, r *gin.RouterGroup, s *types.ApiGatewayServices) *ApiGatewayRouter {
+	return &ApiGatewayRouter{
+		s: s,
+		r: r,
+		l: l,
+	}
+}
 
-	// Define other routes here (e.g., bookings, employees, etc.)
+func SetupRouter(l *utils.Logger, r *gin.Engine) {
+	serviceApi := r.Group("/api/")
+	{
+		// Health check
+		serviceApi.GET("/health", handlers.HealthCheck)
+		// Swagger
+		r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	return r
+		apiServices := handlers.NewGatewayServices(l)
+		apiRouter := NewRouter(l, serviceApi, apiServices)
+		apiRouter.StartRouterServices()
+	}
+}
+func (r *ApiGatewayRouter) StartRouterServices() {
+	r.l.Info("Starting API Gateway services...")
+	r.l.Info("API Gateway services started successfully.")
+	// Servies here
 }
