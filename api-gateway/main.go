@@ -6,6 +6,10 @@ import (
 	"handworks/api-gateway/internal/router"
 	"handworks/common/utils"
 	"os"
+
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 // @title Handworks API Gateway
@@ -15,19 +19,28 @@ import (
 // @BasePath /
 
 func main() {
-	logger, err := utils.NewLogger()
-	_ = config.NewCors()
-	r := router.SetupRouter(logger)
+	l, err := utils.NewLogger()
 	if err != nil {
-		logger.Error("Failed to create loggerger: %v", err)
+		panic(err)
 	}
+	err = godotenv.Load()
+	if err != nil {
+		l.Error("Error loading .env file: %v", err)
+		return
+	}
+	r := gin.New()
+	r.Use(cors.New(config.NewCors()))
+	router.SetupRouter(l, r)
+	startAndStopServer(r, l)
+}
+
+func startAndStopServer(r *gin.Engine, l *utils.Logger) {
 	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
-	logger.Info("Swagger on http://localhost:%s/swagger/index.html", port)
-	logger.Info("Starting server on :%s...", port)
+	ip := os.Getenv("IP")
+	l.Info("Swagger on http://%s:%s/swagger/index.html", ip, port)
+	l.Info("Starting server on :%s...", port)
 	if err := r.Run(":" + port); err != nil {
-		logger.Error("Server failed: %v", err)
+		l.Error("Server failed: %v", err)
 	}
+	// TODO: will add graceful shutdown later
 }

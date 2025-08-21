@@ -8,7 +8,8 @@ import (
 
 func NewCors() cors.Config {
 	CorsConf := cors.Config{
-		AllowOrigins:     []string{"https://griita-backend-gnashal6914-x2n9tdsh.leapcell.dev", "http://localhost:4040"},
+		// AllowOrigins:     []string{"url here soon, "http://localhost:5173"}, This is for prod
+		AllowAllOrigins:  true, // Allow all origins for development
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
