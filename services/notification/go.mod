@@ -1,3 +1,3 @@
-module handworks/services/notification
+module handworks-services-notification
 
-go 1.22.2
+go 1.23.11

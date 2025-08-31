@@ -1,3 +1,3 @@
-module handworks/services/payment
+module handworks-services-payment
 
-go 1.22.2
+go 1.23.11

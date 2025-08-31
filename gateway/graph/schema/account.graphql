@@ -1,0 +1,54 @@
+type Account {
+    id: ID!, 
+    firstName: String!, 
+    middleName: String, 
+    lastName: String!, 
+    status: Boolean!, 
+    accType: String!,
+}
+type Employee {
+    id: ID!, 
+    accId: ID!,
+    status: String!
+}
+type Customer {
+    id: ID!,
+    accId: ID!,  
+    email: String!, 
+    provider: String,
+    onWatchlist: Boolean! 
+}
+type Admin {
+    id: ID!,
+    accId: ID!
+}
+type WatchList {
+    id: ID!, 
+    customerId: ID!
+}
+
+
+type Query {
+
+    accounts: [Account!]!,
+    customers:[Customer!]!,
+    employees:[Employee!]!,
+    admins: [Admin!]!,
+    watchlist: [WatchList!]!
+  
+}
+
+type Mutation {
+    createAccount(
+        firstName: String!
+        middleName: String
+        lastName: String!
+        accType: String!
+    ): Account!
+
+  
+    updateAccountStatus(id: ID!, status: Boolean!): Account!
+
+    
+    addCustomerToWatchlist(customerId: ID!): WatchList!
+}

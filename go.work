@@ -3,8 +3,8 @@ go 1.23.11
 toolchain go1.23.11
 
 use (
-	./api-gateway
 	./common
+	./gateway
 	./services/account
 	./services/admin
 	./services/booking
