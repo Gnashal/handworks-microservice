@@ -65,7 +65,7 @@ func (r *queryResolver) Admins(ctx context.Context) ([]*generated.Admin, error) 
 }
 
 // Watchlist is the resolver for the watchlist field.
-func (r *queryResolver) Watchlist(ctx context.Context) ([]*generated.WatchList, error) {
+func (r *queryResolver) Watchlist(ctx context.Context) (*generated.WatchList, error) {
 	return r.watchList, nil
 }
 
