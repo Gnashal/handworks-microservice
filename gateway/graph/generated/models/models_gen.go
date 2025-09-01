@@ -37,6 +37,5 @@ type Query struct {
 }
 
 type WatchList struct {
-	ID         string `json:"id"`
-	CustomerID string `json:"customerId"`
+	Customers []*Customer `json:"customers"`
 }

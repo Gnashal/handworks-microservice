@@ -89,8 +89,7 @@ type ComplexityRoot struct {
 	}
 
 	WatchList struct {
-		CustomerID func(childComplexity int) int
-		ID         func(childComplexity int) int
+		Customers func(childComplexity int) int
 	}
 }
 
@@ -104,7 +103,7 @@ type QueryResolver interface {
 	Customers(ctx context.Context) ([]*generated.Customer, error)
 	Employees(ctx context.Context) ([]*generated.Employee, error)
 	Admins(ctx context.Context) ([]*generated.Admin, error)
-	Watchlist(ctx context.Context) ([]*generated.WatchList, error)
+	Watchlist(ctx context.Context) (*generated.WatchList, error)
 }
 
 type executableSchema struct {
@@ -309,19 +308,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Query.Watchlist(childComplexity), true
 
-	case "WatchList.customerId":
-		if e.complexity.WatchList.CustomerID == nil {
+	case "WatchList.customers":
+		if e.complexity.WatchList.Customers == nil {
 			break
 		}
 
-		return e.complexity.WatchList.CustomerID(childComplexity), true
-
-	case "WatchList.id":
-		if e.complexity.WatchList.ID == nil {
-			break
-		}
-
-		return e.complexity.WatchList.ID(childComplexity), true
+		return e.complexity.WatchList.Customers(childComplexity), true
 
 	}
 	return 0, false
@@ -452,8 +444,7 @@ type Admin {
     accId: ID!
 }
 type WatchList {
-    id: ID!, 
-    customerId: ID!
+    customers: [Customer!]!
 }
 
 
@@ -463,7 +454,7 @@ type Query {
     customers:[Customer!]!,
     employees:[Employee!]!,
     admins: [Admin!]!,
-    watchlist: [WatchList!]!
+    watchlist: WatchList!
   
 }
 
@@ -477,8 +468,6 @@ type Mutation {
 
   
     updateAccountStatus(id: ID!, status: Boolean!): Account!
-
-    
     addCustomerToWatchlist(customerId: ID!): WatchList!
 }
 `, BuiltIn: false},
@@ -1480,10 +1469,8 @@ func (ec *executionContext) fieldContext_Mutation_addCustomerToWatchlist(ctx con
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "id":
-				return ec.fieldContext_WatchList_id(ctx, field)
-			case "customerId":
-				return ec.fieldContext_WatchList_customerId(ctx, field)
+			case "customers":
+				return ec.fieldContext_WatchList_customers(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type WatchList", field.Name)
 		},
@@ -1744,9 +1731,9 @@ func (ec *executionContext) _Query_watchlist(ctx context.Context, field graphql.
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*generated.WatchList)
+	res := resTmp.(*generated.WatchList)
 	fc.Result = res
-	return ec.marshalNWatchList2ᚕᚖhandworksᚑgatewayᚋgraphᚋgeneratedᚋmodelsᚐWatchListᚄ(ctx, field.Selections, res)
+	return ec.marshalNWatchList2ᚖhandworksᚑgatewayᚋgraphᚋgeneratedᚋmodelsᚐWatchList(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_watchlist(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1757,10 +1744,8 @@ func (ec *executionContext) fieldContext_Query_watchlist(_ context.Context, fiel
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "id":
-				return ec.fieldContext_WatchList_id(ctx, field)
-			case "customerId":
-				return ec.fieldContext_WatchList_customerId(ctx, field)
+			case "customers":
+				return ec.fieldContext_WatchList_customers(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type WatchList", field.Name)
 		},
@@ -1899,8 +1884,8 @@ func (ec *executionContext) fieldContext_Query___schema(_ context.Context, field
 	return fc, nil
 }
 
-func (ec *executionContext) _WatchList_id(ctx context.Context, field graphql.CollectedField, obj *generated.WatchList) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_WatchList_id(ctx, field)
+func (ec *executionContext) _WatchList_customers(ctx context.Context, field graphql.CollectedField, obj *generated.WatchList) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WatchList_customers(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1913,7 +1898,7 @@ func (ec *executionContext) _WatchList_id(ctx context.Context, field graphql.Col
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
+		return obj.Customers, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1925,63 +1910,31 @@ func (ec *executionContext) _WatchList_id(ctx context.Context, field graphql.Col
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.([]*generated.Customer)
 	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
+	return ec.marshalNCustomer2ᚕᚖhandworksᚑgatewayᚋgraphᚋgeneratedᚋmodelsᚐCustomerᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_WatchList_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_WatchList_customers(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "WatchList",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _WatchList_customerId(ctx context.Context, field graphql.CollectedField, obj *generated.WatchList) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_WatchList_customerId(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.CustomerID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_WatchList_customerId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "WatchList",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Customer_id(ctx, field)
+			case "accId":
+				return ec.fieldContext_Customer_accId(ctx, field)
+			case "email":
+				return ec.fieldContext_Customer_email(ctx, field)
+			case "provider":
+				return ec.fieldContext_Customer_provider(ctx, field)
+			case "onWatchlist":
+				return ec.fieldContext_Customer_onWatchlist(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Customer", field.Name)
 		},
 	}
 	return fc, nil
@@ -4390,13 +4343,8 @@ func (ec *executionContext) _WatchList(ctx context.Context, sel ast.SelectionSet
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("WatchList")
-		case "id":
-			out.Values[i] = ec._WatchList_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "customerId":
-			out.Values[i] = ec._WatchList_customerId(ctx, field, obj)
+		case "customers":
+			out.Values[i] = ec._WatchList_customers(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -5028,50 +4976,6 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 
 func (ec *executionContext) marshalNWatchList2handworksᚑgatewayᚋgraphᚋgeneratedᚋmodelsᚐWatchList(ctx context.Context, sel ast.SelectionSet, v generated.WatchList) graphql.Marshaler {
 	return ec._WatchList(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNWatchList2ᚕᚖhandworksᚑgatewayᚋgraphᚋgeneratedᚋmodelsᚐWatchListᚄ(ctx context.Context, sel ast.SelectionSet, v []*generated.WatchList) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNWatchList2ᚖhandworksᚑgatewayᚋgraphᚋgeneratedᚋmodelsᚐWatchList(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
 }
 
 func (ec *executionContext) marshalNWatchList2ᚖhandworksᚑgatewayᚋgraphᚋgeneratedᚋmodelsᚐWatchList(ctx context.Context, sel ast.SelectionSet, v *generated.WatchList) graphql.Marshaler {

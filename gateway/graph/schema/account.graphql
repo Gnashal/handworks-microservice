@@ -23,8 +23,7 @@ type Admin {
     accId: ID!
 }
 type WatchList {
-    id: ID!, 
-    customerId: ID!
+    customers: [Customer!]!
 }
 
 
@@ -34,7 +33,7 @@ type Query {
     customers:[Customer!]!,
     employees:[Employee!]!,
     admins: [Admin!]!,
-    watchlist: [WatchList!]!
+    watchlist: WatchList!
   
 }
 
@@ -48,7 +47,5 @@ type Mutation {
 
   
     updateAccountStatus(id: ID!, status: Boolean!): Account!
-
-    
     addCustomerToWatchlist(customerId: ID!): WatchList!
 }

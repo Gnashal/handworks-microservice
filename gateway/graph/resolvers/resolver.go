@@ -14,6 +14,6 @@ type Resolver struct {
 	customers []*generated.Customer
 	employees []*generated.Employee
 	admins    []*generated.Admin
-	watchList []*generated.WatchList
+	watchList *generated.WatchList
 	helpers   *helpers.Helpers
 }
