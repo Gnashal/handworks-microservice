@@ -8,7 +8,13 @@ require (
 )
 
 require (
+	github.com/go-jose/go-jose/v3 v3.0.3 // indirect
+	golang.org/x/crypto v0.19.0 // indirect
+)
+
+require (
 	github.com/agnivade/levenshtein v1.2.1 // indirect
+	github.com/clerk/clerk-sdk-go/v2 v2.3.1
 	github.com/go-viper/mapstructure/v2 v2.4.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect

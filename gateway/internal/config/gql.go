@@ -4,6 +4,7 @@ import (
 	"context"
 	graph "handworks-gateway/graph/generated"
 	"handworks-gateway/graph/resolvers"
+	"handworks-gateway/internal/middleware"
 	"handworks/common/utils"
 	"net/http"
 	"os"
@@ -20,7 +21,7 @@ import (
 
 func StartGQlServer(l *utils.Logger, wg *sync.WaitGroup, stop <-chan struct{}) {
 	defer wg.Done()
-
+	clerkKey := os.Getenv("CLERK_SECRET_KEY")
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
@@ -42,7 +43,7 @@ func StartGQlServer(l *utils.Logger, wg *sync.WaitGroup, stop <-chan struct{}) {
 
 	httpServer := &http.Server{
 		Addr:    ":" + port,
-		Handler: setupRoutes(srv),
+		Handler: setupRoutes(srv, clerkKey),
 	}
 
 	go func() {
@@ -53,16 +54,16 @@ func StartGQlServer(l *utils.Logger, wg *sync.WaitGroup, stop <-chan struct{}) {
 		_ = httpServer.Shutdown(ctx)
 	}()
 	l.Info("GrahQL playground running on http://localhost:%s/playground", port)
-	l.Info("GraphQL server running on http://localhost:%s", port)
+	l.Info("GraphQL server running on http://localhost:%s/api", port)
 	if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		l.Error("GraphQL server error: %v", err)
 	}
 }
 
 // helper to register routes
-func setupRoutes(srv *handler.Server) http.Handler {
+func setupRoutes(srv *handler.Server, clerkKey string) http.Handler {
 	mux := http.NewServeMux()
-	mux.Handle("/playground", playground.Handler("GraphQL playground", "/query"))
-	mux.Handle("/query", srv)
+	mux.Handle("/playground", playground.Handler("GraphQL playground", "/api"))
+	mux.Handle("/api", middleware.AuthMiddleware(srv, clerkKey))
 	return mux
 }

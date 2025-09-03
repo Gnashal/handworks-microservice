@@ -1,0 +1,29 @@
+package middleware
+
+import (
+	"context"
+	"net/http"
+	"os"
+
+	"github.com/clerk/clerk-sdk-go/v2"
+	clerkhttp "github.com/clerk/clerk-sdk-go/v2/http"
+)
+
+type ContextString string
+
+const ClerkClaimsKey ContextString = "clerk_claims"
+
+func AuthMiddleware(next http.Handler, clerkKey string) http.Handler {
+	clerk.SetKey(os.Getenv(clerkKey))
+
+	return clerkhttp.WithHeaderAuthorization()(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		claims, ok := clerk.SessionClaimsFromContext(r.Context())
+		if !ok {
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+
+		ctx := context.WithValue(r.Context(), ClerkClaimsKey, claims)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	}))
+}

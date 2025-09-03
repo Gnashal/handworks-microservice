@@ -1,3 +1,3 @@
 package server
 
-// add server config here
+// func StartGrpc()
