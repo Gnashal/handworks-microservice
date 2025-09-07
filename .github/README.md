@@ -6,162 +6,187 @@ A centralized, scalable service platform designed to optimize booking, schedulin
 
 ## System Diagram
 
-![Handworks Cleaning System Diagram](https://github.com/Gnashal/handworks-microservice/blob/D14N6C0/.github/diagrams/handwords_system_backend_diagram.png)
+![Handworks Cleaning System Diagram](https://github.com/Gnashal/handworks-microservice/blob/D14N6C0/.github/diagrams/handwords_system_backend_diagram_V2.png)
 
 ---
 
 ## Overview
 
-This system is built using a **distributed microservices architecture**, breaking down complex business functions (e.g. bookings, workforce, payments, inventory) into independently developed and scalable services. It supports three user roles:
-- **Clients** (web/mobile bookings)
-- **Cleaners/Employees** (mobile operations)
-- **Administrators/Managers** (desktop app + dashboards)
+The system, **“Optimizing Service Delivery through a Centralized Booking and Operations Management System for Handworks Cleaning Services”**, is built using a **distributed microservices architecture**, breaking down business domains (e.g., bookings, workforce, payments, inventory) into independently developed modules. This ensures scalability, maintainability, and fault tolerance.
+
+It supports three main user roles:
+
+* **Clients** (web portal)
+* **Cleaners/Employees** (dedicated Android app)
+* **Administrators/Managers** (desktop app)
 
 ---
 
 ## System Architecture
 
-### 🔹 Client-Facing Applications
-- **Mobile App** (React Native)
-  - Book and pay for services
-  - Upload job-related photos
-  - Submit feedback
-- **Web App** (Vite + React on Netlify)
-  - Mirrors mobile functionality
-  - Fast and accessible on any browser
+### 🔹 Client Web Application
 
-### 🔹 Cleaner (Employee) Application
-- **React Native mobile app**
-  - Receive real-time job notifications
-  - View tasks and update progress
-  - Upload before/after photos
-  - Syncs updates with backend
+* **React + Vite (deployed on Netlify)**
+* Fully responsive design (desktop + mobile)
+* Features:
+
+  * Service browsing & booking
+  * Online payment (30% down payment required)
+  * Upload job-related images
+  * Post-job feedback
+* **Guest bookings are not permitted**; login with verified account is required.
+
+### 🔹 Cleaner (Employee) Mobile Application
+
+* **Android SDK (Java + XML)**
+* Proprietary, internally distributed app (not Play Store)
+* Features:
+
+  * Real-time job notifications
+  * Task viewing and progress updates
+  * Upload before/after photos
+  * Sync with backend for coordination
 
 ### 🔹 Admin Desktop Application
-- **Electron + React**
-  - Management dashboards
-  - Scheduling and resource allocation
-  - Works offline, syncs on reconnect
-  - Advanced reporting and analytics
+
+* **Electron + React**
+* Features:
+
+  * Management dashboards
+  * Scheduling & resource allocation
+  * Reports & analytics
+  * Works offline with auto-sync when reconnected
 
 ---
 
 ## Backend Microservices
 
-Each domain (e.g. bookings, payments, inventory) runs as an independent Go (Golang) microservice connected to a dedicated PostgreSQL database (on Neon). Core backend features:
+Each domain (bookings, employees, payments, inventory) is an independent **Go (Golang)** microservice with its own **PostgreSQL (Neon)** database. Key features:
 
-- Modular, scalable, and secure design
-- REST/GraphQL/gRPC APIs
-- Fine-grained access control per service
+* Modular and scalable design
+* REST, GraphQL, and gRPC APIs
+* Role-based access control
+* Cloud-hosted per service database
 
 ---
 
 ## Communication & Data Flow
 
-### API Gateway
-- Built in **Go (Gin framework)**
-- Performs:
-  - Request validation
-  - OAuth 2.0 authentication (via Clerk)
-  - Rate limiting
-  - Routing to internal services
+### API Gateway (REST)
+
+* **Go (Gin framework)**
+* Functions:
+
+  * Request validation
+  * OAuth 2.0 authentication (via **Clerk**)
+  * JWT-based access control
+  * Rate limiting
+  * Routing requests to services
 
 ### GraphQL Domain Services
-- **GraphQL endpoints** per business domain
-- Precision queries and dashboards
-- Strong typing with `gqlgen`
+
+* **gqlgen (Go)** per domain
+* Precise data queries
+* Strong typing and flexible dashboards
 
 ### gRPC Inter-Service Communication
-- Used for high-performance operations like:
-  - Cleaner assignments
-  - Inventory status updates
-- Powered by **Protocol Buffers**
+
+* High-performance service-to-service calls
+* Used for:
+
+  * Cleaner assignments
+  * Inventory checks
+  * Real-time booking workflows
 
 ### Event-Driven Messaging
-- **NATS + JetStream**
-  - Publish-subscribe architecture
-  - Used for:
-    - Booking notifications
-    - Payment confirmations
-    - Inventory updates
-  - Adds fault tolerance and durability
+
+* **NATS + JetStream**
+* Publish-subscribe messaging backbone
+* Handles:
+
+  * Booking creation events
+  * Assignment & notification delivery
+  * Payment confirmations
+  * Inventory updates
+* JetStream adds durability & message persistence
 
 ### Integrated TLS Security
-- TLS on all communication layers:
-  - REST
-  - GraphQL
-  - gRPC
-  - NATS
-- JWT-based access control via Clerk
-- Role-based authorization at every layer
+
+* TLS for **REST, GraphQL, gRPC, and NATS**
+* Clerk-managed JWT tokens
+* Role-based enforcement at API gateway & service level
 
 ---
 
 ## Technology Stack Summary
 
-| Tool                     | Purpose |
-|--------------------------|---------|
-| **React Native (Expo)** | Mobile app for clients & cleaners |
-| **Vite + React**         | Web app (fast & responsive) |
-| **Electron + React**     | Desktop app for admins |
-| **Go (Golang)**          | Backend business logic |
-| **PostgreSQL (Neon)**    | Cloud-hosted relational DB per microservice |
-| **Gin**                  | REST API Gateway |
-| **GraphQL + gqlgen**     | Flexible frontend queries |
-| **gRPC**                 | Inter-service communication |
-| **NATS + JetStream**     | Event-driven messaging |
-| **Clerk**                | OAuth 2.0, JWT auth, RBAC |
-| **Cloudinary**           | Image storage & delivery |
-| **Render / Netlify**     | Backend + frontend hosting |
-| **GitHub + Actions**     | CI/CD pipelines, testing, deployment |
+| Tool/Framework               | Purpose                                          |
+| ---------------------------- | ------------------------------------------------ |
+| **Android SDK (Java + XML)** | Mobile app for cleaners (internal distribution)  |
+| **Vite + React**             | Client web portal (bookings, payments, feedback) |
+| **Electron + React**         | Desktop app for admins (offline sync, analytics) |
+| **Go (Golang)**              | Backend microservices and business logic         |
+| **PostgreSQL (Neon)**        | Cloud-hosted DB per microservice                 |
+| **Gin**                      | REST API gateway                                 |
+| **GraphQL + gqlgen**         | Flexible queries & reporting                     |
+| **gRPC**                     | Inter-service communication                      |
+| **NATS + JetStream**         | Event-driven messaging                           |
+| **Clerk**                    | Authentication & role-based security             |
+| **Cloudinary**               | Image storage & delivery                         |
+| **Render / Netlify**         | Backend + frontend hosting                       |
+| **GitHub + Actions**         | CI/CD automation & testing                       |
 
 ---
 
 ## Security Model
 
-- All client and inter-service communication is encrypted (TLS).
-- API Gateway manages:
-  - Authentication via Clerk (OAuth2, JWT)
-  - Authorization and rate limiting
-- Role-based permissions are enforced at service endpoints.
-- Desktop admin app supports **offline operations** with automatic sync.
+* **TLS encryption** across all communication channels
+* **Clerk OAuth2 + JWT** for authentication & authorization
+* Role-based permissions enforced at API Gateway & microservice endpoints
+* Offline support for admin app with secure re-sync
+* Durable messaging via **NATS JetStream**
 
 ---
 
 ## Quality Assurance
 
-- **Unit tests** per microservice
-- **Integration tests** for workflows (e.g. booking + assignment)
-- **End-to-end tests** simulated through the API Gateway
-- Automated CI/CD checks using **GitHub Actions**
+* **Unit tests** for each microservice
+* **Integration tests** for workflows (e.g., booking + assignment)
+* **End-to-end tests** via API Gateway
+* Automated testing pipelines via **GitHub Actions**
 
 ---
 
 ## Technical Highlights
 
-- **Scalability** via microservices and independent deployments
-- **Cross-platform**: mobile (iOS/Android), desktop, and browser-based access
-- **Flexible data access**: REST + GraphQL + gRPC
-- **High performance**: Go backend + async messaging
-- **Developer-friendly**: clean modular code, GitHub workflows, and type-safe API contracts
+* **Scalability**: modular microservices with independent databases
+* **Cross-platform**: Web (React), Mobile (Android SDK), Desktop (Electron)
+* **Flexible APIs**: REST, GraphQL, gRPC
+* **High performance**: Go backend + NATS JetStream for async events
+* **Offline resilience**: Admin app syncs when reconnected
+* **Developer-friendly**: GitHub CI/CD, ESLint, Prettier, code-first GraphQL
 
 ---
 
 ## Development Tools & Practices
 
-- **Version control**: Git + GitHub
-- **Formatting/linting**: ESLint, Prettier
-- **Media handling**: Cloudinary SDK
-- **Frontend builds**: Vite
-- **Deployment**: Render (backend), Netlify (frontend)
-- **Monitoring/Tracing**: (Planned)
+* **Version control**: Git + GitHub
+* **CI/CD**: GitHub Actions
+* **Formatting/linting**: ESLint, Prettier
+* **Media handling**: Cloudinary SDK
+* **Frontend builds**: Vite
+* **Deployment**: Render (backend), Netlify (frontend)
+* **Monitoring & tracing**: planned
 
 ---
 
 ## Final Considerations
 
-The Handworks Cleaning Services platform delivers a robust, scalable architecture optimized for fast booking, real-time cleaner coordination, admin analytics, and cross-platform access. Its modular design ensures future updates, expansion, and third-party integrations can be done without disrupting core operations.
+The Handworks Cleaning Services platform delivers a robust, modular architecture optimized for:
 
----
+* Seamless client booking
+* Real-time cleaner coordination
+* Secure admin workflows
+* Scalable, fault-tolerant expansion
 
-_This README was auto-generated from the project’s technical documentation. For more details, refer to the full project wiki or reach out to the system architect._
+Its distributed design ensures that future updates, integrations, and scaling can be achieved without disrupting core system operations.
