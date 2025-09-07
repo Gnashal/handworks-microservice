@@ -8,7 +8,6 @@ package account
 
 import (
 	context "context"
-
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -20,17 +19,19 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AccountService_SignUp_FullMethodName      = "/AccountService/SignUp"
-	AccountService_GetAccount_FullMethodName  = "/AccountService/GetAccount"
-	AccountService_GetCustomer_FullMethodName = "/AccountService/GetCustomer"
-	AccountService_GetEmployee_FullMethodName = "/AccountService/GetEmployee"
+	AccountService_SignUpCustomer_FullMethodName = "/AccountService/SignUpCustomer"
+	AccountService_SignUpEmployee_FullMethodName = "/AccountService/SignUpEmployee"
+	AccountService_GetAccount_FullMethodName     = "/AccountService/GetAccount"
+	AccountService_GetCustomer_FullMethodName    = "/AccountService/GetCustomer"
+	AccountService_GetEmployee_FullMethodName    = "/AccountService/GetEmployee"
 )
 
 // AccountServiceClient is the client API for AccountService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AccountServiceClient interface {
-	SignUp(ctx context.Context, in *SignUpRequest, opts ...grpc.CallOption) (*SignUpResponse, error)
+	SignUpCustomer(ctx context.Context, in *SignUpCustomerRequest, opts ...grpc.CallOption) (*SignUpCustomerResponse, error)
+	SignUpEmployee(ctx context.Context, in *SignUpEmployeeRequest, opts ...grpc.CallOption) (*SignUpEmployeeResponse, error)
 	GetAccount(ctx context.Context, in *GetAccountRequest, opts ...grpc.CallOption) (*GetAccountResponse, error)
 	GetCustomer(ctx context.Context, in *GetCustomerRequest, opts ...grpc.CallOption) (*GetCustomerResponse, error)
 	GetEmployee(ctx context.Context, in *GetEmployeeRequest, opts ...grpc.CallOption) (*GetCustomerResponse, error)
@@ -44,10 +45,20 @@ func NewAccountServiceClient(cc grpc.ClientConnInterface) AccountServiceClient {
 	return &accountServiceClient{cc}
 }
 
-func (c *accountServiceClient) SignUp(ctx context.Context, in *SignUpRequest, opts ...grpc.CallOption) (*SignUpResponse, error) {
+func (c *accountServiceClient) SignUpCustomer(ctx context.Context, in *SignUpCustomerRequest, opts ...grpc.CallOption) (*SignUpCustomerResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SignUpResponse)
-	err := c.cc.Invoke(ctx, AccountService_SignUp_FullMethodName, in, out, cOpts...)
+	out := new(SignUpCustomerResponse)
+	err := c.cc.Invoke(ctx, AccountService_SignUpCustomer_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *accountServiceClient) SignUpEmployee(ctx context.Context, in *SignUpEmployeeRequest, opts ...grpc.CallOption) (*SignUpEmployeeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SignUpEmployeeResponse)
+	err := c.cc.Invoke(ctx, AccountService_SignUpEmployee_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +99,8 @@ func (c *accountServiceClient) GetEmployee(ctx context.Context, in *GetEmployeeR
 // All implementations must embed UnimplementedAccountServiceServer
 // for forward compatibility.
 type AccountServiceServer interface {
-	SignUp(context.Context, *SignUpRequest) (*SignUpResponse, error)
+	SignUpCustomer(context.Context, *SignUpCustomerRequest) (*SignUpCustomerResponse, error)
+	SignUpEmployee(context.Context, *SignUpEmployeeRequest) (*SignUpEmployeeResponse, error)
 	GetAccount(context.Context, *GetAccountRequest) (*GetAccountResponse, error)
 	GetCustomer(context.Context, *GetCustomerRequest) (*GetCustomerResponse, error)
 	GetEmployee(context.Context, *GetEmployeeRequest) (*GetCustomerResponse, error)
@@ -102,8 +114,11 @@ type AccountServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedAccountServiceServer struct{}
 
-func (UnimplementedAccountServiceServer) SignUp(context.Context, *SignUpRequest) (*SignUpResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SignUp not implemented")
+func (UnimplementedAccountServiceServer) SignUpCustomer(context.Context, *SignUpCustomerRequest) (*SignUpCustomerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SignUpCustomer not implemented")
+}
+func (UnimplementedAccountServiceServer) SignUpEmployee(context.Context, *SignUpEmployeeRequest) (*SignUpEmployeeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SignUpEmployee not implemented")
 }
 func (UnimplementedAccountServiceServer) GetAccount(context.Context, *GetAccountRequest) (*GetAccountResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAccount not implemented")
@@ -135,20 +150,38 @@ func RegisterAccountServiceServer(s grpc.ServiceRegistrar, srv AccountServiceSer
 	s.RegisterService(&AccountService_ServiceDesc, srv)
 }
 
-func _AccountService_SignUp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SignUpRequest)
+func _AccountService_SignUpCustomer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SignUpCustomerRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AccountServiceServer).SignUp(ctx, in)
+		return srv.(AccountServiceServer).SignUpCustomer(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AccountService_SignUp_FullMethodName,
+		FullMethod: AccountService_SignUpCustomer_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AccountServiceServer).SignUp(ctx, req.(*SignUpRequest))
+		return srv.(AccountServiceServer).SignUpCustomer(ctx, req.(*SignUpCustomerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AccountService_SignUpEmployee_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SignUpEmployeeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountServiceServer).SignUpEmployee(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AccountService_SignUpEmployee_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountServiceServer).SignUpEmployee(ctx, req.(*SignUpEmployeeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -215,8 +248,12 @@ var AccountService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*AccountServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "SignUp",
-			Handler:    _AccountService_SignUp_Handler,
+			MethodName: "SignUpCustomer",
+			Handler:    _AccountService_SignUpCustomer_Handler,
+		},
+		{
+			MethodName: "SignUpEmployee",
+			Handler:    _AccountService_SignUpEmployee_Handler,
 		},
 		{
 			MethodName: "GetAccount",

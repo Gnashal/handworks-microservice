@@ -4,7 +4,8 @@ option go_package="handworks/common/grpc/account";
 import "google/protobuf/timestamp.proto";
 
 service AccountService {
-    rpc SignUp(SignUpRequest) returns (SignUpResponse);
+    rpc SignUpCustomer(SignUpCustomerRequest) returns (SignUpCustomerResponse);
+    rpc SignUpEmployee(SignUpEmployeeRequest) returns (SignUpEmployeeResponse);
     rpc GetAccount(GetAccountRequest) returns (GetAccountResponse);
     rpc GetCustomer(GetCustomerRequest) returns (GetCustomerResponse);
     rpc GetEmployee (GetEmployeeRequest) returns (GetCustomerResponse);
@@ -14,10 +15,11 @@ message Account {
   string first_name = 2;
   string last_name = 3;
   string email = 4;
-  string role = 5;
-  string provider = 6;
-  google.protobuf.Timestamp created_at = 7;
-  google.protobuf.Timestamp updated_at = 8;
+  string provider = 5;
+  string role = 6;
+  string clerk_id = 7;
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
 }
 message Customer {
     string id = 1;
@@ -56,13 +58,27 @@ message GetEmployeeResponse {
     string id = 1;
     Employee employee = 2;
 }
-message SignUpRequest {
+message SignUpCustomerRequest {
     string first_name = 1;
     string last_name = 2;
     string email = 3;
     string provider = 4;
     string clerk_id = 5;
+    string role = 6;
 }
-message SignUpResponse {
-    Account account = 1;
+message SignUpCustomerResponse {
+    Customer customer = 1;
+}
+message SignUpEmployeeRequest {
+    string first_name = 1;
+    string last_name = 2;
+    string email = 3;
+    string provider = 4;
+    string clerk_id = 5;
+    string role = 6;
+    string position = 7;
+    google.protobuf.Timestamp hire_date = 8;
+}
+message SignUpEmployeeResponse {
+    Employee employee = 1;
 }
