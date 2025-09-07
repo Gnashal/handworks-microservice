@@ -12,7 +12,9 @@ import (
 )
 
 func main() {
-	godotenv.Load()
+	if err := godotenv.Load(); err != nil {
+		panic(err)
+	}
 
 	logger, err := utils.NewLogger()
 	if err != nil {

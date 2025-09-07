@@ -14,5 +14,11 @@ func InitDb(ctx context.Context) (*pgxpool.Pool, error) {
 		return nil, err
 	}
 
+	// Ping check for db
+	if err := pool.Ping(ctx); err != nil {
+		pool.Close()
+		return nil, err
+	}
+
 	return pool, nil
 }
