@@ -24,6 +24,77 @@ func (a *AccountService) withTx(ctx context.Context, db *pgxpool.Pool, fn func(p
 	return tx.Commit(ctx)
 }
 
+func (a *AccountService) FetchCustomerData(c context.Context, tx pgx.Tx, ID string) (*types.DbCustomer, *types.DbAccount, error) {
+	var acc types.DbAccount
+	var customer types.DbCustomer
+
+	if err := tx.QueryRow(c,
+		`SELECT id, account_id FROM account.customers WHERE id = $1`,
+		ID,
+	).Scan(&customer.ID, &customer.AccountID); err != nil {
+		return nil, nil, fmt.Errorf("could not query customer table: %w", err)
+	}
+
+	if err := tx.QueryRow(c,
+		`SELECT first_name, last_name, email, provider, clerk_id, role, id, created_at, updated_at
+		 FROM account.accounts WHERE id = $1`,
+		customer.AccountID,
+	).Scan(
+		&acc.FirstName,
+		&acc.LastName,
+		&acc.Email,
+		&acc.Provider,
+		&acc.ClerkID,
+		&acc.Role,
+		&acc.ID,
+		&acc.CreatedAt,
+		&acc.UpdatedAt,
+	); err != nil {
+		return nil, nil, fmt.Errorf("could not query accounts table: %w", err)
+	}
+
+	return &customer, &acc, nil
+}
+func (a *AccountService) FetchEmployeeData(c context.Context, tx pgx.Tx, ID string) (*types.DbEmployee, *types.DbAccount, error) {
+	var acc types.DbAccount
+	var emp types.DbEmployee
+
+	if err := tx.QueryRow(c,
+		`SELECT id, account_id, position, status, performance_score, hire_date
+		 FROM account.employees WHERE id = $1`,
+		ID,
+	).Scan(
+		&emp.ID,
+		&emp.AccountID,
+		&emp.Position,
+		&emp.Status,
+		&emp.Performance,
+		&emp.HireDate,
+	); err != nil {
+		return nil, nil, fmt.Errorf("could not query employees table: %w", err)
+	}
+
+	if err := tx.QueryRow(c,
+		`SELECT first_name, last_name, email, provider, clerk_id, role, id, created_at, updated_at
+		 FROM account.accounts WHERE id = $1`,
+		emp.AccountID,
+	).Scan(
+		&acc.FirstName,
+		&acc.LastName,
+		&acc.Email,
+		&acc.Provider,
+		&acc.ClerkID,
+		&acc.Role,
+		&acc.ID,
+		&acc.CreatedAt,
+		&acc.UpdatedAt,
+	); err != nil {
+		return nil, nil, fmt.Errorf("could not query accounts table: %w", err)
+	}
+
+	return &emp, &acc, nil
+}
+
 func (a *AccountService) CreateAccount(c context.Context, tx pgx.Tx, FirstName, LastName, Email, Provider, ClerkId, Role string) (*types.DbAccount, error) {
 	var acc types.DbAccount
 	err := tx.QueryRow(c,

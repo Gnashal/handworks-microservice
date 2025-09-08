@@ -315,94 +315,6 @@ func (x *Employee) GetHireDate() *timestamppb.Timestamp {
 	return nil
 }
 
-type GetAccountRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetAccountRequest) Reset() {
-	*x = GetAccountRequest{}
-	mi := &file_account_proto_msgTypes[3]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetAccountRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetAccountRequest) ProtoMessage() {}
-
-func (x *GetAccountRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_account_proto_msgTypes[3]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetAccountRequest.ProtoReflect.Descriptor instead.
-func (*GetAccountRequest) Descriptor() ([]byte, []int) {
-	return file_account_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *GetAccountRequest) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-type GetAccountResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Account       *Account               `protobuf:"bytes,1,opt,name=account,proto3" json:"account,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetAccountResponse) Reset() {
-	*x = GetAccountResponse{}
-	mi := &file_account_proto_msgTypes[4]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetAccountResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetAccountResponse) ProtoMessage() {}
-
-func (x *GetAccountResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_account_proto_msgTypes[4]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetAccountResponse.ProtoReflect.Descriptor instead.
-func (*GetAccountResponse) Descriptor() ([]byte, []int) {
-	return file_account_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *GetAccountResponse) GetAccount() *Account {
-	if x != nil {
-		return x.Account
-	}
-	return nil
-}
-
 type GetCustomerRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -412,7 +324,7 @@ type GetCustomerRequest struct {
 
 func (x *GetCustomerRequest) Reset() {
 	*x = GetCustomerRequest{}
-	mi := &file_account_proto_msgTypes[5]
+	mi := &file_account_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -424,7 +336,7 @@ func (x *GetCustomerRequest) String() string {
 func (*GetCustomerRequest) ProtoMessage() {}
 
 func (x *GetCustomerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_account_proto_msgTypes[5]
+	mi := &file_account_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -437,7 +349,7 @@ func (x *GetCustomerRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCustomerRequest.ProtoReflect.Descriptor instead.
 func (*GetCustomerRequest) Descriptor() ([]byte, []int) {
-	return file_account_proto_rawDescGZIP(), []int{5}
+	return file_account_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *GetCustomerRequest) GetId() string {
@@ -456,7 +368,7 @@ type GetCustomerResponse struct {
 
 func (x *GetCustomerResponse) Reset() {
 	*x = GetCustomerResponse{}
-	mi := &file_account_proto_msgTypes[6]
+	mi := &file_account_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -468,7 +380,7 @@ func (x *GetCustomerResponse) String() string {
 func (*GetCustomerResponse) ProtoMessage() {}
 
 func (x *GetCustomerResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_account_proto_msgTypes[6]
+	mi := &file_account_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -481,7 +393,7 @@ func (x *GetCustomerResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCustomerResponse.ProtoReflect.Descriptor instead.
 func (*GetCustomerResponse) Descriptor() ([]byte, []int) {
-	return file_account_proto_rawDescGZIP(), []int{6}
+	return file_account_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *GetCustomerResponse) GetCustomer() *Customer {
@@ -500,7 +412,7 @@ type GetEmployeeRequest struct {
 
 func (x *GetEmployeeRequest) Reset() {
 	*x = GetEmployeeRequest{}
-	mi := &file_account_proto_msgTypes[7]
+	mi := &file_account_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -512,7 +424,7 @@ func (x *GetEmployeeRequest) String() string {
 func (*GetEmployeeRequest) ProtoMessage() {}
 
 func (x *GetEmployeeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_account_proto_msgTypes[7]
+	mi := &file_account_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -525,7 +437,7 @@ func (x *GetEmployeeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetEmployeeRequest.ProtoReflect.Descriptor instead.
 func (*GetEmployeeRequest) Descriptor() ([]byte, []int) {
-	return file_account_proto_rawDescGZIP(), []int{7}
+	return file_account_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *GetEmployeeRequest) GetId() string {
@@ -537,15 +449,14 @@ func (x *GetEmployeeRequest) GetId() string {
 
 type GetEmployeeResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Employee      *Employee              `protobuf:"bytes,2,opt,name=employee,proto3" json:"employee,omitempty"`
+	Employee      *Employee              `protobuf:"bytes,1,opt,name=employee,proto3" json:"employee,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *GetEmployeeResponse) Reset() {
 	*x = GetEmployeeResponse{}
-	mi := &file_account_proto_msgTypes[8]
+	mi := &file_account_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -557,7 +468,7 @@ func (x *GetEmployeeResponse) String() string {
 func (*GetEmployeeResponse) ProtoMessage() {}
 
 func (x *GetEmployeeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_account_proto_msgTypes[8]
+	mi := &file_account_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -570,14 +481,7 @@ func (x *GetEmployeeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetEmployeeResponse.ProtoReflect.Descriptor instead.
 func (*GetEmployeeResponse) Descriptor() ([]byte, []int) {
-	return file_account_proto_rawDescGZIP(), []int{8}
-}
-
-func (x *GetEmployeeResponse) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
+	return file_account_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *GetEmployeeResponse) GetEmployee() *Employee {
@@ -601,7 +505,7 @@ type SignUpCustomerRequest struct {
 
 func (x *SignUpCustomerRequest) Reset() {
 	*x = SignUpCustomerRequest{}
-	mi := &file_account_proto_msgTypes[9]
+	mi := &file_account_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -613,7 +517,7 @@ func (x *SignUpCustomerRequest) String() string {
 func (*SignUpCustomerRequest) ProtoMessage() {}
 
 func (x *SignUpCustomerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_account_proto_msgTypes[9]
+	mi := &file_account_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -626,7 +530,7 @@ func (x *SignUpCustomerRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SignUpCustomerRequest.ProtoReflect.Descriptor instead.
 func (*SignUpCustomerRequest) Descriptor() ([]byte, []int) {
-	return file_account_proto_rawDescGZIP(), []int{9}
+	return file_account_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *SignUpCustomerRequest) GetFirstName() string {
@@ -680,7 +584,7 @@ type SignUpCustomerResponse struct {
 
 func (x *SignUpCustomerResponse) Reset() {
 	*x = SignUpCustomerResponse{}
-	mi := &file_account_proto_msgTypes[10]
+	mi := &file_account_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -692,7 +596,7 @@ func (x *SignUpCustomerResponse) String() string {
 func (*SignUpCustomerResponse) ProtoMessage() {}
 
 func (x *SignUpCustomerResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_account_proto_msgTypes[10]
+	mi := &file_account_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -705,7 +609,7 @@ func (x *SignUpCustomerResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SignUpCustomerResponse.ProtoReflect.Descriptor instead.
 func (*SignUpCustomerResponse) Descriptor() ([]byte, []int) {
-	return file_account_proto_rawDescGZIP(), []int{10}
+	return file_account_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *SignUpCustomerResponse) GetCustomer() *Customer {
@@ -731,7 +635,7 @@ type SignUpEmployeeRequest struct {
 
 func (x *SignUpEmployeeRequest) Reset() {
 	*x = SignUpEmployeeRequest{}
-	mi := &file_account_proto_msgTypes[11]
+	mi := &file_account_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -743,7 +647,7 @@ func (x *SignUpEmployeeRequest) String() string {
 func (*SignUpEmployeeRequest) ProtoMessage() {}
 
 func (x *SignUpEmployeeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_account_proto_msgTypes[11]
+	mi := &file_account_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -756,7 +660,7 @@ func (x *SignUpEmployeeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SignUpEmployeeRequest.ProtoReflect.Descriptor instead.
 func (*SignUpEmployeeRequest) Descriptor() ([]byte, []int) {
-	return file_account_proto_rawDescGZIP(), []int{11}
+	return file_account_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *SignUpEmployeeRequest) GetFirstName() string {
@@ -824,7 +728,7 @@ type SignUpEmployeeResponse struct {
 
 func (x *SignUpEmployeeResponse) Reset() {
 	*x = SignUpEmployeeResponse{}
-	mi := &file_account_proto_msgTypes[12]
+	mi := &file_account_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -836,7 +740,7 @@ func (x *SignUpEmployeeResponse) String() string {
 func (*SignUpEmployeeResponse) ProtoMessage() {}
 
 func (x *SignUpEmployeeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_account_proto_msgTypes[12]
+	mi := &file_account_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -849,7 +753,7 @@ func (x *SignUpEmployeeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SignUpEmployeeResponse.ProtoReflect.Descriptor instead.
 func (*SignUpEmployeeResponse) Descriptor() ([]byte, []int) {
-	return file_account_proto_rawDescGZIP(), []int{12}
+	return file_account_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *SignUpEmployeeResponse) GetEmployee() *Employee {
@@ -886,20 +790,15 @@ const file_account_proto_rawDesc = "" +
 	"\bposition\x18\x03 \x01(\tR\bposition\x12'\n" +
 	"\x06status\x18\x04 \x01(\x0e2\x0f.EmployeeStatusR\x06status\x12+\n" +
 	"\x11performance_score\x18\x05 \x01(\x02R\x10performanceScore\x127\n" +
-	"\thire_date\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\bhireDate\"#\n" +
-	"\x11GetAccountRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"8\n" +
-	"\x12GetAccountResponse\x12\"\n" +
-	"\aaccount\x18\x01 \x01(\v2\b.AccountR\aaccount\"$\n" +
+	"\thire_date\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\bhireDate\"$\n" +
 	"\x12GetCustomerRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"<\n" +
 	"\x13GetCustomerResponse\x12%\n" +
 	"\bcustomer\x18\x01 \x01(\v2\t.CustomerR\bcustomer\"$\n" +
 	"\x12GetEmployeeRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"L\n" +
-	"\x13GetEmployeeResponse\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12%\n" +
-	"\bemployee\x18\x02 \x01(\v2\t.EmployeeR\bemployee\"\xb4\x01\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"<\n" +
+	"\x13GetEmployeeResponse\x12%\n" +
+	"\bemployee\x18\x01 \x01(\v2\t.EmployeeR\bemployee\"\xb4\x01\n" +
 	"\x15SignUpCustomerRequest\x12\x1d\n" +
 	"\n" +
 	"first_name\x18\x01 \x01(\tR\tfirstName\x12\x1b\n" +
@@ -927,14 +826,12 @@ const file_account_proto_rawDesc = "" +
 	"\x06ACTIVE\x10\x00\x12\n" +
 	"\n" +
 	"\x06ONDUTY\x10\x01\x12\f\n" +
-	"\bINACTIVE\x10\x022\xc1\x02\n" +
+	"\bINACTIVE\x10\x022\x8a\x02\n" +
 	"\x0eAccountService\x12A\n" +
 	"\x0eSignUpCustomer\x12\x16.SignUpCustomerRequest\x1a\x17.SignUpCustomerResponse\x12A\n" +
-	"\x0eSignUpEmployee\x12\x16.SignUpEmployeeRequest\x1a\x17.SignUpEmployeeResponse\x125\n" +
-	"\n" +
-	"GetAccount\x12\x12.GetAccountRequest\x1a\x13.GetAccountResponse\x128\n" +
+	"\x0eSignUpEmployee\x12\x16.SignUpEmployeeRequest\x1a\x17.SignUpEmployeeResponse\x128\n" +
 	"\vGetCustomer\x12\x13.GetCustomerRequest\x1a\x14.GetCustomerResponse\x128\n" +
-	"\vGetEmployee\x12\x13.GetEmployeeRequest\x1a\x14.GetCustomerResponseB\x1fZ\x1dhandworks/common/grpc/accountb\x06proto3"
+	"\vGetEmployee\x12\x13.GetEmployeeRequest\x1a\x14.GetEmployeeResponseB\x1fZ\x1dhandworks/common/grpc/accountb\x06proto3"
 
 var (
 	file_account_proto_rawDescOnce sync.Once
@@ -949,52 +846,47 @@ func file_account_proto_rawDescGZIP() []byte {
 }
 
 var file_account_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_account_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
+var file_account_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_account_proto_goTypes = []any{
 	(EmployeeStatus)(0),            // 0: EmployeeStatus
 	(*Account)(nil),                // 1: Account
 	(*Customer)(nil),               // 2: Customer
 	(*Employee)(nil),               // 3: Employee
-	(*GetAccountRequest)(nil),      // 4: GetAccountRequest
-	(*GetAccountResponse)(nil),     // 5: GetAccountResponse
-	(*GetCustomerRequest)(nil),     // 6: GetCustomerRequest
-	(*GetCustomerResponse)(nil),    // 7: GetCustomerResponse
-	(*GetEmployeeRequest)(nil),     // 8: GetEmployeeRequest
-	(*GetEmployeeResponse)(nil),    // 9: GetEmployeeResponse
-	(*SignUpCustomerRequest)(nil),  // 10: SignUpCustomerRequest
-	(*SignUpCustomerResponse)(nil), // 11: SignUpCustomerResponse
-	(*SignUpEmployeeRequest)(nil),  // 12: SignUpEmployeeRequest
-	(*SignUpEmployeeResponse)(nil), // 13: SignUpEmployeeResponse
-	(*timestamppb.Timestamp)(nil),  // 14: google.protobuf.Timestamp
+	(*GetCustomerRequest)(nil),     // 4: GetCustomerRequest
+	(*GetCustomerResponse)(nil),    // 5: GetCustomerResponse
+	(*GetEmployeeRequest)(nil),     // 6: GetEmployeeRequest
+	(*GetEmployeeResponse)(nil),    // 7: GetEmployeeResponse
+	(*SignUpCustomerRequest)(nil),  // 8: SignUpCustomerRequest
+	(*SignUpCustomerResponse)(nil), // 9: SignUpCustomerResponse
+	(*SignUpEmployeeRequest)(nil),  // 10: SignUpEmployeeRequest
+	(*SignUpEmployeeResponse)(nil), // 11: SignUpEmployeeResponse
+	(*timestamppb.Timestamp)(nil),  // 12: google.protobuf.Timestamp
 }
 var file_account_proto_depIdxs = []int32{
-	14, // 0: Account.created_at:type_name -> google.protobuf.Timestamp
-	14, // 1: Account.updated_at:type_name -> google.protobuf.Timestamp
+	12, // 0: Account.created_at:type_name -> google.protobuf.Timestamp
+	12, // 1: Account.updated_at:type_name -> google.protobuf.Timestamp
 	1,  // 2: Customer.account:type_name -> Account
 	1,  // 3: Employee.Account:type_name -> Account
 	0,  // 4: Employee.status:type_name -> EmployeeStatus
-	14, // 5: Employee.hire_date:type_name -> google.protobuf.Timestamp
-	1,  // 6: GetAccountResponse.account:type_name -> Account
-	2,  // 7: GetCustomerResponse.customer:type_name -> Customer
-	3,  // 8: GetEmployeeResponse.employee:type_name -> Employee
-	2,  // 9: SignUpCustomerResponse.customer:type_name -> Customer
-	14, // 10: SignUpEmployeeRequest.hire_date:type_name -> google.protobuf.Timestamp
-	3,  // 11: SignUpEmployeeResponse.employee:type_name -> Employee
-	10, // 12: AccountService.SignUpCustomer:input_type -> SignUpCustomerRequest
-	12, // 13: AccountService.SignUpEmployee:input_type -> SignUpEmployeeRequest
-	4,  // 14: AccountService.GetAccount:input_type -> GetAccountRequest
-	6,  // 15: AccountService.GetCustomer:input_type -> GetCustomerRequest
-	8,  // 16: AccountService.GetEmployee:input_type -> GetEmployeeRequest
-	11, // 17: AccountService.SignUpCustomer:output_type -> SignUpCustomerResponse
-	13, // 18: AccountService.SignUpEmployee:output_type -> SignUpEmployeeResponse
-	5,  // 19: AccountService.GetAccount:output_type -> GetAccountResponse
-	7,  // 20: AccountService.GetCustomer:output_type -> GetCustomerResponse
-	7,  // 21: AccountService.GetEmployee:output_type -> GetCustomerResponse
-	17, // [17:22] is the sub-list for method output_type
-	12, // [12:17] is the sub-list for method input_type
-	12, // [12:12] is the sub-list for extension type_name
-	12, // [12:12] is the sub-list for extension extendee
-	0,  // [0:12] is the sub-list for field type_name
+	12, // 5: Employee.hire_date:type_name -> google.protobuf.Timestamp
+	2,  // 6: GetCustomerResponse.customer:type_name -> Customer
+	3,  // 7: GetEmployeeResponse.employee:type_name -> Employee
+	2,  // 8: SignUpCustomerResponse.customer:type_name -> Customer
+	12, // 9: SignUpEmployeeRequest.hire_date:type_name -> google.protobuf.Timestamp
+	3,  // 10: SignUpEmployeeResponse.employee:type_name -> Employee
+	8,  // 11: AccountService.SignUpCustomer:input_type -> SignUpCustomerRequest
+	10, // 12: AccountService.SignUpEmployee:input_type -> SignUpEmployeeRequest
+	4,  // 13: AccountService.GetCustomer:input_type -> GetCustomerRequest
+	6,  // 14: AccountService.GetEmployee:input_type -> GetEmployeeRequest
+	9,  // 15: AccountService.SignUpCustomer:output_type -> SignUpCustomerResponse
+	11, // 16: AccountService.SignUpEmployee:output_type -> SignUpEmployeeResponse
+	5,  // 17: AccountService.GetCustomer:output_type -> GetCustomerResponse
+	7,  // 18: AccountService.GetEmployee:output_type -> GetEmployeeResponse
+	15, // [15:19] is the sub-list for method output_type
+	11, // [11:15] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_account_proto_init() }
@@ -1008,7 +900,7 @@ func file_account_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_account_proto_rawDesc), len(file_account_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   13,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

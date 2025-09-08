@@ -6,9 +6,8 @@ import "google/protobuf/timestamp.proto";
 service AccountService {
     rpc SignUpCustomer(SignUpCustomerRequest) returns (SignUpCustomerResponse);
     rpc SignUpEmployee(SignUpEmployeeRequest) returns (SignUpEmployeeResponse);
-    rpc GetAccount(GetAccountRequest) returns (GetAccountResponse);
     rpc GetCustomer(GetCustomerRequest) returns (GetCustomerResponse);
-    rpc GetEmployee (GetEmployeeRequest) returns (GetCustomerResponse);
+    rpc GetEmployee (GetEmployeeRequest) returns (GetEmployeeResponse);
 }
 message Account {
   string id = 1;
@@ -39,12 +38,6 @@ enum EmployeeStatus {
     ONDUTY = 1;
     INACTIVE = 2;
 }
-message GetAccountRequest{
-    string id = 1;
-}
-message GetAccountResponse{
-    Account account = 1;
-}
 message GetCustomerRequest {
     string id = 1;
 }
@@ -55,8 +48,7 @@ message GetEmployeeRequest {
     string id = 1;
 }
 message GetEmployeeResponse {
-    string id = 1;
-    Employee employee = 2;
+    Employee employee = 1;
 }
 message SignUpCustomerRequest {
     string first_name = 1;

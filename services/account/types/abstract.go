@@ -7,6 +7,18 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
+type DbCustomer struct {
+	ID        string
+	AccountID string
+}
+
+func (dbCustomer DbCustomer) ToProto() *account.Customer {
+	return &account.Customer{
+		Id:      dbCustomer.ID,
+		Account: nil,
+	}
+}
+
 type DbEmployee struct {
 	ID          string
 	AccountID   string
