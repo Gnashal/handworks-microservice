@@ -16,36 +16,30 @@ import (
 func StartGrpcServer(s *service.AccountService, logger *utils.Logger) error {
 	host := getEnv("DEV_URL", "localhost")
 	port := getEnv("PORT", "9090")
-
 	addr := fmt.Sprintf("%s:%s", host, port)
+
 	lis, err := net.Listen("tcp", addr)
 	if err != nil {
 		return fmt.Errorf("failed to listen on %s: %w", addr, err)
 	}
 
-	server := grpc.NewServer()
-	account.RegisterAccountServiceServer(server, s)
+	grpcServer := grpc.NewServer()
+	account.RegisterAccountServiceServer(grpcServer, s)
 
-	go gracefulShutdown(server, lis, logger)
-	logger.Info("Account Service Ready")
+	// graceful shutdown
+	go func() {
+		c := make(chan os.Signal, 1)
+		signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+		<-c
+		logger.Warn("Shutting down Account gRPC server...")
+		grpcServer.GracefulStop()
+		lis.Close()
+	}()
+
 	logger.Info("Account Service gRPC server listening on %s", addr)
-	if err := server.Serve(lis); err != nil {
-		return fmt.Errorf("gRPC server failed: %w", err)
-	}
-	return nil
+	return grpcServer.Serve(lis)
 }
 
-func gracefulShutdown(server *grpc.Server, lis net.Listener, logger *utils.Logger) {
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
-	<-c
-
-	logger.Warn("Shutting down gRPC server...")
-	server.GracefulStop()
-	lis.Close()
-}
-
-// tiny helper for env lookup
 func getEnv(key, fallback string) string {
 	if v := os.Getenv(key); v != "" {
 		return v
