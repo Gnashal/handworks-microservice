@@ -26,6 +26,7 @@ type DbEmployee struct {
 	Status      string
 	Performance float32
 	HireDate    time.Time
+	NumRatings  int32
 }
 
 func (dbEmp DbEmployee) ToProto() *account.Employee {
@@ -36,6 +37,7 @@ func (dbEmp DbEmployee) ToProto() *account.Employee {
 		Status:           account.EmployeeStatus(account.EmployeeStatus_value[dbEmp.Status]),
 		PerformanceScore: dbEmp.Performance,
 		HireDate:         timestamppb.New(dbEmp.HireDate),
+		NumRatings:       dbEmp.NumRatings,
 	}
 }
 

@@ -19,10 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AccountService_SignUpCustomer_FullMethodName = "/AccountService/SignUpCustomer"
-	AccountService_SignUpEmployee_FullMethodName = "/AccountService/SignUpEmployee"
-	AccountService_GetCustomer_FullMethodName    = "/AccountService/GetCustomer"
-	AccountService_GetEmployee_FullMethodName    = "/AccountService/GetEmployee"
+	AccountService_SignUpCustomer_FullMethodName                 = "/AccountService/SignUpCustomer"
+	AccountService_SignUpEmployee_FullMethodName                 = "/AccountService/SignUpEmployee"
+	AccountService_GetCustomer_FullMethodName                    = "/AccountService/GetCustomer"
+	AccountService_GetEmployee_FullMethodName                    = "/AccountService/GetEmployee"
+	AccountService_UpdateCustomer_FullMethodName                 = "/AccountService/UpdateCustomer"
+	AccountService_UpdateEmployee_FullMethodName                 = "/AccountService/UpdateEmployee"
+	AccountService_UpdateEmployeePerformanceScore_FullMethodName = "/AccountService/UpdateEmployeePerformanceScore"
+	AccountService_UpdateEmployeeStatus_FullMethodName           = "/AccountService/UpdateEmployeeStatus"
 )
 
 // AccountServiceClient is the client API for AccountService service.
@@ -33,6 +37,10 @@ type AccountServiceClient interface {
 	SignUpEmployee(ctx context.Context, in *SignUpEmployeeRequest, opts ...grpc.CallOption) (*SignUpEmployeeResponse, error)
 	GetCustomer(ctx context.Context, in *GetCustomerRequest, opts ...grpc.CallOption) (*GetCustomerResponse, error)
 	GetEmployee(ctx context.Context, in *GetEmployeeRequest, opts ...grpc.CallOption) (*GetEmployeeResponse, error)
+	UpdateCustomer(ctx context.Context, in *UpdateCustomerRequest, opts ...grpc.CallOption) (*UpdateCustomerResponse, error)
+	UpdateEmployee(ctx context.Context, in *UpdateEmployeeRequest, opts ...grpc.CallOption) (*UpdateEmployeeResponse, error)
+	UpdateEmployeePerformanceScore(ctx context.Context, in *UpdatePerformanceScoreRequest, opts ...grpc.CallOption) (*UpdatePerformanceScoreResponse, error)
+	UpdateEmployeeStatus(ctx context.Context, in *UpdateEmployeeStatusRequest, opts ...grpc.CallOption) (*UpdateEmployeeStatusResponse, error)
 }
 
 type accountServiceClient struct {
@@ -83,6 +91,46 @@ func (c *accountServiceClient) GetEmployee(ctx context.Context, in *GetEmployeeR
 	return out, nil
 }
 
+func (c *accountServiceClient) UpdateCustomer(ctx context.Context, in *UpdateCustomerRequest, opts ...grpc.CallOption) (*UpdateCustomerResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateCustomerResponse)
+	err := c.cc.Invoke(ctx, AccountService_UpdateCustomer_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *accountServiceClient) UpdateEmployee(ctx context.Context, in *UpdateEmployeeRequest, opts ...grpc.CallOption) (*UpdateEmployeeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateEmployeeResponse)
+	err := c.cc.Invoke(ctx, AccountService_UpdateEmployee_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *accountServiceClient) UpdateEmployeePerformanceScore(ctx context.Context, in *UpdatePerformanceScoreRequest, opts ...grpc.CallOption) (*UpdatePerformanceScoreResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdatePerformanceScoreResponse)
+	err := c.cc.Invoke(ctx, AccountService_UpdateEmployeePerformanceScore_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *accountServiceClient) UpdateEmployeeStatus(ctx context.Context, in *UpdateEmployeeStatusRequest, opts ...grpc.CallOption) (*UpdateEmployeeStatusResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateEmployeeStatusResponse)
+	err := c.cc.Invoke(ctx, AccountService_UpdateEmployeeStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AccountServiceServer is the server API for AccountService service.
 // All implementations must embed UnimplementedAccountServiceServer
 // for forward compatibility.
@@ -91,6 +139,10 @@ type AccountServiceServer interface {
 	SignUpEmployee(context.Context, *SignUpEmployeeRequest) (*SignUpEmployeeResponse, error)
 	GetCustomer(context.Context, *GetCustomerRequest) (*GetCustomerResponse, error)
 	GetEmployee(context.Context, *GetEmployeeRequest) (*GetEmployeeResponse, error)
+	UpdateCustomer(context.Context, *UpdateCustomerRequest) (*UpdateCustomerResponse, error)
+	UpdateEmployee(context.Context, *UpdateEmployeeRequest) (*UpdateEmployeeResponse, error)
+	UpdateEmployeePerformanceScore(context.Context, *UpdatePerformanceScoreRequest) (*UpdatePerformanceScoreResponse, error)
+	UpdateEmployeeStatus(context.Context, *UpdateEmployeeStatusRequest) (*UpdateEmployeeStatusResponse, error)
 	mustEmbedUnimplementedAccountServiceServer()
 }
 
@@ -112,6 +164,18 @@ func (UnimplementedAccountServiceServer) GetCustomer(context.Context, *GetCustom
 }
 func (UnimplementedAccountServiceServer) GetEmployee(context.Context, *GetEmployeeRequest) (*GetEmployeeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetEmployee not implemented")
+}
+func (UnimplementedAccountServiceServer) UpdateCustomer(context.Context, *UpdateCustomerRequest) (*UpdateCustomerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateCustomer not implemented")
+}
+func (UnimplementedAccountServiceServer) UpdateEmployee(context.Context, *UpdateEmployeeRequest) (*UpdateEmployeeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateEmployee not implemented")
+}
+func (UnimplementedAccountServiceServer) UpdateEmployeePerformanceScore(context.Context, *UpdatePerformanceScoreRequest) (*UpdatePerformanceScoreResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateEmployeePerformanceScore not implemented")
+}
+func (UnimplementedAccountServiceServer) UpdateEmployeeStatus(context.Context, *UpdateEmployeeStatusRequest) (*UpdateEmployeeStatusResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateEmployeeStatus not implemented")
 }
 func (UnimplementedAccountServiceServer) mustEmbedUnimplementedAccountServiceServer() {}
 func (UnimplementedAccountServiceServer) testEmbeddedByValue()                        {}
@@ -206,6 +270,78 @@ func _AccountService_GetEmployee_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AccountService_UpdateCustomer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateCustomerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountServiceServer).UpdateCustomer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AccountService_UpdateCustomer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountServiceServer).UpdateCustomer(ctx, req.(*UpdateCustomerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AccountService_UpdateEmployee_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateEmployeeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountServiceServer).UpdateEmployee(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AccountService_UpdateEmployee_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountServiceServer).UpdateEmployee(ctx, req.(*UpdateEmployeeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AccountService_UpdateEmployeePerformanceScore_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdatePerformanceScoreRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountServiceServer).UpdateEmployeePerformanceScore(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AccountService_UpdateEmployeePerformanceScore_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountServiceServer).UpdateEmployeePerformanceScore(ctx, req.(*UpdatePerformanceScoreRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AccountService_UpdateEmployeeStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateEmployeeStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountServiceServer).UpdateEmployeeStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AccountService_UpdateEmployeeStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountServiceServer).UpdateEmployeeStatus(ctx, req.(*UpdateEmployeeStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AccountService_ServiceDesc is the grpc.ServiceDesc for AccountService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -228,6 +364,22 @@ var AccountService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetEmployee",
 			Handler:    _AccountService_GetEmployee_Handler,
+		},
+		{
+			MethodName: "UpdateCustomer",
+			Handler:    _AccountService_UpdateCustomer_Handler,
+		},
+		{
+			MethodName: "UpdateEmployee",
+			Handler:    _AccountService_UpdateEmployee_Handler,
+		},
+		{
+			MethodName: "UpdateEmployeePerformanceScore",
+			Handler:    _AccountService_UpdateEmployeePerformanceScore_Handler,
+		},
+		{
+			MethodName: "UpdateEmployeeStatus",
+			Handler:    _AccountService_UpdateEmployeeStatus_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

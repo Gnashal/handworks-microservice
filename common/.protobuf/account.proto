@@ -8,6 +8,10 @@ service AccountService {
     rpc SignUpEmployee(SignUpEmployeeRequest) returns (SignUpEmployeeResponse);
     rpc GetCustomer(GetCustomerRequest) returns (GetCustomerResponse);
     rpc GetEmployee (GetEmployeeRequest) returns (GetEmployeeResponse);
+    rpc UpdateCustomer(UpdateCustomerRequest) returns (UpdateCustomerResponse);
+    rpc UpdateEmployee(UpdateEmployeeRequest) returns (UpdateEmployeeResponse);
+    rpc UpdateEmployeePerformanceScore(UpdatePerformanceScoreRequest) returns (UpdatePerformanceScoreResponse);
+    rpc UpdateEmployeeStatus(UpdateEmployeeStatusRequest) returns (UpdateEmployeeStatusResponse);
 }
 message Account {
   string id = 1;
@@ -32,6 +36,7 @@ message Employee {
     EmployeeStatus status = 4;
     float performance_score = 5;
     google.protobuf.Timestamp hire_date = 6;
+    int32 num_ratings = 7;
 }
 enum EmployeeStatus {
     ACTIVE = 0;
@@ -72,5 +77,39 @@ message SignUpEmployeeRequest {
     google.protobuf.Timestamp hire_date = 8;
 }
 message SignUpEmployeeResponse {
+    Employee employee = 1;
+}
+message UpdateCustomerRequest {
+    string id = 1;
+    string first_name = 2;
+    string last_name = 3;
+    string email = 4;
+    string customer_id = 5;
+}
+message UpdateCustomerResponse {
+    Customer customer = 1;
+}
+message UpdateEmployeeRequest {
+    string id = 1;
+    string first_name = 2;
+    string last_name = 3;
+    string email = 4;
+    string employee_id = 5;
+}
+message UpdateEmployeeResponse {
+    Employee employee = 1;
+}
+message UpdatePerformanceScoreRequest {
+    string id = 1;
+    float new_performance_score = 2;
+}
+message UpdatePerformanceScoreResponse {
+    Employee employee = 1;
+}
+message UpdateEmployeeStatusRequest {
+    string id = 1;
+    string status = 2;
+}
+message UpdateEmployeeStatusResponse {
     Employee employee = 1;
 }

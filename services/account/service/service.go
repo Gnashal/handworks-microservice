@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"handworks-services-account/types"
 	"handworks/common/grpc/account"
 	"handworks/common/utils"
@@ -111,6 +112,113 @@ func (a *AccountService) GetEmployee(ctx context.Context, in *account.GetEmploye
 	employee := dbEmp.ToProto()
 	employee.Account = dbAcc.ToProto()
 	return &account.GetEmployeeResponse{
+		Employee: employee,
+	}, nil
+}
+func (a *AccountService) UpdateCustomer(ctx context.Context, in *account.UpdateCustomerRequest) (*account.UpdateCustomerResponse, error) {
+	var dbAcc types.DbAccount
+	var dbCust types.DbCustomer
+
+	if err := a.withTx(ctx, a.DB, func(tx pgx.Tx) error {
+		acc, err := a.UpdateAccount(ctx, tx, in.Id, in.FirstName, in.LastName, in.Email)
+		if err != nil {
+			return err
+		}
+		dbAcc = *acc
+
+		cust, err := a.FetchOnlyCustomerData(ctx, tx, in.Id)
+		if err != nil {
+			return err
+		}
+		dbCust = *cust
+
+		return nil
+	}); err != nil {
+		return nil, fmt.Errorf("could not update customer: %w", err)
+	}
+
+	customer := dbCust.ToProto()
+	customer.Account = dbAcc.ToProto()
+
+	return &account.UpdateCustomerResponse{
+		Customer: customer,
+	}, nil
+}
+
+func (a *AccountService) UpdateEmployee(ctx context.Context, in *account.UpdateEmployeeRequest) (*account.UpdateEmployeeResponse, error) {
+	var dbAcc types.DbAccount
+	var dbEmp types.DbEmployee
+	if err := a.withTx(ctx, a.DB, func(tx pgx.Tx) error {
+		acc, err := a.UpdateAccount(ctx, tx, in.Id, in.FirstName, in.LastName, in.Email)
+		if err != nil {
+			return err
+		}
+		dbAcc = *acc
+
+		emp, err := a.FetchOnlyEmployeeData(ctx, tx, dbAcc.ID)
+		if err != nil {
+			return err
+		}
+		dbEmp = *emp
+		return nil
+	}); err != nil {
+		return nil, fmt.Errorf("could not query employee table")
+	}
+
+	employee := dbEmp.ToProto()
+	employee.Account = dbAcc.ToProto()
+	return &account.UpdateEmployeeResponse{
+		Employee: employee,
+	}, nil
+}
+
+func (a *AccountService) UpdateEmployeePerformanceScore(ctx context.Context, in *account.UpdatePerformanceScoreRequest) (*account.UpdatePerformanceScoreResponse, error) {
+	var dbAcc types.DbAccount
+	var dbEmp types.DbEmployee
+	if err := a.withTx(ctx, a.DB, func(tx pgx.Tx) error {
+		err := a.AddPerformanceScore(ctx, tx, in.NewPerformanceScore, in.Id)
+		if err != nil {
+			return err
+		}
+
+		emp, acc, err := a.FetchEmployeeData(ctx, tx, in.Id)
+		if err != nil {
+			return err
+		}
+		dbEmp = *emp
+		dbAcc = *acc
+		return nil
+	}); err != nil {
+		return nil, fmt.Errorf("could not update performance score in employee table: %w", err)
+	}
+	employee := dbEmp.ToProto()
+	employee.Account = dbAcc.ToProto()
+	return &account.UpdatePerformanceScoreResponse{
+		Employee: employee,
+	}, nil
+}
+func (a *AccountService) UpdateEmployeeStatus(ctx context.Context, in *account.UpdateEmployeeStatusRequest) (*account.UpdateEmployeeStatusResponse, error) {
+	var dbAcc types.DbAccount
+	var dbEmp types.DbEmployee
+	if err := a.withTx(ctx, a.DB, func(tx pgx.Tx) error {
+		err := a.UpdateStatus(ctx, tx, in.Status, in.Id)
+		if err != nil {
+			return err
+		}
+
+		emp, acc, err := a.FetchEmployeeData(ctx, tx, in.Id)
+		if err != nil {
+			return err
+		}
+		dbEmp = *emp
+		dbAcc = *acc
+		return nil
+	}); err != nil {
+		return nil, fmt.Errorf("could not update performance score in employee table: %w", err)
+	}
+	employee := dbEmp.ToProto()
+	employee.Account = dbAcc.ToProto()
+	return &account.UpdateEmployeeStatusResponse{
 		Employee: employee,
 	}, nil
 }
