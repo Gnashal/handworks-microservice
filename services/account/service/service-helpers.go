@@ -11,17 +11,25 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func (a *AccountService) withTx(ctx context.Context, db *pgxpool.Pool, fn func(pgx.Tx) error) error {
+func (a *AccountService) withTx(
+	ctx context.Context,
+	db *pgxpool.Pool,
+	fn func(pgx.Tx) error,
+) (err error) {
 	tx, err := db.Begin(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to begin tx: %w", err)
 	}
-	defer tx.Rollback(ctx)
-
-	if err := fn(tx); err != nil {
-		return err
-	}
-	return tx.Commit(ctx)
+	defer func() {
+		if err != nil {
+			if rbErr := tx.Rollback(ctx); rbErr != nil {
+				a.L.Error("rollback failed: %v", rbErr)
+			}
+		} else {
+			err = tx.Commit(ctx)
+		}
+	}()
+	return fn(tx)
 }
 
 func (a *AccountService) FetchCustomerData(c context.Context, tx pgx.Tx, ID string) (*types.DbCustomer, *types.DbAccount, error) {
