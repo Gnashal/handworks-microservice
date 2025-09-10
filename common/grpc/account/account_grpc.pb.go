@@ -27,6 +27,8 @@ const (
 	AccountService_UpdateEmployee_FullMethodName                 = "/AccountService/UpdateEmployee"
 	AccountService_UpdateEmployeePerformanceScore_FullMethodName = "/AccountService/UpdateEmployeePerformanceScore"
 	AccountService_UpdateEmployeeStatus_FullMethodName           = "/AccountService/UpdateEmployeeStatus"
+	AccountService_DeleteEmployee_FullMethodName                 = "/AccountService/DeleteEmployee"
+	AccountService_DeleteCustomer_FullMethodName                 = "/AccountService/DeleteCustomer"
 )
 
 // AccountServiceClient is the client API for AccountService service.
@@ -41,6 +43,8 @@ type AccountServiceClient interface {
 	UpdateEmployee(ctx context.Context, in *UpdateEmployeeRequest, opts ...grpc.CallOption) (*UpdateEmployeeResponse, error)
 	UpdateEmployeePerformanceScore(ctx context.Context, in *UpdatePerformanceScoreRequest, opts ...grpc.CallOption) (*UpdatePerformanceScoreResponse, error)
 	UpdateEmployeeStatus(ctx context.Context, in *UpdateEmployeeStatusRequest, opts ...grpc.CallOption) (*UpdateEmployeeStatusResponse, error)
+	DeleteEmployee(ctx context.Context, in *DeleteEmployeeRequest, opts ...grpc.CallOption) (*DeleteEmployeeResponse, error)
+	DeleteCustomer(ctx context.Context, in *DeleteCustomerRequest, opts ...grpc.CallOption) (*DeleteCustomerResponse, error)
 }
 
 type accountServiceClient struct {
@@ -131,6 +135,26 @@ func (c *accountServiceClient) UpdateEmployeeStatus(ctx context.Context, in *Upd
 	return out, nil
 }
 
+func (c *accountServiceClient) DeleteEmployee(ctx context.Context, in *DeleteEmployeeRequest, opts ...grpc.CallOption) (*DeleteEmployeeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteEmployeeResponse)
+	err := c.cc.Invoke(ctx, AccountService_DeleteEmployee_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *accountServiceClient) DeleteCustomer(ctx context.Context, in *DeleteCustomerRequest, opts ...grpc.CallOption) (*DeleteCustomerResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteCustomerResponse)
+	err := c.cc.Invoke(ctx, AccountService_DeleteCustomer_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AccountServiceServer is the server API for AccountService service.
 // All implementations must embed UnimplementedAccountServiceServer
 // for forward compatibility.
@@ -143,6 +167,8 @@ type AccountServiceServer interface {
 	UpdateEmployee(context.Context, *UpdateEmployeeRequest) (*UpdateEmployeeResponse, error)
 	UpdateEmployeePerformanceScore(context.Context, *UpdatePerformanceScoreRequest) (*UpdatePerformanceScoreResponse, error)
 	UpdateEmployeeStatus(context.Context, *UpdateEmployeeStatusRequest) (*UpdateEmployeeStatusResponse, error)
+	DeleteEmployee(context.Context, *DeleteEmployeeRequest) (*DeleteEmployeeResponse, error)
+	DeleteCustomer(context.Context, *DeleteCustomerRequest) (*DeleteCustomerResponse, error)
 	mustEmbedUnimplementedAccountServiceServer()
 }
 
@@ -176,6 +202,12 @@ func (UnimplementedAccountServiceServer) UpdateEmployeePerformanceScore(context.
 }
 func (UnimplementedAccountServiceServer) UpdateEmployeeStatus(context.Context, *UpdateEmployeeStatusRequest) (*UpdateEmployeeStatusResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateEmployeeStatus not implemented")
+}
+func (UnimplementedAccountServiceServer) DeleteEmployee(context.Context, *DeleteEmployeeRequest) (*DeleteEmployeeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteEmployee not implemented")
+}
+func (UnimplementedAccountServiceServer) DeleteCustomer(context.Context, *DeleteCustomerRequest) (*DeleteCustomerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteCustomer not implemented")
 }
 func (UnimplementedAccountServiceServer) mustEmbedUnimplementedAccountServiceServer() {}
 func (UnimplementedAccountServiceServer) testEmbeddedByValue()                        {}
@@ -342,6 +374,42 @@ func _AccountService_UpdateEmployeeStatus_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AccountService_DeleteEmployee_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteEmployeeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountServiceServer).DeleteEmployee(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AccountService_DeleteEmployee_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountServiceServer).DeleteEmployee(ctx, req.(*DeleteEmployeeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AccountService_DeleteCustomer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteCustomerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountServiceServer).DeleteCustomer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AccountService_DeleteCustomer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountServiceServer).DeleteCustomer(ctx, req.(*DeleteCustomerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AccountService_ServiceDesc is the grpc.ServiceDesc for AccountService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -380,6 +448,14 @@ var AccountService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateEmployeeStatus",
 			Handler:    _AccountService_UpdateEmployeeStatus_Handler,
+		},
+		{
+			MethodName: "DeleteEmployee",
+			Handler:    _AccountService_DeleteEmployee_Handler,
+		},
+		{
+			MethodName: "DeleteCustomer",
+			Handler:    _AccountService_DeleteCustomer_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

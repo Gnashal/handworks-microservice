@@ -12,6 +12,8 @@ service AccountService {
     rpc UpdateEmployee(UpdateEmployeeRequest) returns (UpdateEmployeeResponse);
     rpc UpdateEmployeePerformanceScore(UpdatePerformanceScoreRequest) returns (UpdatePerformanceScoreResponse);
     rpc UpdateEmployeeStatus(UpdateEmployeeStatusRequest) returns (UpdateEmployeeStatusResponse);
+    rpc DeleteEmployee(DeleteEmployeeRequest) returns (DeleteEmployeeResponse);
+    rpc DeleteCustomer(DeleteCustomerRequest) returns (DeleteCustomerResponse);
 }
 message Account {
   string id = 1;
@@ -113,3 +115,22 @@ message UpdateEmployeeStatusRequest {
 message UpdateEmployeeStatusResponse {
     Employee employee = 1;
 }
+message DeleteEmployeeRequest{
+    string id = 1;
+    string empId = 2;
+}
+message DeleteEmployeeResponse {
+    bool ok = 1;
+    string message = 2;
+    Employee employee = 3;
+}
+message DeleteCustomerRequest {
+    string id = 1;
+    string custId = 2;
+}
+message DeleteCustomerResponse {
+    bool ok = 1;
+    string message = 2;
+    Customer customer = 3;
+}
+
