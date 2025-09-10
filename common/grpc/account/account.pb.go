@@ -1203,6 +1203,230 @@ func (x *UpdateEmployeeStatusResponse) GetEmployee() *Employee {
 	return nil
 }
 
+type DeleteEmployeeRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	EmpId         string                 `protobuf:"bytes,2,opt,name=empId,proto3" json:"empId,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteEmployeeRequest) Reset() {
+	*x = DeleteEmployeeRequest{}
+	mi := &file_account_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteEmployeeRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteEmployeeRequest) ProtoMessage() {}
+
+func (x *DeleteEmployeeRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_account_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteEmployeeRequest.ProtoReflect.Descriptor instead.
+func (*DeleteEmployeeRequest) Descriptor() ([]byte, []int) {
+	return file_account_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *DeleteEmployeeRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *DeleteEmployeeRequest) GetEmpId() string {
+	if x != nil {
+		return x.EmpId
+	}
+	return ""
+}
+
+type DeleteEmployeeResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Ok            bool                   `protobuf:"varint,1,opt,name=ok,proto3" json:"ok,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	Employee      *Employee              `protobuf:"bytes,3,opt,name=employee,proto3" json:"employee,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteEmployeeResponse) Reset() {
+	*x = DeleteEmployeeResponse{}
+	mi := &file_account_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteEmployeeResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteEmployeeResponse) ProtoMessage() {}
+
+func (x *DeleteEmployeeResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_account_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteEmployeeResponse.ProtoReflect.Descriptor instead.
+func (*DeleteEmployeeResponse) Descriptor() ([]byte, []int) {
+	return file_account_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *DeleteEmployeeResponse) GetOk() bool {
+	if x != nil {
+		return x.Ok
+	}
+	return false
+}
+
+func (x *DeleteEmployeeResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+func (x *DeleteEmployeeResponse) GetEmployee() *Employee {
+	if x != nil {
+		return x.Employee
+	}
+	return nil
+}
+
+type DeleteCustomerRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	CustId        string                 `protobuf:"bytes,2,opt,name=custId,proto3" json:"custId,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteCustomerRequest) Reset() {
+	*x = DeleteCustomerRequest{}
+	mi := &file_account_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteCustomerRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteCustomerRequest) ProtoMessage() {}
+
+func (x *DeleteCustomerRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_account_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteCustomerRequest.ProtoReflect.Descriptor instead.
+func (*DeleteCustomerRequest) Descriptor() ([]byte, []int) {
+	return file_account_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *DeleteCustomerRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *DeleteCustomerRequest) GetCustId() string {
+	if x != nil {
+		return x.CustId
+	}
+	return ""
+}
+
+type DeleteCustomerResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Ok            bool                   `protobuf:"varint,1,opt,name=ok,proto3" json:"ok,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	Customer      *Customer              `protobuf:"bytes,3,opt,name=customer,proto3" json:"customer,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteCustomerResponse) Reset() {
+	*x = DeleteCustomerResponse{}
+	mi := &file_account_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteCustomerResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteCustomerResponse) ProtoMessage() {}
+
+func (x *DeleteCustomerResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_account_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteCustomerResponse.ProtoReflect.Descriptor instead.
+func (*DeleteCustomerResponse) Descriptor() ([]byte, []int) {
+	return file_account_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *DeleteCustomerResponse) GetOk() bool {
+	if x != nil {
+		return x.Ok
+	}
+	return false
+}
+
+func (x *DeleteCustomerResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+func (x *DeleteCustomerResponse) GetCustomer() *Customer {
+	if x != nil {
+		return x.Customer
+	}
+	return nil
+}
+
 var File_account_proto protoreflect.FileDescriptor
 
 const file_account_proto_rawDesc = "" +
@@ -1292,13 +1516,27 @@ const file_account_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06status\x18\x02 \x01(\tR\x06status\"E\n" +
 	"\x1cUpdateEmployeeStatusResponse\x12%\n" +
-	"\bemployee\x18\x01 \x01(\v2\t.EmployeeR\bemployee*6\n" +
+	"\bemployee\x18\x01 \x01(\v2\t.EmployeeR\bemployee\"=\n" +
+	"\x15DeleteEmployeeRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
+	"\x05empId\x18\x02 \x01(\tR\x05empId\"i\n" +
+	"\x16DeleteEmployeeResponse\x12\x0e\n" +
+	"\x02ok\x18\x01 \x01(\bR\x02ok\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\x12%\n" +
+	"\bemployee\x18\x03 \x01(\v2\t.EmployeeR\bemployee\"?\n" +
+	"\x15DeleteCustomerRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
+	"\x06custId\x18\x02 \x01(\tR\x06custId\"i\n" +
+	"\x16DeleteCustomerResponse\x12\x0e\n" +
+	"\x02ok\x18\x01 \x01(\bR\x02ok\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\x12%\n" +
+	"\bcustomer\x18\x03 \x01(\v2\t.CustomerR\bcustomer*6\n" +
 	"\x0eEmployeeStatus\x12\n" +
 	"\n" +
 	"\x06ACTIVE\x10\x00\x12\n" +
 	"\n" +
 	"\x06ONDUTY\x10\x01\x12\f\n" +
-	"\bINACTIVE\x10\x022\xc8\x04\n" +
+	"\bINACTIVE\x10\x022\xce\x05\n" +
 	"\x0eAccountService\x12A\n" +
 	"\x0eSignUpCustomer\x12\x16.SignUpCustomerRequest\x1a\x17.SignUpCustomerResponse\x12A\n" +
 	"\x0eSignUpEmployee\x12\x16.SignUpEmployeeRequest\x1a\x17.SignUpEmployeeResponse\x128\n" +
@@ -1307,7 +1545,9 @@ const file_account_proto_rawDesc = "" +
 	"\x0eUpdateCustomer\x12\x16.UpdateCustomerRequest\x1a\x17.UpdateCustomerResponse\x12A\n" +
 	"\x0eUpdateEmployee\x12\x16.UpdateEmployeeRequest\x1a\x17.UpdateEmployeeResponse\x12a\n" +
 	"\x1eUpdateEmployeePerformanceScore\x12\x1e.UpdatePerformanceScoreRequest\x1a\x1f.UpdatePerformanceScoreResponse\x12S\n" +
-	"\x14UpdateEmployeeStatus\x12\x1c.UpdateEmployeeStatusRequest\x1a\x1d.UpdateEmployeeStatusResponseB\x1fZ\x1dhandworks/common/grpc/accountb\x06proto3"
+	"\x14UpdateEmployeeStatus\x12\x1c.UpdateEmployeeStatusRequest\x1a\x1d.UpdateEmployeeStatusResponse\x12A\n" +
+	"\x0eDeleteEmployee\x12\x16.DeleteEmployeeRequest\x1a\x17.DeleteEmployeeResponse\x12A\n" +
+	"\x0eDeleteCustomer\x12\x16.DeleteCustomerRequest\x1a\x17.DeleteCustomerResponseB\x1fZ\x1dhandworks/common/grpc/accountb\x06proto3"
 
 var (
 	file_account_proto_rawDescOnce sync.Once
@@ -1322,7 +1562,7 @@ func file_account_proto_rawDescGZIP() []byte {
 }
 
 var file_account_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_account_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
+var file_account_proto_msgTypes = make([]protoimpl.MessageInfo, 23)
 var file_account_proto_goTypes = []any{
 	(EmployeeStatus)(0),                    // 0: EmployeeStatus
 	(*Account)(nil),                        // 1: Account
@@ -1344,45 +1584,55 @@ var file_account_proto_goTypes = []any{
 	(*UpdatePerformanceScoreResponse)(nil), // 17: UpdatePerformanceScoreResponse
 	(*UpdateEmployeeStatusRequest)(nil),    // 18: UpdateEmployeeStatusRequest
 	(*UpdateEmployeeStatusResponse)(nil),   // 19: UpdateEmployeeStatusResponse
-	(*timestamppb.Timestamp)(nil),          // 20: google.protobuf.Timestamp
+	(*DeleteEmployeeRequest)(nil),          // 20: DeleteEmployeeRequest
+	(*DeleteEmployeeResponse)(nil),         // 21: DeleteEmployeeResponse
+	(*DeleteCustomerRequest)(nil),          // 22: DeleteCustomerRequest
+	(*DeleteCustomerResponse)(nil),         // 23: DeleteCustomerResponse
+	(*timestamppb.Timestamp)(nil),          // 24: google.protobuf.Timestamp
 }
 var file_account_proto_depIdxs = []int32{
-	20, // 0: Account.created_at:type_name -> google.protobuf.Timestamp
-	20, // 1: Account.updated_at:type_name -> google.protobuf.Timestamp
+	24, // 0: Account.created_at:type_name -> google.protobuf.Timestamp
+	24, // 1: Account.updated_at:type_name -> google.protobuf.Timestamp
 	1,  // 2: Customer.account:type_name -> Account
 	1,  // 3: Employee.Account:type_name -> Account
 	0,  // 4: Employee.status:type_name -> EmployeeStatus
-	20, // 5: Employee.hire_date:type_name -> google.protobuf.Timestamp
+	24, // 5: Employee.hire_date:type_name -> google.protobuf.Timestamp
 	2,  // 6: GetCustomerResponse.customer:type_name -> Customer
 	3,  // 7: GetEmployeeResponse.employee:type_name -> Employee
 	2,  // 8: SignUpCustomerResponse.customer:type_name -> Customer
-	20, // 9: SignUpEmployeeRequest.hire_date:type_name -> google.protobuf.Timestamp
+	24, // 9: SignUpEmployeeRequest.hire_date:type_name -> google.protobuf.Timestamp
 	3,  // 10: SignUpEmployeeResponse.employee:type_name -> Employee
 	2,  // 11: UpdateCustomerResponse.customer:type_name -> Customer
 	3,  // 12: UpdateEmployeeResponse.employee:type_name -> Employee
 	3,  // 13: UpdatePerformanceScoreResponse.employee:type_name -> Employee
 	3,  // 14: UpdateEmployeeStatusResponse.employee:type_name -> Employee
-	8,  // 15: AccountService.SignUpCustomer:input_type -> SignUpCustomerRequest
-	10, // 16: AccountService.SignUpEmployee:input_type -> SignUpEmployeeRequest
-	4,  // 17: AccountService.GetCustomer:input_type -> GetCustomerRequest
-	6,  // 18: AccountService.GetEmployee:input_type -> GetEmployeeRequest
-	12, // 19: AccountService.UpdateCustomer:input_type -> UpdateCustomerRequest
-	14, // 20: AccountService.UpdateEmployee:input_type -> UpdateEmployeeRequest
-	16, // 21: AccountService.UpdateEmployeePerformanceScore:input_type -> UpdatePerformanceScoreRequest
-	18, // 22: AccountService.UpdateEmployeeStatus:input_type -> UpdateEmployeeStatusRequest
-	9,  // 23: AccountService.SignUpCustomer:output_type -> SignUpCustomerResponse
-	11, // 24: AccountService.SignUpEmployee:output_type -> SignUpEmployeeResponse
-	5,  // 25: AccountService.GetCustomer:output_type -> GetCustomerResponse
-	7,  // 26: AccountService.GetEmployee:output_type -> GetEmployeeResponse
-	13, // 27: AccountService.UpdateCustomer:output_type -> UpdateCustomerResponse
-	15, // 28: AccountService.UpdateEmployee:output_type -> UpdateEmployeeResponse
-	17, // 29: AccountService.UpdateEmployeePerformanceScore:output_type -> UpdatePerformanceScoreResponse
-	19, // 30: AccountService.UpdateEmployeeStatus:output_type -> UpdateEmployeeStatusResponse
-	23, // [23:31] is the sub-list for method output_type
-	15, // [15:23] is the sub-list for method input_type
-	15, // [15:15] is the sub-list for extension type_name
-	15, // [15:15] is the sub-list for extension extendee
-	0,  // [0:15] is the sub-list for field type_name
+	3,  // 15: DeleteEmployeeResponse.employee:type_name -> Employee
+	2,  // 16: DeleteCustomerResponse.customer:type_name -> Customer
+	8,  // 17: AccountService.SignUpCustomer:input_type -> SignUpCustomerRequest
+	10, // 18: AccountService.SignUpEmployee:input_type -> SignUpEmployeeRequest
+	4,  // 19: AccountService.GetCustomer:input_type -> GetCustomerRequest
+	6,  // 20: AccountService.GetEmployee:input_type -> GetEmployeeRequest
+	12, // 21: AccountService.UpdateCustomer:input_type -> UpdateCustomerRequest
+	14, // 22: AccountService.UpdateEmployee:input_type -> UpdateEmployeeRequest
+	16, // 23: AccountService.UpdateEmployeePerformanceScore:input_type -> UpdatePerformanceScoreRequest
+	18, // 24: AccountService.UpdateEmployeeStatus:input_type -> UpdateEmployeeStatusRequest
+	20, // 25: AccountService.DeleteEmployee:input_type -> DeleteEmployeeRequest
+	22, // 26: AccountService.DeleteCustomer:input_type -> DeleteCustomerRequest
+	9,  // 27: AccountService.SignUpCustomer:output_type -> SignUpCustomerResponse
+	11, // 28: AccountService.SignUpEmployee:output_type -> SignUpEmployeeResponse
+	5,  // 29: AccountService.GetCustomer:output_type -> GetCustomerResponse
+	7,  // 30: AccountService.GetEmployee:output_type -> GetEmployeeResponse
+	13, // 31: AccountService.UpdateCustomer:output_type -> UpdateCustomerResponse
+	15, // 32: AccountService.UpdateEmployee:output_type -> UpdateEmployeeResponse
+	17, // 33: AccountService.UpdateEmployeePerformanceScore:output_type -> UpdatePerformanceScoreResponse
+	19, // 34: AccountService.UpdateEmployeeStatus:output_type -> UpdateEmployeeStatusResponse
+	21, // 35: AccountService.DeleteEmployee:output_type -> DeleteEmployeeResponse
+	23, // 36: AccountService.DeleteCustomer:output_type -> DeleteCustomerResponse
+	27, // [27:37] is the sub-list for method output_type
+	17, // [17:27] is the sub-list for method input_type
+	17, // [17:17] is the sub-list for extension type_name
+	17, // [17:17] is the sub-list for extension extendee
+	0,  // [0:17] is the sub-list for field type_name
 }
 
 func init() { file_account_proto_init() }
@@ -1396,7 +1646,7 @@ func file_account_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_account_proto_rawDesc), len(file_account_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   19,
+			NumMessages:   23,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

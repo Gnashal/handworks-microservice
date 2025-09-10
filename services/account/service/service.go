@@ -222,3 +222,51 @@ func (a *AccountService) UpdateEmployeeStatus(ctx context.Context, in *account.U
 		Employee: employee,
 	}, nil
 }
+func (a *AccountService) DeleteEmployee(ctx context.Context, in *account.DeleteEmployeeRequest) (*account.DeleteEmployeeResponse, error) {
+	var dbAcc types.DbAccount
+	var dbEmp types.DbEmployee
+
+	if err := a.withTx(ctx, a.DB, func(tx pgx.Tx) error {
+		emp, acc, err := a.DeleteEmployeeData(ctx, tx, in.EmpId, in.Id)
+		if err != nil {
+			return err
+		}
+		dbEmp = *emp
+		dbAcc = *acc
+		return nil
+	}); err != nil {
+		return nil, err
+	}
+
+	employee := dbEmp.ToProto()
+	employee.Account = dbAcc.ToProto()
+
+	return &account.DeleteEmployeeResponse{
+		Ok:       true,
+		Message:  "deleting employee success",
+		Employee: employee,
+	}, nil
+}
+func (a *AccountService) DeleteCustomer(ctx context.Context, in *account.DeleteCustomerRequest) (*account.DeleteCustomerResponse, error) {
+	var dbCust types.DbCustomer
+	var dbAcc types.DbAccount
+
+	if err := a.withTx(ctx, a.DB, func(tx pgx.Tx) error {
+		cust, acc, err := a.DeleteCustomerData(ctx, tx, in.CustId, in.Id)
+		if err != nil {
+			return err
+		}
+		dbCust = *cust
+		dbAcc = *acc
+		return nil
+	}); err != nil {
+		return nil, err
+	}
+	customer := dbCust.ToProto()
+	customer.Account = dbAcc.ToProto()
+	return &account.DeleteCustomerResponse{
+		Ok:       true,
+		Message:  "deleting customer success",
+		Customer: customer,
+	}, nil
+}

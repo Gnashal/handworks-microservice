@@ -252,3 +252,81 @@ func (a *AccountService) UpdateStatus(c context.Context, tx pgx.Tx, status, empI
 	}
 	return nil
 }
+func (a *AccountService) DeleteEmployeeData(c context.Context, tx pgx.Tx, empId, accId string) (*types.DbEmployee, *types.DbAccount, error) {
+	var emp types.DbEmployee
+	var acc types.DbAccount
+
+	// Delete employee, return row
+	if err := tx.QueryRow(c,
+		`DELETE FROM account.employees
+		 WHERE id = $1
+		 RETURNING id, account_id, position, status, performance_score, hire_date, num_ratings`,
+		empId,
+	).Scan(
+		&emp.ID,
+		&emp.AccountID,
+		&emp.Position,
+		&emp.Status,
+		&emp.Performance,
+		&emp.HireDate,
+		&emp.NumRatings,
+	); err != nil {
+		return nil, nil, fmt.Errorf("could not delete employee: %w", err)
+	}
+	if err := tx.QueryRow(c,
+		`DELETE FROM account.accounts
+		 WHERE id = $1
+		 RETURNING first_name, last_name, email, provider, clerk_id, role, id, created_at, updated_at`,
+		accId,
+	).Scan(
+		&acc.FirstName,
+		&acc.LastName,
+		&acc.Email,
+		&acc.Provider,
+		&acc.ClerkID,
+		&acc.Role,
+		&acc.ID,
+		&acc.CreatedAt,
+		&acc.UpdatedAt,
+	); err != nil {
+		return nil, nil, fmt.Errorf("could not delete account: %w", err)
+	}
+
+	return &emp, &acc, nil
+}
+
+func (a *AccountService) DeleteCustomerData(c context.Context, tx pgx.Tx, customerId, accId string) (*types.DbCustomer, *types.DbAccount, error) {
+	var cust types.DbCustomer
+	var acc types.DbAccount
+
+	if err := tx.QueryRow(c, `
+		DELETE FROM account.customers
+		WHERE id = $1
+		RETURNING id, account_id, status, loyalty_points, created_at, updated_at
+	`, customerId).Scan(
+		&cust.ID,
+		&cust.AccountID,
+	); err != nil {
+		return nil, nil, fmt.Errorf("could not delete customer with id %s: %w", customerId, err)
+	}
+
+	if err := tx.QueryRow(c, `
+		DELETE FROM account.accounts
+		WHERE id = $1
+		RETURNING first_name, last_name, email, provider, clerk_id, role, id, created_at, updated_at
+	`, accId).Scan(
+		&acc.FirstName,
+		&acc.LastName,
+		&acc.Email,
+		&acc.Provider,
+		&acc.ClerkID,
+		&acc.Role,
+		&acc.ID,
+		&acc.CreatedAt,
+		&acc.UpdatedAt,
+	); err != nil {
+		return nil, nil, fmt.Errorf("could not delete account with id %s: %w", accId, err)
+	}
+
+	return &cust, &acc, nil
+}
