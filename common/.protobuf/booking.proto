@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+option go_package="handworks/common/grpc/booking";
+import "google/protobuf/timestamp.proto";
+
+service BookingService {
+    rpc CreateBook (CreateBookRequest) returns (CreateBookResponse);
+    rpc GetBooksByUID (GetBooksByUIDRequest) returns (GetBooksByUIDResponse);
+    rpc UpdateBook (UpdateBookRequest) returns (UpdateBookResponse);
+    rpc DeleteBook (DeleteBookRequest) returns (DeleteBookResponse);
+}
+
+message Booking {
+    string id = 1;
+    string customer_id = 2;
+    string address_id = 3;
+    BookingType booking_type = 4;
+    int32 dirty_scale = 5;
+    google.protobuf.Timestamp schedule = 6;
+    Status status = 7;
+    string notes = 8;
+    google.protobuf.Timestamp created_at = 9;
+    google.protobuf.Timestamp updated_at = 10;
+}
+
+enum BookingType {
+    GENERAL = 0;
+    COUCH = 1;
+    SOFA = 2;
+    CARPET = 3;
+    MATRESS = 4;
+    CAR_INTERIOR = 5;
+    POST_CONSTRUCTION = 6;
+}
+
+enum Status {
+    PENDING = 0;
+    CONFIRMED = 1;
+    CANCELLED = 2;
+}
+
+message CreateBookRequest {
+    string customer_id = 1;
+    string address_id = 2;
+    BookingType booking_type = 3;
+    int32 dirty_scale = 4;
+    google.protobuf.Timestamp schedule = 5;
+    Status status = 6;
+    string notes = 7;
+}
+
+message CreateBookResponse {
+    Booking book = 1;
+}
+
+message GetBooksByUIDRequest {
+    string customer_id = 1;
+}
+
+message GetBooksByUIDResponse {
+    repeated Booking books = 1;
+    string message = 2;
+}
+
+message UpdateBookRequest {
+    string id = 1;
+    string customer_id = 2;
+    string address_id = 3;
+    BookingType booking_type = 4;
+    int32 dirty_scale = 5;
+    google.protobuf.Timestamp schedule = 6;
+    Status status = 7;
+    string notes = 8;
+    google.protobuf.Timestamp updated_at = 9;
+}
+
+message UpdateBookResponse {
+    Booking book = 1;
+}
+
+message DeleteBookRequest {
+    string id = 1;
+}
+
+message DeleteBookResponse {
+    string id = 1;
+    string message = 2;
+}
