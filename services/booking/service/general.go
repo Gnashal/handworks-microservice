@@ -1,6 +1,8 @@
 package service
 
-import "handworks/common/grpc/booking"
+import (
+	"handworks/common/grpc/booking"
+)
 
 var validBookingTypes = map[string]struct{}{
 	booking.BookingType_CARPET.String():            {},
@@ -17,4 +19,17 @@ func DetermineBookingType(booking_type string) string {
 		return booking_type
 	}
 	return booking.BookingType_SOFA.String()
+}
+
+var validStatus = map[string]struct{}{
+	booking.Status_PENDING.String():   {},
+	booking.Status_CONFIRMED.String(): {},
+	booking.Status_CANCELLED.String(): {},
+}
+
+func DetermineStatusType(status_type string) string {
+	if _, ok := validStatus[status_type]; ok {
+		return status_type
+	}
+	return booking.Status_CANCELLED.String()
 }

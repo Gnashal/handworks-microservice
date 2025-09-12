@@ -33,7 +33,7 @@ func (dbBooking DbBookings) ToProto() *booking.Booking {
 		BookingType: booking.BookingType(booking.BookingType_value[dbBooking.BookingType]),
 		DirtyScale:  dbBooking.DirtyScale,
 		Schedule:    timestamppb.New(dbBooking.Schedule),
-		Status:      booking.Status(booking.BookingType_value[dbBooking.Status]),
+		Status:      booking.Status(booking.Status_value[dbBooking.Status]),
 		Notes:       dbBooking.Notes,
 		CreatedAt:   timestamppb.New(dbBooking.CreatedAt),
 		UpdatedAt:   updatedAt,

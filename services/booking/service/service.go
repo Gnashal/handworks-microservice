@@ -16,9 +16,26 @@ type BookingService struct {
 	booking.UnimplementedBookingServiceServer
 }
 
-func (b *BookingService) CreateBook(c context.Context, in *booking.CreateBookRequest) (*booking.CreateBookResponse, error) {
+func (b *BookingService) CreateBook(ctx context.Context, in *booking.CreateBookRequest) (*booking.CreateBookResponse, error) {
+	b.L.Info("Creating Book for UID: %s...", in.AddressId)
 
-	return nil, nil
+	var createdBook *types.DbBookings
+
+	if err := b.withTx(ctx, b.DB, func(tx pgx.Tx) error {
+		book, err := b.MakeBooking(ctx, tx, in.CustomerId, in.AddressId, in.BookingType.String(), in.DirtyScale, in.Schedule.AsTime(), in.Status.String(), in.Notes)
+		if err != nil {
+			return err
+		}
+		createdBook = book
+		return nil
+	}); err != nil {
+		return nil, err
+	}
+	book := createdBook.ToProto()
+
+	return &booking.CreateBookResponse{
+		Book: book,
+	}, nil
 }
 
 func (b *BookingService) GetBooksByUID(ctx context.Context, in *booking.GetBooksByUIDRequest) (*booking.GetBooksByUIDResponse, error) {
@@ -54,12 +71,47 @@ func (b *BookingService) GetBooksByUID(ctx context.Context, in *booking.GetBooks
 	}, nil
 }
 
-func (b *BookingService) UpdateBook(c context.Context, in *booking.UpdateBookRequest) (*booking.UpdateBookResponse, error) {
+func (b *BookingService) UpdateBook(ctx context.Context, in *booking.UpdateBookRequest) (*booking.UpdateBookResponse, error) {
+	b.L.Info("Updating Book by ID: %s...", in.Id)
 
-	return nil, nil
+	var updatedBook *types.DbBookings
+
+	if err := b.withTx(ctx, b.DB, func(tx pgx.Tx) error {
+		book, err := b.PatchBook(ctx, tx, in.Id, in.AddressId, in.BookingType.String(), in.DirtyScale, in.Schedule.AsTime(), in.Status.String(), in.Notes)
+		if err != nil {
+			return err
+		}
+		updatedBook = book
+		return nil
+	}); err != nil {
+		return nil, err
+	}
+	book := updatedBook.ToProto()
+
+	return &booking.UpdateBookResponse{
+		Book: book,
+	}, nil
 }
 
-func (b *BookingService) DeleteBook(c context.Context, in *booking.DeleteBookRequest) (*booking.DeleteBookResponse, error) {
+func (b *BookingService) DeleteBook(ctx context.Context, in *booking.DeleteBookRequest) (*booking.DeleteBookResponse, error) {
+	b.L.Info("Deleting Book by ID: %s...", in.Id)
 
-	return nil, nil
+	var deletedBook *types.DbBookings
+
+	if err := b.withTx(ctx, b.DB, func(tx pgx.Tx) error {
+		book, err := b.RemoveBook(ctx, tx, in.Id)
+		if err != nil {
+			return err
+		}
+		deletedBook = book
+		return nil
+	}); err != nil {
+		return nil, err
+	}
+	book := deletedBook.ToProto()
+
+	return &booking.DeleteBookResponse{
+		Id:   book.Id,
+		Book: book,
+	}, nil
 }

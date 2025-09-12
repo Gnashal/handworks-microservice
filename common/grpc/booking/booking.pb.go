@@ -483,14 +483,12 @@ func (x *GetBooksByUIDResponse) GetMessage() string {
 type UpdateBookRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	CustomerId    string                 `protobuf:"bytes,2,opt,name=customer_id,json=customerId,proto3" json:"customer_id,omitempty"`
-	AddressId     string                 `protobuf:"bytes,3,opt,name=address_id,json=addressId,proto3" json:"address_id,omitempty"`
-	BookingType   BookingType            `protobuf:"varint,4,opt,name=booking_type,json=bookingType,proto3,enum=BookingType" json:"booking_type,omitempty"`
-	DirtyScale    int32                  `protobuf:"varint,5,opt,name=dirty_scale,json=dirtyScale,proto3" json:"dirty_scale,omitempty"`
-	Schedule      *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=schedule,proto3" json:"schedule,omitempty"`
-	Status        Status                 `protobuf:"varint,7,opt,name=status,proto3,enum=Status" json:"status,omitempty"`
-	Notes         string                 `protobuf:"bytes,8,opt,name=notes,proto3" json:"notes,omitempty"`
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	AddressId     string                 `protobuf:"bytes,2,opt,name=address_id,json=addressId,proto3" json:"address_id,omitempty"`
+	BookingType   BookingType            `protobuf:"varint,3,opt,name=booking_type,json=bookingType,proto3,enum=BookingType" json:"booking_type,omitempty"`
+	DirtyScale    int32                  `protobuf:"varint,4,opt,name=dirty_scale,json=dirtyScale,proto3" json:"dirty_scale,omitempty"`
+	Schedule      *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=schedule,proto3" json:"schedule,omitempty"`
+	Status        Status                 `protobuf:"varint,6,opt,name=status,proto3,enum=Status" json:"status,omitempty"`
+	Notes         string                 `protobuf:"bytes,7,opt,name=notes,proto3" json:"notes,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -528,13 +526,6 @@ func (*UpdateBookRequest) Descriptor() ([]byte, []int) {
 func (x *UpdateBookRequest) GetId() string {
 	if x != nil {
 		return x.Id
-	}
-	return ""
-}
-
-func (x *UpdateBookRequest) GetCustomerId() string {
-	if x != nil {
-		return x.CustomerId
 	}
 	return ""
 }
@@ -579,13 +570,6 @@ func (x *UpdateBookRequest) GetNotes() string {
 		return x.Notes
 	}
 	return ""
-}
-
-func (x *UpdateBookRequest) GetUpdatedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.UpdatedAt
-	}
-	return nil
 }
 
 type UpdateBookResponse struct {
@@ -679,7 +663,7 @@ func (x *DeleteBookRequest) GetId() string {
 type DeleteBookResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	Book          *Booking               `protobuf:"bytes,2,opt,name=book,proto3" json:"book,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -721,11 +705,11 @@ func (x *DeleteBookResponse) GetId() string {
 	return ""
 }
 
-func (x *DeleteBookResponse) GetMessage() string {
+func (x *DeleteBookResponse) GetBook() *Booking {
 	if x != nil {
-		return x.Message
+		return x.Book
 	}
-	return ""
+	return nil
 }
 
 var File_booking_proto protoreflect.FileDescriptor
@@ -768,28 +752,24 @@ const file_booking_proto_rawDesc = "" +
 	"customerId\"Q\n" +
 	"\x15GetBooksByUIDResponse\x12\x1e\n" +
 	"\x05books\x18\x01 \x03(\v2\b.BookingR\x05books\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"\xdf\x02\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"\x83\x02\n" +
 	"\x11UpdateBookRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
-	"\vcustomer_id\x18\x02 \x01(\tR\n" +
-	"customerId\x12\x1d\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
 	"\n" +
-	"address_id\x18\x03 \x01(\tR\taddressId\x12/\n" +
-	"\fbooking_type\x18\x04 \x01(\x0e2\f.BookingTypeR\vbookingType\x12\x1f\n" +
-	"\vdirty_scale\x18\x05 \x01(\x05R\n" +
+	"address_id\x18\x02 \x01(\tR\taddressId\x12/\n" +
+	"\fbooking_type\x18\x03 \x01(\x0e2\f.BookingTypeR\vbookingType\x12\x1f\n" +
+	"\vdirty_scale\x18\x04 \x01(\x05R\n" +
 	"dirtyScale\x126\n" +
-	"\bschedule\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\bschedule\x12\x1f\n" +
-	"\x06status\x18\a \x01(\x0e2\a.StatusR\x06status\x12\x14\n" +
-	"\x05notes\x18\b \x01(\tR\x05notes\x129\n" +
-	"\n" +
-	"updated_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"2\n" +
+	"\bschedule\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\bschedule\x12\x1f\n" +
+	"\x06status\x18\x06 \x01(\x0e2\a.StatusR\x06status\x12\x14\n" +
+	"\x05notes\x18\a \x01(\tR\x05notes\"2\n" +
 	"\x12UpdateBookResponse\x12\x1c\n" +
 	"\x04book\x18\x01 \x01(\v2\b.BookingR\x04book\"#\n" +
 	"\x11DeleteBookRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\">\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"B\n" +
 	"\x12DeleteBookResponse\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage*q\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1c\n" +
+	"\x04book\x18\x02 \x01(\v2\b.BookingR\x04book*q\n" +
 	"\vBookingType\x12\v\n" +
 	"\aGENERAL\x10\x00\x12\t\n" +
 	"\x05COUCH\x10\x01\x12\b\n" +
@@ -854,8 +834,8 @@ var file_booking_proto_depIdxs = []int32{
 	0,  // 10: UpdateBookRequest.booking_type:type_name -> BookingType
 	11, // 11: UpdateBookRequest.schedule:type_name -> google.protobuf.Timestamp
 	1,  // 12: UpdateBookRequest.status:type_name -> Status
-	11, // 13: UpdateBookRequest.updated_at:type_name -> google.protobuf.Timestamp
-	2,  // 14: UpdateBookResponse.book:type_name -> Booking
+	2,  // 13: UpdateBookResponse.book:type_name -> Booking
+	2,  // 14: DeleteBookResponse.book:type_name -> Booking
 	3,  // 15: BookingService.CreateBook:input_type -> CreateBookRequest
 	5,  // 16: BookingService.GetBooksByUID:input_type -> GetBooksByUIDRequest
 	7,  // 17: BookingService.UpdateBook:input_type -> UpdateBookRequest

@@ -64,14 +64,12 @@ message GetBooksByUIDResponse {
 
 message UpdateBookRequest {
     string id = 1;
-    string customer_id = 2;
-    string address_id = 3;
-    BookingType booking_type = 4;
-    int32 dirty_scale = 5;
-    google.protobuf.Timestamp schedule = 6;
-    Status status = 7;
-    string notes = 8;
-    google.protobuf.Timestamp updated_at = 9;
+    string address_id = 2;
+    BookingType booking_type = 3;
+    int32 dirty_scale = 4;
+    google.protobuf.Timestamp schedule = 5;
+    Status status = 6;
+    string notes = 7;
 }
 
 message UpdateBookResponse {
@@ -84,5 +82,5 @@ message DeleteBookRequest {
 
 message DeleteBookResponse {
     string id = 1;
-    string message = 2;
+    Booking book = 2;
 }
