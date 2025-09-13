@@ -1,0 +1,141 @@
+syntax = "proto3";
+
+option go_package="handworks/common/grpc/booking";
+import "google/protobuf/timestamp.proto";
+
+service BookingService {
+  rpc CreateBooking(CreateBookingRequest) returns (CreateBookingResponse);
+  rpc CalculatePrice(CalculatePriceRequest) returns (CalculatePriceResponse);
+  rpc GetBookingById(GetBookingByIdRequest) returns (GetBookingByIdResponse);
+}
+
+message Address {
+    string address_human = 3;
+    double address_lat = 4;
+    double address_lng = 5;
+}
+
+message BaseBookingDetails {
+    string id = 1;
+    string customer_first_name = 2;
+    string customer_last_name = 3;
+    Address address = 4;
+    google.protobuf.Timestamp schedule = 5;
+    int32 dirty_scale = 6; // 1 - 5
+    string payment_status = 7;
+    string review_status = 8;
+    repeated string photos = 9; // file IDs or URLs
+    repeated string addon_ids = 10; // cross-service add-ons
+}
+
+enum HomeType {
+    CONDO_ROOM = 0;
+    HOUSE = 1;
+    COMMERCIAL = 2;
+}
+enum CouchType {
+    SEATER_1 = 0;
+    SEATER_2 = 1;
+    SEATER_3 = 2;
+    SEATER_3_LTYPE_SMALL = 3;
+    SEATER_3_LTYPE_LARGE = 4;
+    SEATER_4_LTYPE_SMALL = 5;
+    SEATER_4_LTYPE_LARGE = 6;
+    SEATER_5_LTYPE = 7;
+    SEATER_6_LTYPE = 8;
+    OTTOMAN = 9;
+    LAZBOY = 10;
+    CHAIR = 11;
+}
+enum BedType {
+    KING = 0;
+    QUEEN = 1;
+    KING_HEADBAND = 2;
+    QUEEN_HEADBAND = 3;
+    DOUBLE = 4;
+    SINGLE = 5;
+    BED_PILLOW = 6;
+}
+enum CarType {
+    SEDAN = 0;
+    MPV = 1;
+    SUV = 2;
+    PICKUP = 3;
+    VAN = 4;
+    CAR_SMALL = 5;    
+}
+// General cleaning
+message GeneralCleaningDetails {
+  HomeType home_type = 1;
+  int32 sqm = 2;
+}
+
+// Couch cleaning
+message CouchCleaningDetails {
+  CouchType couch_type = 1;
+  int32 width_cm = 2;
+  int32 depth_cm = 3;
+  int32 height_cm = 4;
+}
+
+// Mattress cleaning
+message MattressCleaningDetails {
+  BedType bed_type = 1;
+  int32 width_cm = 2;
+  int32 depth_cm = 3;
+  int32 height_cm = 4;
+}
+
+// Car interior cleaning
+message CarCleaningDetails {
+  CarType car_type = 1;
+  int32 child_seats = 2;
+}
+
+// Post-construction cleaning
+message PostConstructionCleaningDetails {
+  int32 sqm = 1;
+}
+
+message CreateBookingRequest {
+  BaseBookingDetails base = 1;
+
+  oneof details {
+    GeneralCleaningDetails general = 2;
+    CouchCleaningDetails couch = 3;
+    MattressCleaningDetails mattress = 4;
+    CarCleaningDetails car = 5;
+    PostConstructionCleaningDetails post = 6;
+  }
+}
+
+message CreateBookingResponse {
+  string booking_id = 1;
+  float total_price = 2;
+}
+message CalculatePriceRequest {
+  CreateBookingRequest booking = 1;
+}
+
+message CalculatePriceResponse {
+  float base_price = 1;
+  float adjustments = 2;
+  float addons_price = 3;
+  float total_price = 4;
+  repeated PricingBreakdown breakdown = 5;
+}
+
+message PricingBreakdown {
+  string description = 1;
+  float amount = 2;
+}
+
+message GetBookingByIdRequest {
+  string booking_id = 1;
+}
+
+message GetBookingByIdResponse {
+  CreateBookingRequest booking = 1;
+  float total_price = 2;
+}
+
