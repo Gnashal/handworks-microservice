@@ -11,7 +11,7 @@ import (
 
 type ContextString string
 
-const ClerkClaimsKey ContextString = "clerk_claims"
+const ClerkClaimsKey ContextString = "clerk-claims"
 
 func AuthMiddleware(next http.Handler, clerkKey string) http.Handler {
 	clerk.SetKey(os.Getenv(clerkKey))

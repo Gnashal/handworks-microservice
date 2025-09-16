@@ -4,6 +4,7 @@ import (
 	"context"
 	graph "handworks-gateway/graph/generated"
 	"handworks-gateway/graph/resolvers"
+	"handworks-gateway/grpc"
 	"handworks-gateway/internal/middleware"
 	"handworks/common/utils"
 	"net/http"
@@ -26,8 +27,14 @@ func StartGQlServer(l *utils.Logger, wg *sync.WaitGroup, stop <-chan struct{}) {
 	if port == "" {
 		port = "8080"
 	}
+	clients, err := grpc.NewClients()
+	if err != nil {
+		l.Fatal("Failed to dial grpc servers: %w", err)
+	}
 	config := graph.Config{
-		Resolvers: &resolvers.Resolver{},
+		Resolvers: &resolvers.Resolver{
+			GrpcClients: clients,
+		},
 	}
 	srv := handler.New(graph.NewExecutableSchema(config))
 	srv.AddTransport(transport.Options{})
