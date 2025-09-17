@@ -29,10 +29,11 @@ func StartGQlServer(l *utils.Logger, wg *sync.WaitGroup, stop <-chan struct{}) {
 	}
 	clients, err := grpc.NewClients()
 	if err != nil {
-		l.Fatal("Failed to dial grpc servers: %w", err)
+		l.Fatal("Failed to dial grpc servers: %s", err)
 	}
 	config := graph.Config{
 		Resolvers: &resolvers.Resolver{
+			Log:         l,
 			GrpcClients: clients,
 		},
 	}

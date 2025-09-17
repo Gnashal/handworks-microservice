@@ -17,6 +17,13 @@ func AuthMiddleware(next http.Handler, clerkKey string) http.Handler {
 	clerk.SetKey(os.Getenv(clerkKey))
 
 	return clerkhttp.WithHeaderAuthorization()(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if os.Getenv("ENV") == "dev" {
+			// skip auth in dev mode
+			ctx := context.WithValue(r.Context(), "user", "dev-user")
+			next.ServeHTTP(w, r.WithContext(ctx))
+			return
+		}
+
 		claims, ok := clerk.SessionClaimsFromContext(r.Context())
 		if !ok {
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)

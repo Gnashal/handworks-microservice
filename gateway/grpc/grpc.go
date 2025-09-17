@@ -2,6 +2,7 @@ package grpc
 
 // add gprc config here
 import (
+	"fmt"
 	accpb "handworks/common/grpc/account"
 	"os"
 
@@ -17,7 +18,9 @@ type GrpcClients struct {
 func NewClients() (*GrpcClients, error) {
 	// Connection strings here
 	ACC_CONN := os.Getenv("ACC_CONN")
-
+	if ACC_CONN == "" {
+		return nil, fmt.Errorf("ACC_CONN environment variable not set")
+	}
 	// Then add the connections here
 	accConn, err := grpc.NewClient(ACC_CONN,
 		// will changes this nya for prod, but for now this is fine

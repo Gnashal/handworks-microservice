@@ -2,32 +2,39 @@
 
 package generated
 
-type Account struct {
-	ID         string  `json:"id"`
-	FirstName  string  `json:"firstName"`
-	MiddleName *string `json:"middleName,omitempty"`
-	LastName   string  `json:"lastName"`
-	Status     bool    `json:"status"`
-	AccType    string  `json:"accType"`
-}
+import (
+	"bytes"
+	"fmt"
+	"io"
+	"strconv"
+	"time"
+)
 
-type Admin struct {
-	ID    string `json:"id"`
-	AccID string `json:"accId"`
+type Account struct {
+	ID        string    `json:"id"`
+	FirstName string    `json:"firstName"`
+	LastName  string    `json:"lastName"`
+	Email     string    `json:"email"`
+	Provider  *string   `json:"provider,omitempty"`
+	Role      string    `json:"role"`
+	ClerkID   string    `json:"clerkId"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
 }
 
 type Customer struct {
-	ID          string  `json:"id"`
-	AccID       string  `json:"accId"`
-	Email       string  `json:"email"`
-	Provider    *string `json:"provider,omitempty"`
-	OnWatchlist bool    `json:"onWatchlist"`
+	ID      string   `json:"id"`
+	Account *Account `json:"account"`
 }
 
 type Employee struct {
-	ID     string `json:"id"`
-	AccID  string `json:"accId"`
-	Status string `json:"status"`
+	ID               string         `json:"id"`
+	Account          *Account       `json:"account"`
+	Position         string         `json:"position"`
+	Status           EmployeeStatus `json:"status"`
+	PerformanceScore float64        `json:"performanceScore"`
+	HireDate         time.Time      `json:"hireDate"`
+	NumRatings       int32          `json:"numRatings"`
 }
 
 type Mutation struct {
@@ -36,6 +43,59 @@ type Mutation struct {
 type Query struct {
 }
 
-type WatchList struct {
-	Customers []*Customer `json:"customers"`
+type EmployeeStatus string
+
+const (
+	EmployeeStatusActive   EmployeeStatus = "ACTIVE"
+	EmployeeStatusOnduty   EmployeeStatus = "ONDUTY"
+	EmployeeStatusInactive EmployeeStatus = "INACTIVE"
+)
+
+var AllEmployeeStatus = []EmployeeStatus{
+	EmployeeStatusActive,
+	EmployeeStatusOnduty,
+	EmployeeStatusInactive,
+}
+
+func (e EmployeeStatus) IsValid() bool {
+	switch e {
+	case EmployeeStatusActive, EmployeeStatusOnduty, EmployeeStatusInactive:
+		return true
+	}
+	return false
+}
+
+func (e EmployeeStatus) String() string {
+	return string(e)
+}
+
+func (e *EmployeeStatus) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = EmployeeStatus(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid EmployeeStatus", str)
+	}
+	return nil
+}
+
+func (e EmployeeStatus) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *EmployeeStatus) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e EmployeeStatus) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }

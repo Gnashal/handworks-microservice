@@ -3,6 +3,17 @@
 A centralized, scalable service platform designed to optimize booking, scheduling, operations, and administration for Handworks Cleaning Services. Built on distributed microservices, the system supports cross-platform access and automates key workflows across clients, cleaners, and admin roles.
 
 ---
+# How to Run
+- First run the gateway
+```
+cd ./gateway
+go run main.go
+```
+- Then run each service (if applicable when you test)
+```
+cd .services/{service name eg.. account}
+go run main.go
+```
 
 ## System Diagram
 

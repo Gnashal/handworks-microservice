@@ -1,51 +1,87 @@
+scalar Time
+
 type Account {
-    id: ID!, 
-    firstName: String!, 
-    middleName: String, 
-    lastName: String!, 
-    status: Boolean!, 
-    accType: String!,
-}
-type Employee {
-    id: ID!, 
-    accId: ID!,
-    status: String!
-}
-type Customer {
-    id: ID!,
-    accId: ID!,  
-    email: String!, 
-    provider: String,
-    onWatchlist: Boolean! 
-}
-type Admin {
-    id: ID!,
-    accId: ID!
-}
-type WatchList {
-    customers: [Customer!]!
+  id: ID!
+  firstName: String!
+  lastName: String!
+  email: String!
+  provider: String
+  role: String!
+  clerkId: String!
+  createdAt: Time!
+  updatedAt: Time!
 }
 
+type Customer {
+  id: ID!
+  account: Account!
+}
+
+enum EmployeeStatus {
+  ACTIVE
+  ONDUTY
+  INACTIVE
+}
+
+type Employee {
+  id: ID!
+  account: Account!
+  position: String!
+  status: EmployeeStatus!
+  performanceScore: Float!
+  hireDate: Time!
+  numRatings: Int!
+}
 
 type Query {
-
-    accounts: [Account!]!,
-    customers:[Customer!]!,
-    employees:[Employee!]!,
-    admins: [Admin!]!,
-    watchlist: WatchList!
-  
+  customer(id: ID!): Customer
+  employee(id: ID!): Employee
 }
-
 type Mutation {
-    createAccount(
-        firstName: String!
-        middleName: String
-        lastName: String!
-        accType: String!
-    ): Account!
+  signUpCustomer(
+    firstName: String!
+    lastName: String!
+    email: String!
+    provider: String
+    clerkId: String!
+    role: String!
+  ): Customer!
 
-  
-    updateAccountStatus(id: ID!, status: Boolean!): Account!
-    addCustomerToWatchlist(customerId: ID!): WatchList!
+  signUpEmployee(
+    firstName: String!
+    lastName: String!
+    email: String!
+    provider: String
+    clerkId: String!
+    role: String!
+    position: String!
+    hireDate: Time!
+  ): Employee!
+
+  updateCustomer(
+    id: ID!
+    firstName: String
+    lastName: String
+    email: String
+  ): Customer!
+
+  updateEmployee(
+    id: ID!
+    firstName: String
+    lastName: String
+    email: String
+  ): Employee!
+
+  updateEmployeePerformanceScore(
+    id: ID!
+    newPerformanceScore: Float!
+  ): Employee!
+
+  updateEmployeeStatus(
+    id: ID!
+    status: EmployeeStatus!
+  ): Employee!
+
+  deleteEmployee(id: ID!, empId: ID!): Employee!
+  deleteCustomer(id: ID!, custId: ID!): Customer!
 }
