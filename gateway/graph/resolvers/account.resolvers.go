@@ -12,36 +12,103 @@ import (
 	"handworks-gateway/graph/resolvers/helpers"
 	"handworks/common/grpc/account"
 	"time"
+
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 // SignUpCustomer is the resolver for the signUpCustomer field.
 func (r *mutationResolver) SignUpCustomer(ctx context.Context, firstName string, lastName string, email string, provider *string, clerkID string, role string) (*model.Customer, error) {
-	panic(fmt.Errorf("not implemented: SignUpCustomer - signUpCustomer"))
+	accReq := &account.SignUpCustomerRequest{
+		FirstName: firstName,
+		LastName:  lastName,
+		Email:     email,
+		Provider:  *provider,
+		ClerkId:   clerkID,
+		Role:      role,
+	}
+	res, err := r.GrpcClients.AccClient.SignUpCustomer(ctx, accReq)
+	if err != nil {
+		r.Log.Error("Error signing up customer via Account service: %s", err)
+		return nil, fmt.Errorf("failed to sign up customer: %w", err)
+	}
+	return helpers.MapCustomer(res.Customer), nil
 }
 
 // SignUpEmployee is the resolver for the signUpEmployee field.
 func (r *mutationResolver) SignUpEmployee(ctx context.Context, firstName string, lastName string, email string, provider *string, clerkID string, role string, position string, hireDate time.Time) (*model.Employee, error) {
-	panic(fmt.Errorf("not implemented: SignUpEmployee - signUpEmployee"))
+	accReq := &account.SignUpEmployeeRequest{
+		FirstName: firstName,
+		LastName:  lastName,
+		Email:     email,
+		Provider:  *provider,
+		ClerkId:   clerkID,
+		Role:      role,
+		Position:  position,
+		HireDate:  timestamppb.New(hireDate),
+	}
+	res, err := r.GrpcClients.AccClient.SignUpEmployee(ctx, accReq)
+	if err != nil {
+		r.Log.Error("Error signing up employee via Account service: %s", err)
+		return nil, fmt.Errorf("failed to sign up employee: %w", err)
+	}
+	return helpers.MapEmployee(res.Employee), nil
 }
 
 // UpdateCustomer is the resolver for the updateCustomer field.
 func (r *mutationResolver) UpdateCustomer(ctx context.Context, id string, firstName *string, lastName *string, email *string) (*model.Customer, error) {
-	panic(fmt.Errorf("not implemented: UpdateCustomer - updateCustomer"))
+	accReq := &account.UpdateCustomerRequest{
+		Id:        id,
+		FirstName: *firstName,
+		LastName:  *lastName,
+		Email:     *email,
+	}
+	res, err := r.GrpcClients.AccClient.UpdateCustomer(ctx, accReq)
+	if err != nil {
+		r.Log.Error("Error updating customer via Account service: %s", err)
+		return nil, fmt.Errorf("failed to update customer: %w", err)
+	}
+	return helpers.MapCustomer(res.Customer), nil
 }
 
 // UpdateEmployee is the resolver for the updateEmployee field.
 func (r *mutationResolver) UpdateEmployee(ctx context.Context, id string, firstName *string, lastName *string, email *string) (*model.Employee, error) {
-	panic(fmt.Errorf("not implemented: UpdateEmployee - updateEmployee"))
+	accReq := &account.UpdateEmployeeRequest{
+		Id:        id,
+		FirstName: *firstName,
+		LastName:  *lastName,
+		Email:     *email,
+	}
+	res, err := r.GrpcClients.AccClient.UpdateEmployee(ctx, accReq)
+	if err != nil {
+		r.Log.Error("Error updating employee via Account service: %s", err)
+		return nil, fmt.Errorf("failed to update employee: %w", err)
+	}
+	return helpers.MapEmployee(res.Employee), nil
 }
 
 // UpdateEmployeePerformanceScore is the resolver for the updateEmployeePerformanceScore field.
 func (r *mutationResolver) UpdateEmployeePerformanceScore(ctx context.Context, id string, newPerformanceScore float64) (*model.Employee, error) {
-	panic(fmt.Errorf("not implemented: UpdateEmployeePerformanceScore - updateEmployeePerformanceScore"))
+	accReq := &account.UpdatePerformanceScoreRequest{
+		Id:                  id,
+		NewPerformanceScore: float32(newPerformanceScore),
+	}
+	res, err := r.GrpcClients.AccClient.UpdateEmployeePerformanceScore(ctx, accReq)
+	if err != nil {
+		r.Log.Error("Error updating employee performance score via Account service: %s", err)
+		return nil, fmt.Errorf("failed to update employee performance score: %w", err)
+	}
+	return helpers.MapEmployee(res.Employee), nil
 }
 
 // UpdateEmployeeStatus is the resolver for the updateEmployeeStatus field.
 func (r *mutationResolver) UpdateEmployeeStatus(ctx context.Context, id string, status model.EmployeeStatus) (*model.Employee, error) {
-	panic(fmt.Errorf("not implemented: UpdateEmployeeStatus - updateEmployeeStatus"))
+	// TODO: Continue tomorrow
+
+	// accReq := &account.UpdateEmployeeStatusRequest{
+	// 	Id:     id,
+	// 	Status: account.EmployeeStatus(account.EmployeeStatus_name[string(status)]),
+	// }
+	return nil, nil
 }
 
 // DeleteEmployee is the resolver for the deleteEmployee field.

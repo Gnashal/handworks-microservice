@@ -53,6 +53,8 @@ func MapEmployee(e *account.Employee) *model.Employee {
 	}
 }
 
+// func MapSignUpCustomer(e* acc)
+
 // Convert protobuf Timestamp to Go time.Time
 func timestampToTime(ts *timestamppb.Timestamp) time.Time {
 	if ts == nil {
