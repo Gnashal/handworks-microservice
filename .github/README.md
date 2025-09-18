@@ -3,6 +3,17 @@
 A centralized, scalable service platform designed to optimize booking, scheduling, operations, and administration for Handworks Cleaning Services. Built on distributed microservices, the system supports cross-platform access and automates key workflows across clients, cleaners, and admin roles.
 
 ---
+# How to Run
+First run the gateway
+```
+cd ./gateway
+go run main.go
+```
+Then run each service (ones that are applicable when you test)
+```
+cd .services/{service name (eg..account)}
+go run main.go
+```
 
 ## System Diagram
 
@@ -72,9 +83,9 @@ Each domain (bookings, employees, payments, inventory) is an independent **Go (G
 
 ## Communication & Data Flow
 
-### API Gateway (REST)
+### API Gateway (GraphQL)
 
-* **Go (Gin framework)**
+* **Go (gqlgen)**
 * Functions:
 
   * Request validation
@@ -83,9 +94,9 @@ Each domain (bookings, employees, payments, inventory) is an independent **Go (G
   * Rate limiting
   * Routing requests to services
 
-### GraphQL Domain Services
+### Services
 
-* **gqlgen (Go)** per domain
+* **grpc (Go)** per domain
 * Precise data queries
 * Strong typing and flexible dashboards
 
@@ -179,14 +190,3 @@ Each domain (bookings, employees, payments, inventory) is an independent **Go (G
 * **Monitoring & tracing**: planned
 
 ---
-
-## Final Considerations
-
-The Handworks Cleaning Services platform delivers a robust, modular architecture optimized for:
-
-* Seamless client booking
-* Real-time cleaner coordination
-* Secure admin workflows
-* Scalable, fault-tolerant expansion
-
-Its distributed design ensures that future updates, integrations, and scaling can be achieved without disrupting core system operations.

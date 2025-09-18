@@ -113,6 +113,28 @@ message CreateBookingResponse {
   string booking_id = 1;
   float total_price = 2;
 }
+
+message QuoteRequest {
+  oneof details {
+    GeneralCleaningDetails general = 1;
+    CouchCleaningDetails couch = 2;
+    MattressCleaningDetails mattress = 3;
+    CarCleaningDetails car = 4;
+    PostConstructionCleaningDetails post = 5;
+  }
+}
+message QuoteResponse {
+  float total_price = 1;
+}
+
+message CalculateQuotePriceRequest {
+  QuoteRequest quote = 1;
+}
+message CalculateQuotePriceResponse {
+  float total_price = 1;
+  repeated PricingBreakdown breakdown = 2;
+}
+
 message CalculatePriceRequest {
   CreateBookingRequest booking = 1;
 }

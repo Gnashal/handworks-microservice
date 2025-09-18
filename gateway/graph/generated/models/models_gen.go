@@ -2,40 +2,39 @@
 
 package generated
 
-type Account struct {
-	ID         string  `json:"id"`
-	FirstName  string  `json:"firstName"`
-	MiddleName *string `json:"middleName,omitempty"`
-	LastName   string  `json:"lastName"`
-	Status     bool    `json:"status"`
-	AccType    string  `json:"accType"`
-}
+import (
+	"time"
+)
 
-type Admin struct {
-	ID    string `json:"id"`
-	AccID string `json:"accId"`
+type Account struct {
+	ID        string    `json:"id"`
+	FirstName string    `json:"firstName"`
+	LastName  string    `json:"lastName"`
+	Email     string    `json:"email"`
+	Provider  *string   `json:"provider,omitempty"`
+	Role      string    `json:"role"`
+	ClerkID   string    `json:"clerkId"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
 }
 
 type Customer struct {
-	ID          string  `json:"id"`
-	AccID       string  `json:"accId"`
-	Email       string  `json:"email"`
-	Provider    *string `json:"provider,omitempty"`
-	OnWatchlist bool    `json:"onWatchlist"`
+	ID      string   `json:"id"`
+	Account *Account `json:"account"`
 }
 
 type Employee struct {
-	ID     string `json:"id"`
-	AccID  string `json:"accId"`
-	Status string `json:"status"`
+	ID               string    `json:"id"`
+	Account          *Account  `json:"account"`
+	Position         string    `json:"position"`
+	Status           string    `json:"status"`
+	PerformanceScore float64   `json:"performanceScore"`
+	HireDate         time.Time `json:"hireDate"`
+	NumRatings       int32     `json:"numRatings"`
 }
 
 type Mutation struct {
 }
 
 type Query struct {
-}
-
-type WatchList struct {
-	Customers []*Customer `json:"customers"`
 }
