@@ -7,7 +7,7 @@ package resolvers
 import (
 	"context"
 	"fmt"
-	generated "handworks-gateway/graph/generated"
+	"handworks-gateway/graph/generated"
 	model "handworks-gateway/graph/generated/models"
 	"handworks-gateway/graph/resolvers/helpers"
 	"handworks/common/grpc/account"
@@ -101,24 +101,45 @@ func (r *mutationResolver) UpdateEmployeePerformanceScore(ctx context.Context, i
 }
 
 // UpdateEmployeeStatus is the resolver for the updateEmployeeStatus field.
-func (r *mutationResolver) UpdateEmployeeStatus(ctx context.Context, id string, status model.EmployeeStatus) (*model.Employee, error) {
-	// TODO: Continue tomorrow
-
-	// accReq := &account.UpdateEmployeeStatusRequest{
-	// 	Id:     id,
-	// 	Status: account.EmployeeStatus(account.EmployeeStatus_name[string(status)]),
-	// }
-	return nil, nil
+func (r *mutationResolver) UpdateEmployeeStatus(ctx context.Context, id string, status string) (*model.Employee, error) {
+	accReq := &account.UpdateEmployeeStatusRequest{
+		Id:     id,
+		Status: status,
+	}
+	res, err := r.GrpcClients.AccClient.UpdateEmployeeStatus(ctx, accReq)
+	if err != nil {
+		r.Log.Error("Error updating employee status via Account service: %s", err)
+		return nil, fmt.Errorf("failed to update employee status: %w", err)
+	}
+	return helpers.MapEmployee(res.Employee), nil
 }
 
 // DeleteEmployee is the resolver for the deleteEmployee field.
 func (r *mutationResolver) DeleteEmployee(ctx context.Context, id string, empID string) (*model.Employee, error) {
-	panic(fmt.Errorf("not implemented: DeleteEmployee - deleteEmployee"))
+	accReq := &account.DeleteEmployeeRequest{
+		Id:    id,
+		EmpId: empID,
+	}
+	res, err := r.GrpcClients.AccClient.DeleteEmployee(ctx, accReq)
+	if err != nil {
+		r.Log.Error("Error deleting employee via Account service: %s", err)
+		return nil, fmt.Errorf("failed to delete employee: %w", err)
+	}
+	return helpers.MapEmployee(res.Employee), nil
 }
 
 // DeleteCustomer is the resolver for the deleteCustomer field.
 func (r *mutationResolver) DeleteCustomer(ctx context.Context, id string, custID string) (*model.Customer, error) {
-	panic(fmt.Errorf("not implemented: DeleteCustomer - deleteCustomer"))
+	accReq := &account.DeleteCustomerRequest{
+		Id:     id,
+		CustId: custID,
+	}
+	res, err := r.GrpcClients.AccClient.DeleteCustomer(ctx, accReq)
+	if err != nil {
+		r.Log.Error("Error deleting customer via Account service: %s", err)
+		return nil, fmt.Errorf("failed to delete customer: %w", err)
+	}
+	return helpers.MapCustomer(res.Customer), nil
 }
 
 // Customer is the resolver for the customer field.
@@ -142,8 +163,6 @@ func (r *queryResolver) Employee(ctx context.Context, id string) (*model.Employe
 	}
 	return helpers.MapEmployee(res.Employee), nil
 }
-
-// No need to touch this bottom code :D - Yousif
 
 // Mutation returns generated.MutationResolver implementation.
 func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }

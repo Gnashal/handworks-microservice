@@ -82,7 +82,7 @@ type ComplexityRoot struct {
 		UpdateCustomer                 func(childComplexity int, id string, firstName *string, lastName *string, email *string) int
 		UpdateEmployee                 func(childComplexity int, id string, firstName *string, lastName *string, email *string) int
 		UpdateEmployeePerformanceScore func(childComplexity int, id string, newPerformanceScore float64) int
-		UpdateEmployeeStatus           func(childComplexity int, id string, status generated.EmployeeStatus) int
+		UpdateEmployeeStatus           func(childComplexity int, id string, status string) int
 	}
 
 	Query struct {
@@ -97,7 +97,7 @@ type MutationResolver interface {
 	UpdateCustomer(ctx context.Context, id string, firstName *string, lastName *string, email *string) (*generated.Customer, error)
 	UpdateEmployee(ctx context.Context, id string, firstName *string, lastName *string, email *string) (*generated.Employee, error)
 	UpdateEmployeePerformanceScore(ctx context.Context, id string, newPerformanceScore float64) (*generated.Employee, error)
-	UpdateEmployeeStatus(ctx context.Context, id string, status generated.EmployeeStatus) (*generated.Employee, error)
+	UpdateEmployeeStatus(ctx context.Context, id string, status string) (*generated.Employee, error)
 	DeleteEmployee(ctx context.Context, id string, empID string) (*generated.Employee, error)
 	DeleteCustomer(ctx context.Context, id string, custID string) (*generated.Customer, error)
 }
@@ -345,7 +345,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateEmployeeStatus(childComplexity, args["id"].(string), args["status"].(generated.EmployeeStatus)), true
+		return e.complexity.Mutation.UpdateEmployeeStatus(childComplexity, args["id"].(string), args["status"].(string)), true
 
 	case "Query.customer":
 		if e.complexity.Query.Customer == nil {
@@ -494,17 +494,12 @@ type Customer {
   account: Account!
 }
 
-enum EmployeeStatus {
-  ACTIVE
-  ONDUTY
-  INACTIVE
-}
 
 type Employee {
   id: ID!
   account: Account!
   position: String!
-  status: EmployeeStatus!
+  status: String!
   performanceScore: Float!
   hireDate: Time!
   numRatings: Int!
@@ -556,7 +551,7 @@ type Mutation {
 
   updateEmployeeStatus(
     id: ID!
-    status: EmployeeStatus!
+    status: String!
   ): Employee!
 
   deleteEmployee(id: ID!, empId: ID!): Employee!
@@ -734,7 +729,7 @@ func (ec *executionContext) field_Mutation_updateEmployeeStatus_args(ctx context
 		return nil, err
 	}
 	args["id"] = arg0
-	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "status", ec.unmarshalNEmployeeStatus2handworksᚑgatewayᚋgraphᚋgeneratedᚋmodelsᚐEmployeeStatus)
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "status", ec.unmarshalNString2string)
 	if err != nil {
 		return nil, err
 	}
@@ -1532,9 +1527,9 @@ func (ec *executionContext) _Employee_status(ctx context.Context, field graphql.
 		}
 		return graphql.Null
 	}
-	res := resTmp.(generated.EmployeeStatus)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNEmployeeStatus2handworksᚑgatewayᚋgraphᚋgeneratedᚋmodelsᚐEmployeeStatus(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Employee_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1544,7 +1539,7 @@ func (ec *executionContext) fieldContext_Employee_status(_ context.Context, fiel
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type EmployeeStatus does not have child fields")
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -2031,7 +2026,7 @@ func (ec *executionContext) _Mutation_updateEmployeeStatus(ctx context.Context, 
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateEmployeeStatus(rctx, fc.Args["id"].(string), fc.Args["status"].(generated.EmployeeStatus))
+		return ec.resolvers.Mutation().UpdateEmployeeStatus(rctx, fc.Args["id"].(string), fc.Args["status"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5198,16 +5193,6 @@ func (ec *executionContext) marshalNEmployee2ᚖhandworksᚑgatewayᚋgraphᚋge
 		return graphql.Null
 	}
 	return ec._Employee(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalNEmployeeStatus2handworksᚑgatewayᚋgraphᚋgeneratedᚋmodelsᚐEmployeeStatus(ctx context.Context, v any) (generated.EmployeeStatus, error) {
-	var res generated.EmployeeStatus
-	err := res.UnmarshalGQL(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNEmployeeStatus2handworksᚑgatewayᚋgraphᚋgeneratedᚋmodelsᚐEmployeeStatus(ctx context.Context, sel ast.SelectionSet, v generated.EmployeeStatus) graphql.Marshaler {
-	return v
 }
 
 func (ec *executionContext) unmarshalNFloat2float64(ctx context.Context, v any) (float64, error) {

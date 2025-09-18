@@ -46,7 +46,7 @@ func MapEmployee(e *account.Employee) *model.Employee {
 		ID:               e.Id,
 		Account:          MapAccount(e.Account),
 		Position:         e.Position,
-		Status:           model.EmployeeStatus(e.Status.String()), // map enum -> GraphQL enum
+		Status:           e.Status.String(),
 		PerformanceScore: float64(e.PerformanceScore),
 		HireDate:         timestampToTime(e.HireDate),
 		NumRatings:       int32(e.NumRatings),

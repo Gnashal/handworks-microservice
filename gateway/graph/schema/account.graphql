@@ -17,17 +17,12 @@ type Customer {
   account: Account!
 }
 
-enum EmployeeStatus {
-  ACTIVE
-  ONDUTY
-  INACTIVE
-}
 
 type Employee {
   id: ID!
   account: Account!
   position: String!
-  status: EmployeeStatus!
+  status: String!
   performanceScore: Float!
   hireDate: Time!
   numRatings: Int!
@@ -79,7 +74,7 @@ type Mutation {
 
   updateEmployeeStatus(
     id: ID!
-    status: EmployeeStatus!
+    status: String!
   ): Employee!
 
   deleteEmployee(id: ID!, empId: ID!): Employee!
