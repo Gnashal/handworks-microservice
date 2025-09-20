@@ -10,13 +10,76 @@ service BookingService {
 }
 
 message Address {
-    string address_human = 3;
-    double address_lat = 4;
-    double address_lng = 5;
+    string address_human = 1;
+    double address_lat = 2;
+    double address_lng = 3;
+}
+
+message CleaningEquipment {
+  string id = 1;
+  string name = 2;
+  string type = 3;
+  string photo_url = 4;
+}
+
+message CleaningResources {
+  string id = 1;
+  string name = 2;
+  string type = 3;
+  string photo_url = 4;
+}
+
+message CleanerAssigned {
+  string id = 1;
+  string cleaner_first_name = 2;
+  string cleaner_last_name = 3;
+  string pfp_url = 4;
+}
+
+message ServiceDetail {
+  oneof type {
+    GeneralCleaningDetails general = 1;
+    CouchCleaningDetails couch = 2;
+    MattressCleaningDetails mattress = 3;
+    CarCleaningDetails car = 4;
+    PostConstructionCleaningDetails post = 5;
+  }
+}
+
+message Booking {
+  string id = 1;
+  BaseBookingDetails base = 2;
+  ServiceDetail main_service = 3;
+  repeated AddOn addons = 4;
+  repeated CleaningEquipment equipment = 5;
+  repeated CleaningResources resources = 6;
+  repeated CleanerAssigned cleaners = 7;
+  float total_price = 8;
+}
+
+message AddOn {
+  string id = 1;
+  ServiceDetail serviceDetail = 2;
+  float price = 3;
 }
 
 message BaseBookingDetails {
     string id = 1;
+    string cust_id = 2;
+    string customer_first_name = 3;
+    string customer_last_name = 4;
+    Address address = 5;
+    google.protobuf.Timestamp schedule = 6;
+    int32 dirty_scale = 7; // 1 - 5
+    string payment_status = 8;
+    string review_status = 9;
+    repeated string photos = 10; // file IDs or URLs
+    google.protobuf.Timestamp created_at = 11;
+    google.protobuf.Timestamp updated_at = 12;
+}
+
+message BaseBookingDetailsCreate {
+    string cust_id = 1;
     string customer_first_name = 2;
     string customer_last_name = 3;
     Address address = 4;
@@ -25,7 +88,19 @@ message BaseBookingDetails {
     string payment_status = 7;
     string review_status = 8;
     repeated string photos = 9; // file IDs or URLs
-    repeated string addon_ids = 10; // cross-service add-ons
+}
+
+message CreateBookingRequest {
+  BaseBookingDetailsCreate base = 1;
+  ServiceDetail main_service = 2;
+  repeated AddOn addons = 3;
+  repeated CleaningEquipment equipment = 4;
+  repeated CleaningResources resources = 5;
+  repeated CleanerAssigned cleaners = 6;
+}
+
+message CreateBookingResponse {
+  string booking_id = 1;
 }
 
 enum HomeType {
@@ -97,22 +172,22 @@ message PostConstructionCleaningDetails {
   int32 sqm = 1;
 }
 
-message CreateBookingRequest {
-  BaseBookingDetails base = 1;
+// message CreateBookingRequest {
+//   BaseBookingDetails base = 1;
 
-  oneof details {
-    GeneralCleaningDetails general = 2;
-    CouchCleaningDetails couch = 3;
-    MattressCleaningDetails mattress = 4;
-    CarCleaningDetails car = 5;
-    PostConstructionCleaningDetails post = 6;
-  }
-}
+//   oneof details {
+//     GeneralCleaningDetails general = 2;
+//     CouchCleaningDetails couch = 3;
+//     MattressCleaningDetails mattress = 4;
+//     CarCleaningDetails car = 5;
+//     PostConstructionCleaningDetails post = 6;
+//   }
+// }
 
-message CreateBookingResponse {
-  string booking_id = 1;
-  float total_price = 2;
-}
+// message CreateBookingResponse {
+//   string booking_id = 1;
+//   float total_price = 2;
+// }
 
 message QuoteRequest {
   oneof details {
@@ -157,7 +232,6 @@ message GetBookingByIdRequest {
 }
 
 message GetBookingByIdResponse {
-  CreateBookingRequest booking = 1;
-  float total_price = 2;
+  Booking booking = 1;
 }
 
