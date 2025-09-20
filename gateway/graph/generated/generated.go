@@ -44,6 +44,7 @@ type ResolverRoot interface {
 }
 
 type DirectiveRoot struct {
+	IsPublic func(ctx context.Context, obj any, next graphql.Resolver) (res any, err error)
 }
 
 type ComplexityRoot struct {
@@ -475,7 +476,9 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "../schema/account.graphql", Input: `scalar Time
+	{Name: "../schema/account.graphql", Input: `directive @isPublic on FIELD_DEFINITION
+
+scalar Time
 
 type Account {
   id: ID!
@@ -494,7 +497,6 @@ type Customer {
   account: Account!
 }
 
-
 type Employee {
   id: ID!
   account: Account!
@@ -509,6 +511,7 @@ type Query {
   customer(id: ID!): Customer
   employee(id: ID!): Employee
 }
+
 type Mutation {
   signUpCustomer(
     firstName: String!
@@ -517,7 +520,7 @@ type Mutation {
     provider: String
     clerkId: String!
     role: String!
-  ): Customer!
+  ): Customer! @isPublic
 
   signUpEmployee(
     firstName: String!
@@ -528,7 +531,7 @@ type Mutation {
     role: String!
     position: String!
     hireDate: Time!
-  ): Employee!
+  ): Employee! @isPublic
 
   updateCustomer(
     id: ID!
@@ -1690,8 +1693,30 @@ func (ec *executionContext) _Mutation_signUpCustomer(ctx context.Context, field 
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().SignUpCustomer(rctx, fc.Args["firstName"].(string), fc.Args["lastName"].(string), fc.Args["email"].(string), fc.Args["provider"].(*string), fc.Args["clerkId"].(string), fc.Args["role"].(string))
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().SignUpCustomer(rctx, fc.Args["firstName"].(string), fc.Args["lastName"].(string), fc.Args["email"].(string), fc.Args["provider"].(*string), fc.Args["clerkId"].(string), fc.Args["role"].(string))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			if ec.directives.IsPublic == nil {
+				var zeroVal *generated.Customer
+				return zeroVal, errors.New("directive isPublic is not implemented")
+			}
+			return ec.directives.IsPublic(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*generated.Customer); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *handworks-gateway/graph/generated/models.Customer`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1751,8 +1776,30 @@ func (ec *executionContext) _Mutation_signUpEmployee(ctx context.Context, field 
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().SignUpEmployee(rctx, fc.Args["firstName"].(string), fc.Args["lastName"].(string), fc.Args["email"].(string), fc.Args["provider"].(*string), fc.Args["clerkId"].(string), fc.Args["role"].(string), fc.Args["position"].(string), fc.Args["hireDate"].(time.Time))
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().SignUpEmployee(rctx, fc.Args["firstName"].(string), fc.Args["lastName"].(string), fc.Args["email"].(string), fc.Args["provider"].(*string), fc.Args["clerkId"].(string), fc.Args["role"].(string), fc.Args["position"].(string), fc.Args["hireDate"].(time.Time))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			if ec.directives.IsPublic == nil {
+				var zeroVal *generated.Employee
+				return zeroVal, errors.New("directive isPublic is not implemented")
+			}
+			return ec.directives.IsPublic(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*generated.Employee); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *handworks-gateway/graph/generated/models.Employee`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
