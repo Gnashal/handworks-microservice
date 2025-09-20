@@ -1,14 +1,64 @@
 package helpers
 
 import (
-	"crypto/rand"
-	"math/big"
+	model "handworks-gateway/graph/generated/models"
+	"handworks/common/grpc/account"
+	"time"
+
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-type Helpers struct {
+func MapAccount(a *account.Account) *model.Account {
+	if a == nil {
+		return nil
+	}
+
+	return &model.Account{
+		ID:        a.Id,
+		FirstName: a.FirstName,
+		LastName:  a.LastName,
+		Email:     a.Email,
+		Provider:  &a.Provider,
+		Role:      a.Role,
+		ClerkID:   a.ClerkId,
+		CreatedAt: timestampToTime(a.CreatedAt),
+		UpdatedAt: timestampToTime(a.UpdatedAt),
+	}
 }
 
-func (r *Helpers) GenerateIdNum() big.Int {
-	randNumber, _ := rand.Int(rand.Reader, big.NewInt(100))
-	return *randNumber
+func MapCustomer(c *account.Customer) *model.Customer {
+	if c == nil {
+		return nil
+	}
+
+	return &model.Customer{
+		ID:      c.Id,
+		Account: MapAccount(c.Account),
+	}
+}
+
+func MapEmployee(e *account.Employee) *model.Employee {
+	if e == nil {
+		return nil
+	}
+
+	return &model.Employee{
+		ID:               e.Id,
+		Account:          MapAccount(e.Account),
+		Position:         e.Position,
+		Status:           e.Status.String(),
+		PerformanceScore: float64(e.PerformanceScore),
+		HireDate:         timestampToTime(e.HireDate),
+		NumRatings:       int32(e.NumRatings),
+	}
+}
+
+// func MapSignUpCustomer(e* acc)
+
+// Convert protobuf Timestamp to Go time.Time
+func timestampToTime(ts *timestamppb.Timestamp) time.Time {
+	if ts == nil {
+		return time.Time{}
+	}
+	return ts.AsTime()
 }

@@ -7,73 +7,168 @@ package resolvers
 import (
 	"context"
 	"fmt"
-	generated1 "handworks-gateway/graph/generated"
-	generated "handworks-gateway/graph/generated/models"
+	"handworks-gateway/graph/generated"
+	model "handworks-gateway/graph/generated/models"
+	"handworks-gateway/graph/resolvers/helpers"
+	"handworks/common/grpc/account"
+	"time"
+
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-// CreateAccount is the resolver for the createAccount field.
-func (r *mutationResolver) CreateAccount(ctx context.Context, firstName string, middleName *string, lastName string, accType string) (*generated.Account, error) {
-	idNum := r.helpers.GenerateIdNum()
-	acc := &generated.Account{
-		ID:         fmt.Sprintf("T%d", idNum),
-		FirstName:  firstName,
-		MiddleName: middleName,
-		LastName:   lastName,
-		Status:     true,
-		AccType:    accType,
+// SignUpCustomer is the resolver for the signUpCustomer field.
+func (r *mutationResolver) SignUpCustomer(ctx context.Context, firstName string, lastName string, email string, provider *string, clerkID string, role string) (*model.Customer, error) {
+	accReq := &account.SignUpCustomerRequest{
+		FirstName: firstName,
+		LastName:  lastName,
+		Email:     email,
+		Provider:  *provider,
+		ClerkId:   clerkID,
+		Role:      role,
 	}
-	r.accounts = append(r.accounts, acc)
-	return acc, nil
-}
-
-// UpdateAccountStatus is the resolver for the updateAccountStatus field.
-func (r *mutationResolver) UpdateAccountStatus(ctx context.Context, id string, status bool) (*generated.Account, error) {
-	var acc *generated.Account
-
-	for _, a := range r.accounts {
-		if a.ID == id {
-			acc = a
-			a.Status = status
-		}
+	res, err := r.GrpcClients.AccClient.SignUpCustomer(ctx, accReq)
+	if err != nil {
+		r.Log.Error("Error signing up customer via Account service: %s", err)
+		return nil, fmt.Errorf("failed to sign up customer: %w", err)
 	}
-	return acc, nil
+	return helpers.MapCustomer(res.Customer), nil
 }
 
-// AddCustomerToWatchlist is the resolver for the addCustomerToWatchlist field.
-func (r *mutationResolver) AddCustomerToWatchlist(ctx context.Context, customerID string) (*generated.WatchList, error) {
-	panic(fmt.Errorf("not implemented: AddCustomerToWatchlist - addCustomerToWatchlist"))
+// SignUpEmployee is the resolver for the signUpEmployee field.
+func (r *mutationResolver) SignUpEmployee(ctx context.Context, firstName string, lastName string, email string, provider *string, clerkID string, role string, position string, hireDate time.Time) (*model.Employee, error) {
+	accReq := &account.SignUpEmployeeRequest{
+		FirstName: firstName,
+		LastName:  lastName,
+		Email:     email,
+		Provider:  *provider,
+		ClerkId:   clerkID,
+		Role:      role,
+		Position:  position,
+		HireDate:  timestamppb.New(hireDate),
+	}
+	res, err := r.GrpcClients.AccClient.SignUpEmployee(ctx, accReq)
+	if err != nil {
+		r.Log.Error("Error signing up employee via Account service: %s", err)
+		return nil, fmt.Errorf("failed to sign up employee: %w", err)
+	}
+	return helpers.MapEmployee(res.Employee), nil
 }
 
-// Accounts is the resolver for the accounts field.
-func (r *queryResolver) Accounts(ctx context.Context) ([]*generated.Account, error) {
-	return r.accounts, nil
+// UpdateCustomer is the resolver for the updateCustomer field.
+func (r *mutationResolver) UpdateCustomer(ctx context.Context, id string, firstName *string, lastName *string, email *string) (*model.Customer, error) {
+	accReq := &account.UpdateCustomerRequest{
+		Id:        id,
+		FirstName: *firstName,
+		LastName:  *lastName,
+		Email:     *email,
+	}
+	res, err := r.GrpcClients.AccClient.UpdateCustomer(ctx, accReq)
+	if err != nil {
+		r.Log.Error("Error updating customer via Account service: %s", err)
+		return nil, fmt.Errorf("failed to update customer: %w", err)
+	}
+	return helpers.MapCustomer(res.Customer), nil
 }
 
-// Customers is the resolver for the customers field.
-func (r *queryResolver) Customers(ctx context.Context) ([]*generated.Customer, error) {
-	return r.customers, nil
+// UpdateEmployee is the resolver for the updateEmployee field.
+func (r *mutationResolver) UpdateEmployee(ctx context.Context, id string, firstName *string, lastName *string, email *string) (*model.Employee, error) {
+	accReq := &account.UpdateEmployeeRequest{
+		Id:        id,
+		FirstName: *firstName,
+		LastName:  *lastName,
+		Email:     *email,
+	}
+	res, err := r.GrpcClients.AccClient.UpdateEmployee(ctx, accReq)
+	if err != nil {
+		r.Log.Error("Error updating employee via Account service: %s", err)
+		return nil, fmt.Errorf("failed to update employee: %w", err)
+	}
+	return helpers.MapEmployee(res.Employee), nil
 }
 
-// Employees is the resolver for the employees field.
-func (r *queryResolver) Employees(ctx context.Context) ([]*generated.Employee, error) {
-	return r.employees, nil
+// UpdateEmployeePerformanceScore is the resolver for the updateEmployeePerformanceScore field.
+func (r *mutationResolver) UpdateEmployeePerformanceScore(ctx context.Context, id string, newPerformanceScore float64) (*model.Employee, error) {
+	accReq := &account.UpdatePerformanceScoreRequest{
+		Id:                  id,
+		NewPerformanceScore: float32(newPerformanceScore),
+	}
+	res, err := r.GrpcClients.AccClient.UpdateEmployeePerformanceScore(ctx, accReq)
+	if err != nil {
+		r.Log.Error("Error updating employee performance score via Account service: %s", err)
+		return nil, fmt.Errorf("failed to update employee performance score: %w", err)
+	}
+	return helpers.MapEmployee(res.Employee), nil
 }
 
-// Admins is the resolver for the admins field.
-func (r *queryResolver) Admins(ctx context.Context) ([]*generated.Admin, error) {
-	return r.admins, nil
+// UpdateEmployeeStatus is the resolver for the updateEmployeeStatus field.
+func (r *mutationResolver) UpdateEmployeeStatus(ctx context.Context, id string, status string) (*model.Employee, error) {
+	accReq := &account.UpdateEmployeeStatusRequest{
+		Id:     id,
+		Status: status,
+	}
+	res, err := r.GrpcClients.AccClient.UpdateEmployeeStatus(ctx, accReq)
+	if err != nil {
+		r.Log.Error("Error updating employee status via Account service: %s", err)
+		return nil, fmt.Errorf("failed to update employee status: %w", err)
+	}
+	return helpers.MapEmployee(res.Employee), nil
 }
 
-// Watchlist is the resolver for the watchlist field.
-func (r *queryResolver) Watchlist(ctx context.Context) (*generated.WatchList, error) {
-	return r.watchList, nil
+// DeleteEmployee is the resolver for the deleteEmployee field.
+func (r *mutationResolver) DeleteEmployee(ctx context.Context, id string, empID string) (*model.Employee, error) {
+	accReq := &account.DeleteEmployeeRequest{
+		Id:    id,
+		EmpId: empID,
+	}
+	res, err := r.GrpcClients.AccClient.DeleteEmployee(ctx, accReq)
+	if err != nil {
+		r.Log.Error("Error deleting employee via Account service: %s", err)
+		return nil, fmt.Errorf("failed to delete employee: %w", err)
+	}
+	return helpers.MapEmployee(res.Employee), nil
 }
 
-// Mutation returns generated1.MutationResolver implementation.
-func (r *Resolver) Mutation() generated1.MutationResolver { return &mutationResolver{r} }
+// DeleteCustomer is the resolver for the deleteCustomer field.
+func (r *mutationResolver) DeleteCustomer(ctx context.Context, id string, custID string) (*model.Customer, error) {
+	accReq := &account.DeleteCustomerRequest{
+		Id:     id,
+		CustId: custID,
+	}
+	res, err := r.GrpcClients.AccClient.DeleteCustomer(ctx, accReq)
+	if err != nil {
+		r.Log.Error("Error deleting customer via Account service: %s", err)
+		return nil, fmt.Errorf("failed to delete customer: %w", err)
+	}
+	return helpers.MapCustomer(res.Customer), nil
+}
 
-// Query returns generated1.QueryResolver implementation.
-func (r *Resolver) Query() generated1.QueryResolver { return &queryResolver{r} }
+// Customer is the resolver for the customer field.
+func (r *queryResolver) Customer(ctx context.Context, id string) (*model.Customer, error) {
+	accReq := &account.GetCustomerRequest{Id: id}
+	res, err := r.GrpcClients.AccClient.GetCustomer(ctx, accReq)
+	if err != nil {
+		r.Log.Error("Error fetching customer from Account service: %s", err)
+		return nil, fmt.Errorf("failed to get customer: %w", err)
+	}
+	return helpers.MapCustomer(res.Customer), nil
+}
+
+// Employee is the resolver for the employee field.
+func (r *queryResolver) Employee(ctx context.Context, id string) (*model.Employee, error) {
+	accReq := &account.GetEmployeeRequest{Id: id}
+	res, err := r.GrpcClients.AccClient.GetEmployee(ctx, accReq)
+	if err != nil {
+		r.Log.Error("Error fetching employee from Account service: %s", err)
+		return nil, fmt.Errorf("failed to get employee: %w", err)
+	}
+	return helpers.MapEmployee(res.Employee), nil
+}
+
+// Mutation returns generated.MutationResolver implementation.
+func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
+
+// Query returns generated.QueryResolver implementation.
+func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
