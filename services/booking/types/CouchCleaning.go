@@ -12,6 +12,7 @@ type CouchCleaningDetails struct {
 
 func (couchCleaning CouchCleaningDetails) ToProto() *booking.CouchCleaningDetails {
 	return &booking.CouchCleaningDetails{
+		Id:        couchCleaning.ID,
 		CouchType: booking.CouchType(booking.CouchType_value[couchCleaning.CouchType]),
 		WidthCm:   couchCleaning.WidthCM,
 		DepthCm:   couchCleaning.DepthCM,
@@ -24,6 +25,7 @@ func CouchCleaningDetailsFromProto(pb *booking.CouchCleaningDetails) CouchCleani
 		return CouchCleaningDetails{}
 	}
 	return CouchCleaningDetails{
+		ID:        pb.Id,
 		CouchType: pb.CouchType.String(),
 		WidthCM:   pb.WidthCm,
 		DepthCM:   pb.DepthCm,

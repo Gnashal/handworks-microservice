@@ -9,6 +9,7 @@ type PostConstructionDetails struct {
 
 func (postConstruction PostConstructionDetails) ToProto() *booking.PostConstructionCleaningDetails {
 	return &booking.PostConstructionCleaningDetails{
+		Id:  postConstruction.ID,
 		Sqm: postConstruction.SQM,
 	}
 }
@@ -18,6 +19,7 @@ func PostConstructionCleaningDetailsFromProto(pb *booking.PostConstructionCleani
 		return PostConstructionDetails{}
 	}
 	return PostConstructionDetails{
+		ID:  pb.Id,
 		SQM: pb.Sqm,
 	}
 }

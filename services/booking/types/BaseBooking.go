@@ -29,6 +29,7 @@ func (baseBooking BaseBookingDetails) ToProto() *booking.BaseBookingDetails {
 	}
 
 	return &booking.BaseBookingDetails{
+		Id:                baseBooking.ID,
 		CustId:            baseBooking.CustID,
 		CustomerFirstName: baseBooking.CustomerFirstName,
 		CustomerLastName:  baseBooking.CustomerLastName,
@@ -39,6 +40,33 @@ func (baseBooking BaseBookingDetails) ToProto() *booking.BaseBookingDetails {
 		ReviewStatus:      baseBooking.ReviewStatus,
 		Photos:            baseBooking.Photos,
 		CreatedAt:         timestamppb.New(baseBooking.CreatedAt),
+		UpdatedAt:         updatedAt,
+	}
+}
+
+func BaseBookingDetailsFromProto(pb *booking.BaseBookingDetails) BaseBookingDetails {
+	if pb == nil {
+		return BaseBookingDetails{}
+	}
+
+	var updatedAt *time.Time
+	if pb.UpdatedAt != nil {
+		t := pb.UpdatedAt.AsTime()
+		updatedAt = &t
+	}
+
+	return BaseBookingDetails{
+		ID:                pb.Id,
+		CustID:            pb.CustId,
+		CustomerFirstName: pb.CustomerFirstName,
+		CustomerLastName:  pb.CustomerLastName,
+		Address:           AddressFromProto(pb.Address),
+		Schedule:          pb.Schedule.AsTime(),
+		DirtyScale:        pb.DirtyScale,
+		PaymentStatus:     pb.PaymentStatus,
+		ReviewStatus:      pb.ReviewStatus,
+		Photos:            pb.Photos,
+		CreatedAt:         pb.CreatedAt.AsTime(),
 		UpdatedAt:         updatedAt,
 	}
 }

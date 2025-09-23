@@ -12,6 +12,7 @@ type MattressCleaningDetails struct {
 
 func (mattressCleaning MattressCleaningDetails) ToProto() *booking.MattressCleaningDetails {
 	return &booking.MattressCleaningDetails{
+		Id:       mattressCleaning.ID,
 		BedType:  booking.BedType(booking.CarType_value[mattressCleaning.BedType]),
 		WidthCm:  mattressCleaning.WidthCM,
 		DepthCm:  mattressCleaning.DepthCM,
@@ -24,6 +25,7 @@ func MattressCleaningDetailsFromProto(pb *booking.MattressCleaningDetails) Mattr
 		return MattressCleaningDetails{}
 	}
 	return MattressCleaningDetails{
+		ID:       pb.Id,
 		BedType:  pb.BedType.String(),
 		WidthCM:  pb.WidthCm,
 		DepthCM:  pb.DepthCm,

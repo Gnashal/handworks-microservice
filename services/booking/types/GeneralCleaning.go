@@ -10,6 +10,7 @@ type GeneralCleaningDetails struct {
 
 func (generalCleaning GeneralCleaningDetails) ToProto() *booking.GeneralCleaningDetails {
 	return &booking.GeneralCleaningDetails{
+		Id:       generalCleaning.ID,
 		HomeType: booking.HomeType(booking.HomeType_value[generalCleaning.HomeType]),
 		Sqm:      generalCleaning.SQM,
 	}
@@ -20,6 +21,7 @@ func GeneralCleaningDetailsFromProto(pb *booking.GeneralCleaningDetails) General
 		return GeneralCleaningDetails{}
 	}
 	return GeneralCleaningDetails{
+		ID:       pb.Id,
 		HomeType: pb.HomeType.String(),
 		SQM:      pb.Sqm,
 	}
