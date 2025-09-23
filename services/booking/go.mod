@@ -3,7 +3,6 @@ module handworks-services-booking
 go 1.23.11
 
 require (
-	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v5 v5.7.6
 	github.com/joho/godotenv v1.5.1
 	google.golang.org/grpc v1.75.1

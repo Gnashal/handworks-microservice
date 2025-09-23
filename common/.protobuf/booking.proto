@@ -78,20 +78,8 @@ message BaseBookingDetails {
     google.protobuf.Timestamp updated_at = 12;
 }
 
-message BaseBookingDetailsCreate {
-    string cust_id = 1;
-    string customer_first_name = 2;
-    string customer_last_name = 3;
-    Address address = 4;
-    google.protobuf.Timestamp schedule = 5;
-    int32 dirty_scale = 6; // 1 - 5
-    string payment_status = 7;
-    string review_status = 8;
-    repeated string photos = 9; // file IDs or URLs
-}
-
 message CreateBookingRequest {
-  BaseBookingDetailsCreate base = 1;
+  BaseBookingDetails base = 1;
   ServiceDetail main_service = 2;
   repeated AddOn addons = 3;
   repeated CleaningEquipment equipment = 4;
@@ -100,7 +88,7 @@ message CreateBookingRequest {
 }
 
 message CreateBookingResponse {
-  string booking_id = 1;
+  Booking book = 1;
 }
 
 enum HomeType {
@@ -141,35 +129,40 @@ enum CarType {
 }
 // General cleaning
 message GeneralCleaningDetails {
-  HomeType home_type = 1;
-  int32 sqm = 2;
+  string id = 1;
+  HomeType home_type = 2;
+  int32 sqm = 3;
 }
 
 // Couch cleaning
 message CouchCleaningDetails {
-  CouchType couch_type = 1;
-  int32 width_cm = 2;
-  int32 depth_cm = 3;
-  int32 height_cm = 4;
+  string id = 1;
+  CouchType couch_type = 2;
+  int32 width_cm = 3;
+  int32 depth_cm = 4;
+  int32 height_cm = 5;
 }
 
 // Mattress cleaning
 message MattressCleaningDetails {
-  BedType bed_type = 1;
-  int32 width_cm = 2;
-  int32 depth_cm = 3;
-  int32 height_cm = 4;
+  string id = 1;
+  BedType bed_type = 2;
+  int32 width_cm = 3;
+  int32 depth_cm = 4;
+  int32 height_cm = 5;
 }
 
 // Car interior cleaning
 message CarCleaningDetails {
-  CarType car_type = 1;
-  int32 child_seats = 2;
+  string id = 1;
+  CarType car_type = 2;
+  int32 child_seats = 3;
 }
 
 // Post-construction cleaning
 message PostConstructionCleaningDetails {
-  int32 sqm = 1;
+  string id = 1;
+  int32 sqm = 2;
 }
 
 // message CreateBookingRequest {

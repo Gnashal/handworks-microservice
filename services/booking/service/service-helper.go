@@ -7,7 +7,6 @@ import (
 	"handworks/common/grpc/booking"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -45,9 +44,9 @@ func (b *BookingService) MakeBaseBooking(
 	paymentStatus string,
 	reviewStatus string,
 	photos []string,
-) (string, error) {
+) (*types.BaseBookingDetails, error) {
 
-	var createdBaseBookID uuid.UUID
+	var createdBaseBook types.BaseBookingDetails
 
 	err := tx.QueryRow(c,
 		`INSERT INTO booking.basebookings (
@@ -62,7 +61,7 @@ func (b *BookingService) MakeBaseBooking(
             photos
         )
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-        RETURNING id`,
+        RETURNING id, cust_id, customer_first_name, customer_last_name, address, schedule, dirty_scale, payment_status, review_status, photos, created_at, updated_at`,
 		custID,
 		customerFirstName,
 		customerLastName,
@@ -73,14 +72,25 @@ func (b *BookingService) MakeBaseBooking(
 		reviewStatus,
 		photos,
 	).Scan(
-		&createdBaseBookID,
+		&createdBaseBook.ID,
+		&createdBaseBook.CustID,
+		&createdBaseBook.CustomerFirstName,
+		&createdBaseBook.CustomerLastName,
+		&createdBaseBook.Address,
+		&createdBaseBook.Schedule,
+		&createdBaseBook.DirtyScale,
+		&createdBaseBook.PaymentStatus,
+		&createdBaseBook.ReviewStatus,
+		&createdBaseBook.Photos,
+		&createdBaseBook.CreatedAt,
+		&createdBaseBook.UpdatedAt,
 	)
 
 	if err != nil {
-		return "failed to insert booking", fmt.Errorf("failed to insert base booking: %w", err)
+		return nil, fmt.Errorf("failed to insert base booking: %w", err)
 	}
 
-	return createdBaseBookID.String(), nil
+	return &createdBaseBook, nil
 }
 
 func (b *BookingService) MakeGeneralBooking(c context.Context, tx pgx.Tx, general *booking.GeneralCleaningDetails) (*types.GeneralCleaningDetails, error) {
@@ -172,45 +182,40 @@ func (b *BookingService) createMainServiceBooking(
 	ctx context.Context,
 	tx pgx.Tx,
 	mainService *booking.ServiceDetail,
-) (string, error) {
+) (types.ServiceDetail, error) {
 	switch details := mainService.Type.(type) {
 	case *booking.ServiceDetail_General:
 		general, err := b.MakeGeneralBooking(ctx, tx, details.General)
 		if err != nil {
-			return "", err
+			return types.ServiceDetail{}, err
 		}
-		return general.ID, nil
-
+		return types.ServiceDetail{General: *general}, nil
 	case *booking.ServiceDetail_Couch:
 		couch, err := b.MakeCouchBooking(ctx, tx, details.Couch)
 		if err != nil {
-			return "", err
+			return types.ServiceDetail{}, err
 		}
-		return couch.ID, nil
-
+		return types.ServiceDetail{Couch: *couch}, nil
 	case *booking.ServiceDetail_Mattress:
 		mattress, err := b.MakeMattressBooking(ctx, tx, details.Mattress)
 		if err != nil {
-			return "", err
+			return types.ServiceDetail{}, err
 		}
-		return mattress.ID, nil
-
+		return types.ServiceDetail{Mattress: *mattress}, nil
 	case *booking.ServiceDetail_Car:
 		car, err := b.MakeCarBooking(ctx, tx, details.Car)
 		if err != nil {
-			return "", err
+			return types.ServiceDetail{}, err
 		}
-		return car.ID, nil
-
+		return types.ServiceDetail{Car: *car}, nil
 	case *booking.ServiceDetail_Post:
 		post, err := b.MakePostConstructionBooking(ctx, tx, details.Post)
 		if err != nil {
-			return "", err
+			return types.ServiceDetail{}, err
 		}
-		return post.ID, nil
-
+		return types.ServiceDetail{Post: *post}, nil
 	default:
-		return "", fmt.Errorf("unsupported main service type")
+		return types.ServiceDetail{}, fmt.Errorf("unsupported main service type")
 	}
 }
 
@@ -218,88 +223,80 @@ func (b *BookingService) createAddOn(
 	ctx context.Context,
 	tx pgx.Tx,
 	addon *booking.AddOn,
-) (string, error) {
-	serviceID, err := b.createMainServiceBooking(ctx, tx, addon.ServiceDetail)
+) (*types.AddOns, error) {
+	addOnServiceDetails, err := b.createMainServiceBooking(ctx, tx, addon.ServiceDetail)
 	if err != nil {
-		return "", fmt.Errorf("failed to create service details: %w", err)
+		return nil, fmt.Errorf("failed to create service details: %w", err)
 	}
 
-	var addonID string
+	var createdAddon types.AddOns
+	createdAddon.ServiceDetail = addOnServiceDetails
 	err = tx.QueryRow(ctx,
 		`INSERT INTO booking.addons (addon_service_id, price)
 		 VALUES ($1, $2)
-		 RETURNING id`,
-		serviceID,
+		 RETURNING id, price`,
+		addOnServiceDetails.GetID(),
 		addon.Price,
-	).Scan(&addonID)
+	).Scan(
+		&createdAddon.ID,
+		&createdAddon.Price,
+	)
 	if err != nil {
-		return "", fmt.Errorf("failed to insert addon: %w", err)
+		return nil, fmt.Errorf("failed to insert addon: %w", err)
 	}
 
-	return addonID, nil
+	return &createdAddon, nil
 }
 
 func (b *BookingService) createEquipment(
-	ctx context.Context,
-	tx pgx.Tx,
+	// ctx context.Context,
+	// tx pgx.Tx,
 	equipment *booking.CleaningEquipment,
-) (string, error) {
-	var equipmentID string
-	err := tx.QueryRow(ctx,
-		`INSERT INTO booking.cleaningequipments (name, type, photo_url)
-		 VALUES ($1, $2, $3)
-		 RETURNING id`,
-		equipment.Name,
-		equipment.Type,
-		equipment.PhotoUrl,
-	).Scan(&equipmentID)
-	if err != nil {
-		return "", fmt.Errorf("failed to insert cleaning equipment: %w", err)
-	}
+) (*types.CleaningEquipment, error) {
+	var createdEquipment types.CleaningEquipment
 
-	return equipmentID, nil
+	createdEquipment.ID = "d3b07384-4e6f-4f7e-bf6a-2e7f3c2c1f9a"
+	createdEquipment.Name = equipment.Name
+	createdEquipment.Type = equipment.Type
+	createdEquipment.PhotoURL = equipment.PhotoUrl
+
+	fmt.Print(createdEquipment)
+
+	return &createdEquipment, nil
 }
 
 func (b *BookingService) createResource(
-	ctx context.Context,
-	tx pgx.Tx,
+	// ctx context.Context,
+	// tx pgx.Tx,
 	resource *booking.CleaningResources,
-) (string, error) {
-	var resourceID string
-	err := tx.QueryRow(ctx,
-		`INSERT INTO booking.cleaningresources (name, type, photo_url)
-		VALUES ($1, $2, $3)
-		RETURNING id`,
-		resource.Name,
-		resource.Type,
-		resource.PhotoUrl,
-	).Scan(&resourceID)
-	if err != nil {
-		return "", fmt.Errorf("failed to insert cleaning resource: %w", err)
-	}
+) (*types.CleaningResources, error) {
+	var createdResource types.CleaningResources
 
-	return resourceID, nil
+	createdResource.ID = "8f14e45f-ea9d-4c3d-9b1c-ff99a5b6d7c1"
+	createdResource.Name = resource.Name
+	createdResource.Type = resource.Type
+	createdResource.PhotoURL = resource.PhotoUrl
+
+	fmt.Print(createdResource)
+
+	return &createdResource, nil
 }
 
 func (b *BookingService) createCleanersAssigned(
-	ctx context.Context,
-	tx pgx.Tx,
+	// ctx context.Context,
+	// tx pgx.Tx,
 	cleaner *booking.CleanerAssigned,
-) (string, error) {
-	var cleanerID string
-	err := tx.QueryRow(ctx,
-		`INSERT INTO booking.cleanersassigned (cleaner_first_name, cleaner_last_name, pfp_url)
-	VALUES ($1, $2, $3)
-	RETURNING id`,
-		cleaner.CleanerFirstName,
-		cleaner.CleanerLastName,
-		cleaner.PfpUrl,
-	).Scan(&cleanerID)
-	if err != nil {
-		return "", fmt.Errorf("failed to insert cleaners assinged: %w", err)
-	}
+) (*types.CleanerAssigned, error) {
+	var createdCleaner types.CleanerAssigned
 
-	return cleanerID, nil
+	createdCleaner.ID = "45c48cce-0f0e-4b8f-8c4e-9d1a7f2f5e2d"
+	createdCleaner.CleanerFirstName = cleaner.CleanerFirstName
+	createdCleaner.CleanerLastName = cleaner.CleanerLastName
+	createdCleaner.PFPUrl = cleaner.PfpUrl
+
+	fmt.Print(createdCleaner)
+
+	return &createdCleaner, nil
 }
 
 func (b *BookingService) saveBooking(
@@ -315,7 +312,7 @@ func (b *BookingService) saveBooking(
 		(base_booking_id, main_service_id, addon_ids, equipment_ids, resource_ids, cleaner_ids, total_price)
 		VALUES ($1, $2, $3, $4, $5, $6, $7)
 		RETURNING id
-	`
+`
 
 	err := tx.QueryRow(ctx, query,
 		baseBookingID,
