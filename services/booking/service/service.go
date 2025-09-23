@@ -46,7 +46,7 @@ func (b *BookingService) CreateBooking(ctx context.Context, in *booking.CreateBo
 		var equipments []types.CleaningEquipment
 		var equipmentIDs []string
 		for _, equipment := range in.Equipment {
-			equipment, err := b.createEquipment(ctx, tx, equipment)
+			equipment, err := b.createEquipment( /*ctx, tx,*/ equipment)
 			if err != nil {
 				return nil
 			}
@@ -57,7 +57,7 @@ func (b *BookingService) CreateBooking(ctx context.Context, in *booking.CreateBo
 		var resources []types.CleaningResources
 		var resourceIDs []string
 		for _, resource := range in.Resources {
-			resource, err := b.createResource(ctx, tx, resource)
+			resource, err := b.createResource( /*ctx, tx,*/ resource)
 			if err != nil {
 				return nil
 			}
@@ -68,7 +68,7 @@ func (b *BookingService) CreateBooking(ctx context.Context, in *booking.CreateBo
 		var cleanersAssigned []types.CleanerAssigned
 		var cleanersAssignedIDs []string
 		for _, cleanerAssigned := range in.Cleaners {
-			cleanerAssigned, err := b.createCleanersAssigned(ctx, tx, cleanerAssigned)
+			cleanerAssigned, err := b.createCleanersAssigned( /*ctx, tx,*/ cleanerAssigned)
 			if err != nil {
 				return nil
 			}

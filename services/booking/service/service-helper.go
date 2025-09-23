@@ -249,79 +249,52 @@ func (b *BookingService) createAddOn(
 }
 
 func (b *BookingService) createEquipment(
-	ctx context.Context,
-	tx pgx.Tx,
+	// ctx context.Context,
+	// tx pgx.Tx,
 	equipment *booking.CleaningEquipment,
 ) (*types.CleaningEquipment, error) {
 	var createdEquipment types.CleaningEquipment
-	err := tx.QueryRow(ctx,
-		`INSERT INTO booking.cleaningequipments (name, type, photo_url)
-		 VALUES ($1, $2, $3)
-		 RETURNING id, name, type, photo_url`,
-		equipment.Name,
-		equipment.Type,
-		equipment.PhotoUrl,
-	).Scan(
-		&createdEquipment.ID,
-		&createdEquipment.Name,
-		&createdEquipment.Type,
-		&createdEquipment.PhotoURL,
-	)
-	if err != nil {
-		return nil, fmt.Errorf("failed to insert cleaning equipment: %w", err)
-	}
+
+	createdEquipment.ID = "d3b07384-4e6f-4f7e-bf6a-2e7f3c2c1f9a"
+	createdEquipment.Name = equipment.Name
+	createdEquipment.Type = equipment.Type
+	createdEquipment.PhotoURL = equipment.PhotoUrl
+
+	fmt.Print(createdEquipment)
 
 	return &createdEquipment, nil
 }
 
 func (b *BookingService) createResource(
-	ctx context.Context,
-	tx pgx.Tx,
+	// ctx context.Context,
+	// tx pgx.Tx,
 	resource *booking.CleaningResources,
 ) (*types.CleaningResources, error) {
 	var createdResource types.CleaningResources
-	err := tx.QueryRow(ctx,
-		`INSERT INTO booking.cleaningresources (name, type, photo_url)
-		VALUES ($1, $2, $3)
-		RETURNING id, name, type, photo_url`,
-		resource.Name,
-		resource.Type,
-		resource.PhotoUrl,
-	).Scan(
-		&createdResource.ID,
-		&createdResource.Name,
-		&createdResource.Type,
-		&createdResource.PhotoURL,
-	)
-	if err != nil {
-		return nil, fmt.Errorf("failed to insert cleaning resource: %w", err)
-	}
+
+	createdResource.ID = "8f14e45f-ea9d-4c3d-9b1c-ff99a5b6d7c1"
+	createdResource.Name = resource.Name
+	createdResource.Type = resource.Type
+	createdResource.PhotoURL = resource.PhotoUrl
+
+	fmt.Print(createdResource)
 
 	return &createdResource, nil
 }
 
 func (b *BookingService) createCleanersAssigned(
-	ctx context.Context,
-	tx pgx.Tx,
+	// ctx context.Context,
+	// tx pgx.Tx,
 	cleaner *booking.CleanerAssigned,
 ) (*types.CleanerAssigned, error) {
 	var createdCleaner types.CleanerAssigned
-	err := tx.QueryRow(ctx,
-		`INSERT INTO booking.cleanersassigned (cleaner_first_name, cleaner_last_name, pfp_url)
-		VALUES ($1, $2, $3)
-		RETURNING id, cleaner_first_name, cleaner_last_name, pfp_url`,
-		cleaner.CleanerFirstName,
-		cleaner.CleanerLastName,
-		cleaner.PfpUrl,
-	).Scan(
-		&createdCleaner.ID,
-		&createdCleaner.CleanerFirstName,
-		&createdCleaner.CleanerLastName,
-		&createdCleaner.PFPUrl,
-	)
-	if err != nil {
-		return nil, fmt.Errorf("failed to insert cleaners assinged: %w", err)
-	}
+
+	createdCleaner.ID = "45c48cce-0f0e-4b8f-8c4e-9d1a7f2f5e2d"
+	createdCleaner.CleanerFirstName = cleaner.CleanerFirstName
+	createdCleaner.CleanerLastName = cleaner.CleanerLastName
+	createdCleaner.PFPUrl = cleaner.PfpUrl
+
+	fmt.Print(createdCleaner)
 
 	return &createdCleaner, nil
 }

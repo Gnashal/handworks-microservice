@@ -78,18 +78,6 @@ message BaseBookingDetails {
     google.protobuf.Timestamp updated_at = 12;
 }
 
-message BaseBookingDetailsCreate {
-    string cust_id = 1;
-    string customer_first_name = 2;
-    string customer_last_name = 3;
-    Address address = 4;
-    google.protobuf.Timestamp schedule = 5;
-    int32 dirty_scale = 6; // 1 - 5
-    string payment_status = 7;
-    string review_status = 8;
-    repeated string photos = 9; // file IDs or URLs
-}
-
 message CreateBookingRequest {
   BaseBookingDetails base = 1;
   ServiceDetail main_service = 2;
