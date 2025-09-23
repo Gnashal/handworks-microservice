@@ -12,6 +12,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/lru"
@@ -37,6 +38,12 @@ func StartGQlServer(l *utils.Logger, wg *sync.WaitGroup, stop <-chan struct{}) {
 			GrpcClients: clients,
 		},
 	}
+
+	config.Directives.IsPublic = func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error) {
+		l.Info("Accessing public route")
+		return next(ctx)
+	}
+
 	srv := handler.New(graph.NewExecutableSchema(config))
 	srv.AddTransport(transport.Options{})
 	srv.AddTransport(transport.GET{})
@@ -73,5 +80,5 @@ func setupRoutes(srv *handler.Server, clerkKey string) http.Handler {
 	mux := http.NewServeMux()
 	mux.Handle("/playground", playground.Handler("GraphQL playground", "/api"))
 	mux.Handle("/api", middleware.AuthMiddleware(srv, clerkKey))
-	return mux
+	return middleware.CORSMiddleware(mux)
 }
