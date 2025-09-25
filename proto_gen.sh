@@ -1,13 +1,13 @@
 #!/bin/bash
 set -e
 
-# path to the booking proto file
-PROTO=./common/.protobuf/booking.proto
-OUT_DIR=./common/grpc/booking
+# path to the inventory proto file
+PROTO=./common/.protobuf/inventory.proto
+OUT_DIR=./common/grpc/inventory
 
 mkdir -p $OUT_DIR
 
-# generating go code only for booking.proto
+# generating go code only for inventory.proto
 protoc \
   --proto_path=./common/.protobuf \
   --go_out=$OUT_DIR \
@@ -16,4 +16,4 @@ protoc \
   --go-grpc_opt=paths=source_relative \
   $PROTO
 
-echo "Booking protobuf generation complete!"
+echo "inventory protobuf generation complete!"

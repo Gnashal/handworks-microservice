@@ -3,7 +3,7 @@ module handworks/common
 go 1.23.11
 
 require (
-	google.golang.org/grpc v1.75.0
+	google.golang.org/grpc v1.75.1
 	google.golang.org/protobuf v1.36.8
 )
 
