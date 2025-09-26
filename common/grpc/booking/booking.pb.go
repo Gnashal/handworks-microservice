@@ -22,6 +22,64 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type MainServiceType int32
+
+const (
+	MainServiceType_SERVICE_TYPE_UNSPECIFIED MainServiceType = 0
+	MainServiceType_GENERAL                  MainServiceType = 1
+	MainServiceType_COUCH                    MainServiceType = 2
+	MainServiceType_MATTRESS                 MainServiceType = 3
+	MainServiceType_CAR                      MainServiceType = 4
+	MainServiceType_POST                     MainServiceType = 5
+)
+
+// Enum value maps for MainServiceType.
+var (
+	MainServiceType_name = map[int32]string{
+		0: "SERVICE_TYPE_UNSPECIFIED",
+		1: "GENERAL",
+		2: "COUCH",
+		3: "MATTRESS",
+		4: "CAR",
+		5: "POST",
+	}
+	MainServiceType_value = map[string]int32{
+		"SERVICE_TYPE_UNSPECIFIED": 0,
+		"GENERAL":                  1,
+		"COUCH":                    2,
+		"MATTRESS":                 3,
+		"CAR":                      4,
+		"POST":                     5,
+	}
+)
+
+func (x MainServiceType) Enum() *MainServiceType {
+	p := new(MainServiceType)
+	*p = x
+	return p
+}
+
+func (x MainServiceType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (MainServiceType) Descriptor() protoreflect.EnumDescriptor {
+	return file_booking_proto_enumTypes[0].Descriptor()
+}
+
+func (MainServiceType) Type() protoreflect.EnumType {
+	return &file_booking_proto_enumTypes[0]
+}
+
+func (x MainServiceType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use MainServiceType.Descriptor instead.
+func (MainServiceType) EnumDescriptor() ([]byte, []int) {
+	return file_booking_proto_rawDescGZIP(), []int{0}
+}
+
 type HomeType int32
 
 const (
@@ -55,11 +113,11 @@ func (x HomeType) String() string {
 }
 
 func (HomeType) Descriptor() protoreflect.EnumDescriptor {
-	return file_booking_proto_enumTypes[0].Descriptor()
+	return file_booking_proto_enumTypes[1].Descriptor()
 }
 
 func (HomeType) Type() protoreflect.EnumType {
-	return &file_booking_proto_enumTypes[0]
+	return &file_booking_proto_enumTypes[1]
 }
 
 func (x HomeType) Number() protoreflect.EnumNumber {
@@ -68,7 +126,7 @@ func (x HomeType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use HomeType.Descriptor instead.
 func (HomeType) EnumDescriptor() ([]byte, []int) {
-	return file_booking_proto_rawDescGZIP(), []int{0}
+	return file_booking_proto_rawDescGZIP(), []int{1}
 }
 
 type CouchType int32
@@ -131,11 +189,11 @@ func (x CouchType) String() string {
 }
 
 func (CouchType) Descriptor() protoreflect.EnumDescriptor {
-	return file_booking_proto_enumTypes[1].Descriptor()
+	return file_booking_proto_enumTypes[2].Descriptor()
 }
 
 func (CouchType) Type() protoreflect.EnumType {
-	return &file_booking_proto_enumTypes[1]
+	return &file_booking_proto_enumTypes[2]
 }
 
 func (x CouchType) Number() protoreflect.EnumNumber {
@@ -144,7 +202,7 @@ func (x CouchType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use CouchType.Descriptor instead.
 func (CouchType) EnumDescriptor() ([]byte, []int) {
-	return file_booking_proto_rawDescGZIP(), []int{1}
+	return file_booking_proto_rawDescGZIP(), []int{2}
 }
 
 type BedType int32
@@ -192,11 +250,11 @@ func (x BedType) String() string {
 }
 
 func (BedType) Descriptor() protoreflect.EnumDescriptor {
-	return file_booking_proto_enumTypes[2].Descriptor()
+	return file_booking_proto_enumTypes[3].Descriptor()
 }
 
 func (BedType) Type() protoreflect.EnumType {
-	return &file_booking_proto_enumTypes[2]
+	return &file_booking_proto_enumTypes[3]
 }
 
 func (x BedType) Number() protoreflect.EnumNumber {
@@ -205,7 +263,7 @@ func (x BedType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use BedType.Descriptor instead.
 func (BedType) EnumDescriptor() ([]byte, []int) {
-	return file_booking_proto_rawDescGZIP(), []int{2}
+	return file_booking_proto_rawDescGZIP(), []int{3}
 }
 
 type CarType int32
@@ -250,11 +308,11 @@ func (x CarType) String() string {
 }
 
 func (CarType) Descriptor() protoreflect.EnumDescriptor {
-	return file_booking_proto_enumTypes[3].Descriptor()
+	return file_booking_proto_enumTypes[4].Descriptor()
 }
 
 func (CarType) Type() protoreflect.EnumType {
-	return &file_booking_proto_enumTypes[3]
+	return &file_booking_proto_enumTypes[4]
 }
 
 func (x CarType) Number() protoreflect.EnumNumber {
@@ -263,7 +321,7 @@ func (x CarType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use CarType.Descriptor instead.
 func (CarType) EnumDescriptor() ([]byte, []int) {
-	return file_booking_proto_rawDescGZIP(), []int{3}
+	return file_booking_proto_rawDescGZIP(), []int{4}
 }
 
 type Address struct {
@@ -664,7 +722,7 @@ type Booking struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Base          *BaseBookingDetails    `protobuf:"bytes,2,opt,name=base,proto3" json:"base,omitempty"`
-	MainService   *ServiceDetail         `protobuf:"bytes,3,opt,name=main_service,json=mainService,proto3" json:"main_service,omitempty"`
+	MainService   *Services              `protobuf:"bytes,3,opt,name=main_service,json=mainService,proto3" json:"main_service,omitempty"`
 	Addons        []*AddOn               `protobuf:"bytes,4,rep,name=addons,proto3" json:"addons,omitempty"`
 	Equipment     []*CleaningEquipment   `protobuf:"bytes,5,rep,name=equipment,proto3" json:"equipment,omitempty"`
 	Resources     []*CleaningResources   `protobuf:"bytes,6,rep,name=resources,proto3" json:"resources,omitempty"`
@@ -718,7 +776,7 @@ func (x *Booking) GetBase() *BaseBookingDetails {
 	return nil
 }
 
-func (x *Booking) GetMainService() *ServiceDetail {
+func (x *Booking) GetMainService() *Services {
 	if x != nil {
 		return x.MainService
 	}
@@ -763,7 +821,7 @@ func (x *Booking) GetTotalPrice() float32 {
 type AddOn struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	ServiceDetail *ServiceDetail         `protobuf:"bytes,2,opt,name=serviceDetail,proto3" json:"serviceDetail,omitempty"`
+	ServiceDetail *Services              `protobuf:"bytes,2,opt,name=serviceDetail,proto3" json:"serviceDetail,omitempty"`
 	Price         float32                `protobuf:"fixed32,3,opt,name=price,proto3" json:"price,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -806,7 +864,7 @@ func (x *AddOn) GetId() string {
 	return ""
 }
 
-func (x *AddOn) GetServiceDetail() *ServiceDetail {
+func (x *AddOn) GetServiceDetail() *Services {
 	if x != nil {
 		return x.ServiceDetail
 	}
@@ -955,7 +1013,7 @@ func (x *BaseBookingDetails) GetUpdatedAt() *timestamppb.Timestamp {
 type CreateBookingRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *BaseBookingDetails    `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	MainService   *ServiceDetail         `protobuf:"bytes,2,opt,name=main_service,json=mainService,proto3" json:"main_service,omitempty"`
+	MainService   *Services              `protobuf:"bytes,2,opt,name=main_service,json=mainService,proto3" json:"main_service,omitempty"`
 	Addons        []*AddOn               `protobuf:"bytes,3,rep,name=addons,proto3" json:"addons,omitempty"`
 	Equipment     []*CleaningEquipment   `protobuf:"bytes,4,rep,name=equipment,proto3" json:"equipment,omitempty"`
 	Resources     []*CleaningResources   `protobuf:"bytes,5,rep,name=resources,proto3" json:"resources,omitempty"`
@@ -1001,7 +1059,7 @@ func (x *CreateBookingRequest) GetBase() *BaseBookingDetails {
 	return nil
 }
 
-func (x *CreateBookingRequest) GetMainService() *ServiceDetail {
+func (x *CreateBookingRequest) GetMainService() *Services {
 	if x != nil {
 		return x.MainService
 	}
@@ -1080,10 +1138,69 @@ func (x *CreateBookingResponse) GetBook() *Booking {
 	return nil
 }
 
+type Services struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	ServiceType   MainServiceType        `protobuf:"varint,2,opt,name=service_type,json=serviceType,proto3,enum=MainServiceType" json:"service_type,omitempty"`
+	Details       *ServiceDetail         `protobuf:"bytes,3,opt,name=details,proto3" json:"details,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Services) Reset() {
+	*x = Services{}
+	mi := &file_booking_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Services) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Services) ProtoMessage() {}
+
+func (x *Services) ProtoReflect() protoreflect.Message {
+	mi := &file_booking_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Services.ProtoReflect.Descriptor instead.
+func (*Services) Descriptor() ([]byte, []int) {
+	return file_booking_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *Services) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *Services) GetServiceType() MainServiceType {
+	if x != nil {
+		return x.ServiceType
+	}
+	return MainServiceType_SERVICE_TYPE_UNSPECIFIED
+}
+
+func (x *Services) GetDetails() *ServiceDetail {
+	if x != nil {
+		return x.Details
+	}
+	return nil
+}
+
 // General cleaning
 type GeneralCleaningDetails struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	HomeType      HomeType               `protobuf:"varint,2,opt,name=home_type,json=homeType,proto3,enum=HomeType" json:"home_type,omitempty"`
 	Sqm           int32                  `protobuf:"varint,3,opt,name=sqm,proto3" json:"sqm,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1092,7 +1209,7 @@ type GeneralCleaningDetails struct {
 
 func (x *GeneralCleaningDetails) Reset() {
 	*x = GeneralCleaningDetails{}
-	mi := &file_booking_proto_msgTypes[10]
+	mi := &file_booking_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1104,7 +1221,7 @@ func (x *GeneralCleaningDetails) String() string {
 func (*GeneralCleaningDetails) ProtoMessage() {}
 
 func (x *GeneralCleaningDetails) ProtoReflect() protoreflect.Message {
-	mi := &file_booking_proto_msgTypes[10]
+	mi := &file_booking_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1117,14 +1234,7 @@ func (x *GeneralCleaningDetails) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GeneralCleaningDetails.ProtoReflect.Descriptor instead.
 func (*GeneralCleaningDetails) Descriptor() ([]byte, []int) {
-	return file_booking_proto_rawDescGZIP(), []int{10}
-}
-
-func (x *GeneralCleaningDetails) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
+	return file_booking_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *GeneralCleaningDetails) GetHomeType() HomeType {
@@ -1144,7 +1254,6 @@ func (x *GeneralCleaningDetails) GetSqm() int32 {
 // Couch cleaning
 type CouchCleaningDetails struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	CouchType     CouchType              `protobuf:"varint,2,opt,name=couch_type,json=couchType,proto3,enum=CouchType" json:"couch_type,omitempty"`
 	WidthCm       int32                  `protobuf:"varint,3,opt,name=width_cm,json=widthCm,proto3" json:"width_cm,omitempty"`
 	DepthCm       int32                  `protobuf:"varint,4,opt,name=depth_cm,json=depthCm,proto3" json:"depth_cm,omitempty"`
@@ -1155,7 +1264,7 @@ type CouchCleaningDetails struct {
 
 func (x *CouchCleaningDetails) Reset() {
 	*x = CouchCleaningDetails{}
-	mi := &file_booking_proto_msgTypes[11]
+	mi := &file_booking_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1167,7 +1276,7 @@ func (x *CouchCleaningDetails) String() string {
 func (*CouchCleaningDetails) ProtoMessage() {}
 
 func (x *CouchCleaningDetails) ProtoReflect() protoreflect.Message {
-	mi := &file_booking_proto_msgTypes[11]
+	mi := &file_booking_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1180,14 +1289,7 @@ func (x *CouchCleaningDetails) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CouchCleaningDetails.ProtoReflect.Descriptor instead.
 func (*CouchCleaningDetails) Descriptor() ([]byte, []int) {
-	return file_booking_proto_rawDescGZIP(), []int{11}
-}
-
-func (x *CouchCleaningDetails) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
+	return file_booking_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *CouchCleaningDetails) GetCouchType() CouchType {
@@ -1221,7 +1323,6 @@ func (x *CouchCleaningDetails) GetHeightCm() int32 {
 // Mattress cleaning
 type MattressCleaningDetails struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	BedType       BedType                `protobuf:"varint,2,opt,name=bed_type,json=bedType,proto3,enum=BedType" json:"bed_type,omitempty"`
 	WidthCm       int32                  `protobuf:"varint,3,opt,name=width_cm,json=widthCm,proto3" json:"width_cm,omitempty"`
 	DepthCm       int32                  `protobuf:"varint,4,opt,name=depth_cm,json=depthCm,proto3" json:"depth_cm,omitempty"`
@@ -1232,7 +1333,7 @@ type MattressCleaningDetails struct {
 
 func (x *MattressCleaningDetails) Reset() {
 	*x = MattressCleaningDetails{}
-	mi := &file_booking_proto_msgTypes[12]
+	mi := &file_booking_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1244,7 +1345,7 @@ func (x *MattressCleaningDetails) String() string {
 func (*MattressCleaningDetails) ProtoMessage() {}
 
 func (x *MattressCleaningDetails) ProtoReflect() protoreflect.Message {
-	mi := &file_booking_proto_msgTypes[12]
+	mi := &file_booking_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1257,14 +1358,7 @@ func (x *MattressCleaningDetails) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MattressCleaningDetails.ProtoReflect.Descriptor instead.
 func (*MattressCleaningDetails) Descriptor() ([]byte, []int) {
-	return file_booking_proto_rawDescGZIP(), []int{12}
-}
-
-func (x *MattressCleaningDetails) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
+	return file_booking_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *MattressCleaningDetails) GetBedType() BedType {
@@ -1298,7 +1392,6 @@ func (x *MattressCleaningDetails) GetHeightCm() int32 {
 // Car interior cleaning
 type CarCleaningDetails struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	CarType       CarType                `protobuf:"varint,2,opt,name=car_type,json=carType,proto3,enum=CarType" json:"car_type,omitempty"`
 	ChildSeats    int32                  `protobuf:"varint,3,opt,name=child_seats,json=childSeats,proto3" json:"child_seats,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1307,7 +1400,7 @@ type CarCleaningDetails struct {
 
 func (x *CarCleaningDetails) Reset() {
 	*x = CarCleaningDetails{}
-	mi := &file_booking_proto_msgTypes[13]
+	mi := &file_booking_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1319,7 +1412,7 @@ func (x *CarCleaningDetails) String() string {
 func (*CarCleaningDetails) ProtoMessage() {}
 
 func (x *CarCleaningDetails) ProtoReflect() protoreflect.Message {
-	mi := &file_booking_proto_msgTypes[13]
+	mi := &file_booking_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1332,14 +1425,7 @@ func (x *CarCleaningDetails) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CarCleaningDetails.ProtoReflect.Descriptor instead.
 func (*CarCleaningDetails) Descriptor() ([]byte, []int) {
-	return file_booking_proto_rawDescGZIP(), []int{13}
-}
-
-func (x *CarCleaningDetails) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
+	return file_booking_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *CarCleaningDetails) GetCarType() CarType {
@@ -1359,7 +1445,6 @@ func (x *CarCleaningDetails) GetChildSeats() int32 {
 // Post-construction cleaning
 type PostConstructionCleaningDetails struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Sqm           int32                  `protobuf:"varint,2,opt,name=sqm,proto3" json:"sqm,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1367,7 +1452,7 @@ type PostConstructionCleaningDetails struct {
 
 func (x *PostConstructionCleaningDetails) Reset() {
 	*x = PostConstructionCleaningDetails{}
-	mi := &file_booking_proto_msgTypes[14]
+	mi := &file_booking_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1379,7 +1464,7 @@ func (x *PostConstructionCleaningDetails) String() string {
 func (*PostConstructionCleaningDetails) ProtoMessage() {}
 
 func (x *PostConstructionCleaningDetails) ProtoReflect() protoreflect.Message {
-	mi := &file_booking_proto_msgTypes[14]
+	mi := &file_booking_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1392,14 +1477,7 @@ func (x *PostConstructionCleaningDetails) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PostConstructionCleaningDetails.ProtoReflect.Descriptor instead.
 func (*PostConstructionCleaningDetails) Descriptor() ([]byte, []int) {
-	return file_booking_proto_rawDescGZIP(), []int{14}
-}
-
-func (x *PostConstructionCleaningDetails) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
+	return file_booking_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *PostConstructionCleaningDetails) GetSqm() int32 {
@@ -1425,7 +1503,7 @@ type QuoteRequest struct {
 
 func (x *QuoteRequest) Reset() {
 	*x = QuoteRequest{}
-	mi := &file_booking_proto_msgTypes[15]
+	mi := &file_booking_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1437,7 +1515,7 @@ func (x *QuoteRequest) String() string {
 func (*QuoteRequest) ProtoMessage() {}
 
 func (x *QuoteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_booking_proto_msgTypes[15]
+	mi := &file_booking_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1450,7 +1528,7 @@ func (x *QuoteRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use QuoteRequest.ProtoReflect.Descriptor instead.
 func (*QuoteRequest) Descriptor() ([]byte, []int) {
-	return file_booking_proto_rawDescGZIP(), []int{15}
+	return file_booking_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *QuoteRequest) GetDetails() isQuoteRequest_Details {
@@ -1548,7 +1626,7 @@ type QuoteResponse struct {
 
 func (x *QuoteResponse) Reset() {
 	*x = QuoteResponse{}
-	mi := &file_booking_proto_msgTypes[16]
+	mi := &file_booking_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1560,7 +1638,7 @@ func (x *QuoteResponse) String() string {
 func (*QuoteResponse) ProtoMessage() {}
 
 func (x *QuoteResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_booking_proto_msgTypes[16]
+	mi := &file_booking_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1573,7 +1651,7 @@ func (x *QuoteResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use QuoteResponse.ProtoReflect.Descriptor instead.
 func (*QuoteResponse) Descriptor() ([]byte, []int) {
-	return file_booking_proto_rawDescGZIP(), []int{16}
+	return file_booking_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *QuoteResponse) GetTotalPrice() float32 {
@@ -1592,7 +1670,7 @@ type CalculateQuotePriceRequest struct {
 
 func (x *CalculateQuotePriceRequest) Reset() {
 	*x = CalculateQuotePriceRequest{}
-	mi := &file_booking_proto_msgTypes[17]
+	mi := &file_booking_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1604,7 +1682,7 @@ func (x *CalculateQuotePriceRequest) String() string {
 func (*CalculateQuotePriceRequest) ProtoMessage() {}
 
 func (x *CalculateQuotePriceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_booking_proto_msgTypes[17]
+	mi := &file_booking_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1617,7 +1695,7 @@ func (x *CalculateQuotePriceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CalculateQuotePriceRequest.ProtoReflect.Descriptor instead.
 func (*CalculateQuotePriceRequest) Descriptor() ([]byte, []int) {
-	return file_booking_proto_rawDescGZIP(), []int{17}
+	return file_booking_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *CalculateQuotePriceRequest) GetQuote() *QuoteRequest {
@@ -1637,7 +1715,7 @@ type CalculateQuotePriceResponse struct {
 
 func (x *CalculateQuotePriceResponse) Reset() {
 	*x = CalculateQuotePriceResponse{}
-	mi := &file_booking_proto_msgTypes[18]
+	mi := &file_booking_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1649,7 +1727,7 @@ func (x *CalculateQuotePriceResponse) String() string {
 func (*CalculateQuotePriceResponse) ProtoMessage() {}
 
 func (x *CalculateQuotePriceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_booking_proto_msgTypes[18]
+	mi := &file_booking_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1662,7 +1740,7 @@ func (x *CalculateQuotePriceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CalculateQuotePriceResponse.ProtoReflect.Descriptor instead.
 func (*CalculateQuotePriceResponse) Descriptor() ([]byte, []int) {
-	return file_booking_proto_rawDescGZIP(), []int{18}
+	return file_booking_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *CalculateQuotePriceResponse) GetTotalPrice() float32 {
@@ -1688,7 +1766,7 @@ type CalculatePriceRequest struct {
 
 func (x *CalculatePriceRequest) Reset() {
 	*x = CalculatePriceRequest{}
-	mi := &file_booking_proto_msgTypes[19]
+	mi := &file_booking_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1700,7 +1778,7 @@ func (x *CalculatePriceRequest) String() string {
 func (*CalculatePriceRequest) ProtoMessage() {}
 
 func (x *CalculatePriceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_booking_proto_msgTypes[19]
+	mi := &file_booking_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1713,7 +1791,7 @@ func (x *CalculatePriceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CalculatePriceRequest.ProtoReflect.Descriptor instead.
 func (*CalculatePriceRequest) Descriptor() ([]byte, []int) {
-	return file_booking_proto_rawDescGZIP(), []int{19}
+	return file_booking_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *CalculatePriceRequest) GetBooking() *CreateBookingRequest {
@@ -1736,7 +1814,7 @@ type CalculatePriceResponse struct {
 
 func (x *CalculatePriceResponse) Reset() {
 	*x = CalculatePriceResponse{}
-	mi := &file_booking_proto_msgTypes[20]
+	mi := &file_booking_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1748,7 +1826,7 @@ func (x *CalculatePriceResponse) String() string {
 func (*CalculatePriceResponse) ProtoMessage() {}
 
 func (x *CalculatePriceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_booking_proto_msgTypes[20]
+	mi := &file_booking_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1761,7 +1839,7 @@ func (x *CalculatePriceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CalculatePriceResponse.ProtoReflect.Descriptor instead.
 func (*CalculatePriceResponse) Descriptor() ([]byte, []int) {
-	return file_booking_proto_rawDescGZIP(), []int{20}
+	return file_booking_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *CalculatePriceResponse) GetBasePrice() float32 {
@@ -1809,7 +1887,7 @@ type PricingBreakdown struct {
 
 func (x *PricingBreakdown) Reset() {
 	*x = PricingBreakdown{}
-	mi := &file_booking_proto_msgTypes[21]
+	mi := &file_booking_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1821,7 +1899,7 @@ func (x *PricingBreakdown) String() string {
 func (*PricingBreakdown) ProtoMessage() {}
 
 func (x *PricingBreakdown) ProtoReflect() protoreflect.Message {
-	mi := &file_booking_proto_msgTypes[21]
+	mi := &file_booking_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1834,7 +1912,7 @@ func (x *PricingBreakdown) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PricingBreakdown.ProtoReflect.Descriptor instead.
 func (*PricingBreakdown) Descriptor() ([]byte, []int) {
-	return file_booking_proto_rawDescGZIP(), []int{21}
+	return file_booking_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *PricingBreakdown) GetDescription() string {
@@ -1860,7 +1938,7 @@ type GetBookingByIdRequest struct {
 
 func (x *GetBookingByIdRequest) Reset() {
 	*x = GetBookingByIdRequest{}
-	mi := &file_booking_proto_msgTypes[22]
+	mi := &file_booking_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1872,7 +1950,7 @@ func (x *GetBookingByIdRequest) String() string {
 func (*GetBookingByIdRequest) ProtoMessage() {}
 
 func (x *GetBookingByIdRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_booking_proto_msgTypes[22]
+	mi := &file_booking_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1885,7 +1963,7 @@ func (x *GetBookingByIdRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetBookingByIdRequest.ProtoReflect.Descriptor instead.
 func (*GetBookingByIdRequest) Descriptor() ([]byte, []int) {
-	return file_booking_proto_rawDescGZIP(), []int{22}
+	return file_booking_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *GetBookingByIdRequest) GetBookingId() string {
@@ -1904,7 +1982,7 @@ type GetBookingByIdResponse struct {
 
 func (x *GetBookingByIdResponse) Reset() {
 	*x = GetBookingByIdResponse{}
-	mi := &file_booking_proto_msgTypes[23]
+	mi := &file_booking_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1916,7 +1994,7 @@ func (x *GetBookingByIdResponse) String() string {
 func (*GetBookingByIdResponse) ProtoMessage() {}
 
 func (x *GetBookingByIdResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_booking_proto_msgTypes[23]
+	mi := &file_booking_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1929,10 +2007,98 @@ func (x *GetBookingByIdResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetBookingByIdResponse.ProtoReflect.Descriptor instead.
 func (*GetBookingByIdResponse) Descriptor() ([]byte, []int) {
-	return file_booking_proto_rawDescGZIP(), []int{23}
+	return file_booking_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *GetBookingByIdResponse) GetBooking() *Booking {
+	if x != nil {
+		return x.Booking
+	}
+	return nil
+}
+
+type GetBookingByUIdRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetBookingByUIdRequest) Reset() {
+	*x = GetBookingByUIdRequest{}
+	mi := &file_booking_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetBookingByUIdRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetBookingByUIdRequest) ProtoMessage() {}
+
+func (x *GetBookingByUIdRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_booking_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetBookingByUIdRequest.ProtoReflect.Descriptor instead.
+func (*GetBookingByUIdRequest) Descriptor() ([]byte, []int) {
+	return file_booking_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *GetBookingByUIdRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+type GetBookingByUIdResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Booking       *Booking               `protobuf:"bytes,1,opt,name=booking,proto3" json:"booking,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetBookingByUIdResponse) Reset() {
+	*x = GetBookingByUIdResponse{}
+	mi := &file_booking_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetBookingByUIdResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetBookingByUIdResponse) ProtoMessage() {}
+
+func (x *GetBookingByUIdResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_booking_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetBookingByUIdResponse.ProtoReflect.Descriptor instead.
+func (*GetBookingByUIdResponse) Descriptor() ([]byte, []int) {
+	return file_booking_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *GetBookingByUIdResponse) GetBooking() *Booking {
 	if x != nil {
 		return x.Booking
 	}
@@ -1971,20 +2137,20 @@ const file_booking_proto_rawDesc = "" +
 	"\bmattress\x18\x03 \x01(\v2\x18.MattressCleaningDetailsH\x00R\bmattress\x12'\n" +
 	"\x03car\x18\x04 \x01(\v2\x13.CarCleaningDetailsH\x00R\x03car\x126\n" +
 	"\x04post\x18\x05 \x01(\v2 .PostConstructionCleaningDetailsH\x00R\x04postB\x06\n" +
-	"\x04type\"\xc8\x02\n" +
+	"\x04type\"\xc3\x02\n" +
 	"\aBooking\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12'\n" +
-	"\x04base\x18\x02 \x01(\v2\x13.BaseBookingDetailsR\x04base\x121\n" +
-	"\fmain_service\x18\x03 \x01(\v2\x0e.ServiceDetailR\vmainService\x12\x1e\n" +
+	"\x04base\x18\x02 \x01(\v2\x13.BaseBookingDetailsR\x04base\x12,\n" +
+	"\fmain_service\x18\x03 \x01(\v2\t.ServicesR\vmainService\x12\x1e\n" +
 	"\x06addons\x18\x04 \x03(\v2\x06.AddOnR\x06addons\x120\n" +
 	"\tequipment\x18\x05 \x03(\v2\x12.CleaningEquipmentR\tequipment\x120\n" +
 	"\tresources\x18\x06 \x03(\v2\x12.CleaningResourcesR\tresources\x12,\n" +
 	"\bcleaners\x18\a \x03(\v2\x10.CleanerAssignedR\bcleaners\x12\x1f\n" +
 	"\vtotal_price\x18\b \x01(\x02R\n" +
-	"totalPrice\"c\n" +
+	"totalPrice\"^\n" +
 	"\x05AddOn\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x124\n" +
-	"\rserviceDetail\x18\x02 \x01(\v2\x0e.ServiceDetailR\rserviceDetail\x12\x14\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12/\n" +
+	"\rserviceDetail\x18\x02 \x01(\v2\t.ServicesR\rserviceDetail\x12\x14\n" +
 	"\x05price\x18\x03 \x01(\x02R\x05price\"\xf2\x03\n" +
 	"\x12BaseBookingDetails\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
@@ -2002,41 +2168,40 @@ const file_booking_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xa4\x02\n" +
+	"updated_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x9f\x02\n" +
 	"\x14CreateBookingRequest\x12'\n" +
-	"\x04base\x18\x01 \x01(\v2\x13.BaseBookingDetailsR\x04base\x121\n" +
-	"\fmain_service\x18\x02 \x01(\v2\x0e.ServiceDetailR\vmainService\x12\x1e\n" +
+	"\x04base\x18\x01 \x01(\v2\x13.BaseBookingDetailsR\x04base\x12,\n" +
+	"\fmain_service\x18\x02 \x01(\v2\t.ServicesR\vmainService\x12\x1e\n" +
 	"\x06addons\x18\x03 \x03(\v2\x06.AddOnR\x06addons\x120\n" +
 	"\tequipment\x18\x04 \x03(\v2\x12.CleaningEquipmentR\tequipment\x120\n" +
 	"\tresources\x18\x05 \x03(\v2\x12.CleaningResourcesR\tresources\x12,\n" +
 	"\bcleaners\x18\x06 \x03(\v2\x10.CleanerAssignedR\bcleaners\"5\n" +
 	"\x15CreateBookingResponse\x12\x1c\n" +
-	"\x04book\x18\x01 \x01(\v2\b.BookingR\x04book\"b\n" +
-	"\x16GeneralCleaningDetails\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12&\n" +
+	"\x04book\x18\x01 \x01(\v2\b.BookingR\x04book\"y\n" +
+	"\bServices\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x123\n" +
+	"\fservice_type\x18\x02 \x01(\x0e2\x10.MainServiceTypeR\vserviceType\x12(\n" +
+	"\adetails\x18\x03 \x01(\v2\x0e.ServiceDetailR\adetails\"R\n" +
+	"\x16GeneralCleaningDetails\x12&\n" +
 	"\thome_type\x18\x02 \x01(\x0e2\t.HomeTypeR\bhomeType\x12\x10\n" +
-	"\x03sqm\x18\x03 \x01(\x05R\x03sqm\"\xa4\x01\n" +
-	"\x14CouchCleaningDetails\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12)\n" +
+	"\x03sqm\x18\x03 \x01(\x05R\x03sqm\"\x94\x01\n" +
+	"\x14CouchCleaningDetails\x12)\n" +
 	"\n" +
 	"couch_type\x18\x02 \x01(\x0e2\n" +
 	".CouchTypeR\tcouchType\x12\x19\n" +
 	"\bwidth_cm\x18\x03 \x01(\x05R\awidthCm\x12\x19\n" +
 	"\bdepth_cm\x18\x04 \x01(\x05R\adepthCm\x12\x1b\n" +
-	"\theight_cm\x18\x05 \x01(\x05R\bheightCm\"\xa1\x01\n" +
-	"\x17MattressCleaningDetails\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12#\n" +
+	"\theight_cm\x18\x05 \x01(\x05R\bheightCm\"\x91\x01\n" +
+	"\x17MattressCleaningDetails\x12#\n" +
 	"\bbed_type\x18\x02 \x01(\x0e2\b.BedTypeR\abedType\x12\x19\n" +
 	"\bwidth_cm\x18\x03 \x01(\x05R\awidthCm\x12\x19\n" +
 	"\bdepth_cm\x18\x04 \x01(\x05R\adepthCm\x12\x1b\n" +
-	"\theight_cm\x18\x05 \x01(\x05R\bheightCm\"j\n" +
-	"\x12CarCleaningDetails\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12#\n" +
+	"\theight_cm\x18\x05 \x01(\x05R\bheightCm\"Z\n" +
+	"\x12CarCleaningDetails\x12#\n" +
 	"\bcar_type\x18\x02 \x01(\x0e2\b.CarTypeR\acarType\x12\x1f\n" +
 	"\vchild_seats\x18\x03 \x01(\x05R\n" +
-	"childSeats\"C\n" +
-	"\x1fPostConstructionCleaningDetails\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x10\n" +
+	"childSeats\"3\n" +
+	"\x1fPostConstructionCleaningDetails\x12\x10\n" +
 	"\x03sqm\x18\x02 \x01(\x05R\x03sqm\"\x96\x02\n" +
 	"\fQuoteRequest\x123\n" +
 	"\ageneral\x18\x01 \x01(\v2\x17.GeneralCleaningDetailsH\x00R\ageneral\x12-\n" +
@@ -2071,7 +2236,18 @@ const file_booking_proto_rawDesc = "" +
 	"\n" +
 	"booking_id\x18\x01 \x01(\tR\tbookingId\"<\n" +
 	"\x16GetBookingByIdResponse\x12\"\n" +
-	"\abooking\x18\x01 \x01(\v2\b.BookingR\abooking*5\n" +
+	"\abooking\x18\x01 \x01(\v2\b.BookingR\abooking\"1\n" +
+	"\x16GetBookingByUIdRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\"=\n" +
+	"\x17GetBookingByUIdResponse\x12\"\n" +
+	"\abooking\x18\x01 \x01(\v2\b.BookingR\abooking*h\n" +
+	"\x0fMainServiceType\x12\x1c\n" +
+	"\x18SERVICE_TYPE_UNSPECIFIED\x10\x00\x12\v\n" +
+	"\aGENERAL\x10\x01\x12\t\n" +
+	"\x05COUCH\x10\x02\x12\f\n" +
+	"\bMATTRESS\x10\x03\x12\a\n" +
+	"\x03CAR\x10\x04\x12\b\n" +
+	"\x04POST\x10\x05*5\n" +
 	"\bHomeType\x12\x0e\n" +
 	"\n" +
 	"CONDO_ROOM\x10\x00\x12\t\n" +
@@ -2111,11 +2287,12 @@ const file_booking_proto_rawDesc = "" +
 	"\n" +
 	"\x06PICKUP\x10\x03\x12\a\n" +
 	"\x03VAN\x10\x04\x12\r\n" +
-	"\tCAR_SMALL\x10\x052\xd6\x01\n" +
+	"\tCAR_SMALL\x10\x052\x9c\x02\n" +
 	"\x0eBookingService\x12>\n" +
 	"\rCreateBooking\x12\x15.CreateBookingRequest\x1a\x16.CreateBookingResponse\x12A\n" +
 	"\x0eCalculatePrice\x12\x16.CalculatePriceRequest\x1a\x17.CalculatePriceResponse\x12A\n" +
-	"\x0eGetBookingById\x12\x16.GetBookingByIdRequest\x1a\x17.GetBookingByIdResponseB\x1fZ\x1dhandworks/common/grpc/bookingb\x06proto3"
+	"\x0eGetBookingById\x12\x16.GetBookingByIdRequest\x1a\x17.GetBookingByIdResponse\x12D\n" +
+	"\x0fGetBookingByUId\x12\x17.GetBookingByUIdRequest\x1a\x18.GetBookingByUIdResponseB\x1fZ\x1dhandworks/common/grpc/bookingb\x06proto3"
 
 var (
 	file_booking_proto_rawDescOnce sync.Once
@@ -2129,88 +2306,97 @@ func file_booking_proto_rawDescGZIP() []byte {
 	return file_booking_proto_rawDescData
 }
 
-var file_booking_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
-var file_booking_proto_msgTypes = make([]protoimpl.MessageInfo, 24)
+var file_booking_proto_enumTypes = make([]protoimpl.EnumInfo, 5)
+var file_booking_proto_msgTypes = make([]protoimpl.MessageInfo, 27)
 var file_booking_proto_goTypes = []any{
-	(HomeType)(0),                           // 0: HomeType
-	(CouchType)(0),                          // 1: CouchType
-	(BedType)(0),                            // 2: BedType
-	(CarType)(0),                            // 3: CarType
-	(*Address)(nil),                         // 4: Address
-	(*CleaningEquipment)(nil),               // 5: CleaningEquipment
-	(*CleaningResources)(nil),               // 6: CleaningResources
-	(*CleanerAssigned)(nil),                 // 7: CleanerAssigned
-	(*ServiceDetail)(nil),                   // 8: ServiceDetail
-	(*Booking)(nil),                         // 9: Booking
-	(*AddOn)(nil),                           // 10: AddOn
-	(*BaseBookingDetails)(nil),              // 11: BaseBookingDetails
-	(*CreateBookingRequest)(nil),            // 12: CreateBookingRequest
-	(*CreateBookingResponse)(nil),           // 13: CreateBookingResponse
-	(*GeneralCleaningDetails)(nil),          // 14: GeneralCleaningDetails
-	(*CouchCleaningDetails)(nil),            // 15: CouchCleaningDetails
-	(*MattressCleaningDetails)(nil),         // 16: MattressCleaningDetails
-	(*CarCleaningDetails)(nil),              // 17: CarCleaningDetails
-	(*PostConstructionCleaningDetails)(nil), // 18: PostConstructionCleaningDetails
-	(*QuoteRequest)(nil),                    // 19: QuoteRequest
-	(*QuoteResponse)(nil),                   // 20: QuoteResponse
-	(*CalculateQuotePriceRequest)(nil),      // 21: CalculateQuotePriceRequest
-	(*CalculateQuotePriceResponse)(nil),     // 22: CalculateQuotePriceResponse
-	(*CalculatePriceRequest)(nil),           // 23: CalculatePriceRequest
-	(*CalculatePriceResponse)(nil),          // 24: CalculatePriceResponse
-	(*PricingBreakdown)(nil),                // 25: PricingBreakdown
-	(*GetBookingByIdRequest)(nil),           // 26: GetBookingByIdRequest
-	(*GetBookingByIdResponse)(nil),          // 27: GetBookingByIdResponse
-	(*timestamppb.Timestamp)(nil),           // 28: google.protobuf.Timestamp
+	(MainServiceType)(0),                    // 0: MainServiceType
+	(HomeType)(0),                           // 1: HomeType
+	(CouchType)(0),                          // 2: CouchType
+	(BedType)(0),                            // 3: BedType
+	(CarType)(0),                            // 4: CarType
+	(*Address)(nil),                         // 5: Address
+	(*CleaningEquipment)(nil),               // 6: CleaningEquipment
+	(*CleaningResources)(nil),               // 7: CleaningResources
+	(*CleanerAssigned)(nil),                 // 8: CleanerAssigned
+	(*ServiceDetail)(nil),                   // 9: ServiceDetail
+	(*Booking)(nil),                         // 10: Booking
+	(*AddOn)(nil),                           // 11: AddOn
+	(*BaseBookingDetails)(nil),              // 12: BaseBookingDetails
+	(*CreateBookingRequest)(nil),            // 13: CreateBookingRequest
+	(*CreateBookingResponse)(nil),           // 14: CreateBookingResponse
+	(*Services)(nil),                        // 15: Services
+	(*GeneralCleaningDetails)(nil),          // 16: GeneralCleaningDetails
+	(*CouchCleaningDetails)(nil),            // 17: CouchCleaningDetails
+	(*MattressCleaningDetails)(nil),         // 18: MattressCleaningDetails
+	(*CarCleaningDetails)(nil),              // 19: CarCleaningDetails
+	(*PostConstructionCleaningDetails)(nil), // 20: PostConstructionCleaningDetails
+	(*QuoteRequest)(nil),                    // 21: QuoteRequest
+	(*QuoteResponse)(nil),                   // 22: QuoteResponse
+	(*CalculateQuotePriceRequest)(nil),      // 23: CalculateQuotePriceRequest
+	(*CalculateQuotePriceResponse)(nil),     // 24: CalculateQuotePriceResponse
+	(*CalculatePriceRequest)(nil),           // 25: CalculatePriceRequest
+	(*CalculatePriceResponse)(nil),          // 26: CalculatePriceResponse
+	(*PricingBreakdown)(nil),                // 27: PricingBreakdown
+	(*GetBookingByIdRequest)(nil),           // 28: GetBookingByIdRequest
+	(*GetBookingByIdResponse)(nil),          // 29: GetBookingByIdResponse
+	(*GetBookingByUIdRequest)(nil),          // 30: GetBookingByUIdRequest
+	(*GetBookingByUIdResponse)(nil),         // 31: GetBookingByUIdResponse
+	(*timestamppb.Timestamp)(nil),           // 32: google.protobuf.Timestamp
 }
 var file_booking_proto_depIdxs = []int32{
-	14, // 0: ServiceDetail.general:type_name -> GeneralCleaningDetails
-	15, // 1: ServiceDetail.couch:type_name -> CouchCleaningDetails
-	16, // 2: ServiceDetail.mattress:type_name -> MattressCleaningDetails
-	17, // 3: ServiceDetail.car:type_name -> CarCleaningDetails
-	18, // 4: ServiceDetail.post:type_name -> PostConstructionCleaningDetails
-	11, // 5: Booking.base:type_name -> BaseBookingDetails
-	8,  // 6: Booking.main_service:type_name -> ServiceDetail
-	10, // 7: Booking.addons:type_name -> AddOn
-	5,  // 8: Booking.equipment:type_name -> CleaningEquipment
-	6,  // 9: Booking.resources:type_name -> CleaningResources
-	7,  // 10: Booking.cleaners:type_name -> CleanerAssigned
-	8,  // 11: AddOn.serviceDetail:type_name -> ServiceDetail
-	4,  // 12: BaseBookingDetails.address:type_name -> Address
-	28, // 13: BaseBookingDetails.schedule:type_name -> google.protobuf.Timestamp
-	28, // 14: BaseBookingDetails.created_at:type_name -> google.protobuf.Timestamp
-	28, // 15: BaseBookingDetails.updated_at:type_name -> google.protobuf.Timestamp
-	11, // 16: CreateBookingRequest.base:type_name -> BaseBookingDetails
-	8,  // 17: CreateBookingRequest.main_service:type_name -> ServiceDetail
-	10, // 18: CreateBookingRequest.addons:type_name -> AddOn
-	5,  // 19: CreateBookingRequest.equipment:type_name -> CleaningEquipment
-	6,  // 20: CreateBookingRequest.resources:type_name -> CleaningResources
-	7,  // 21: CreateBookingRequest.cleaners:type_name -> CleanerAssigned
-	9,  // 22: CreateBookingResponse.book:type_name -> Booking
-	0,  // 23: GeneralCleaningDetails.home_type:type_name -> HomeType
-	1,  // 24: CouchCleaningDetails.couch_type:type_name -> CouchType
-	2,  // 25: MattressCleaningDetails.bed_type:type_name -> BedType
-	3,  // 26: CarCleaningDetails.car_type:type_name -> CarType
-	14, // 27: QuoteRequest.general:type_name -> GeneralCleaningDetails
-	15, // 28: QuoteRequest.couch:type_name -> CouchCleaningDetails
-	16, // 29: QuoteRequest.mattress:type_name -> MattressCleaningDetails
-	17, // 30: QuoteRequest.car:type_name -> CarCleaningDetails
-	18, // 31: QuoteRequest.post:type_name -> PostConstructionCleaningDetails
-	19, // 32: CalculateQuotePriceRequest.quote:type_name -> QuoteRequest
-	25, // 33: CalculateQuotePriceResponse.breakdown:type_name -> PricingBreakdown
-	12, // 34: CalculatePriceRequest.booking:type_name -> CreateBookingRequest
-	25, // 35: CalculatePriceResponse.breakdown:type_name -> PricingBreakdown
-	9,  // 36: GetBookingByIdResponse.booking:type_name -> Booking
-	12, // 37: BookingService.CreateBooking:input_type -> CreateBookingRequest
-	23, // 38: BookingService.CalculatePrice:input_type -> CalculatePriceRequest
-	26, // 39: BookingService.GetBookingById:input_type -> GetBookingByIdRequest
-	13, // 40: BookingService.CreateBooking:output_type -> CreateBookingResponse
-	24, // 41: BookingService.CalculatePrice:output_type -> CalculatePriceResponse
-	27, // 42: BookingService.GetBookingById:output_type -> GetBookingByIdResponse
-	40, // [40:43] is the sub-list for method output_type
-	37, // [37:40] is the sub-list for method input_type
-	37, // [37:37] is the sub-list for extension type_name
-	37, // [37:37] is the sub-list for extension extendee
-	0,  // [0:37] is the sub-list for field type_name
+	16, // 0: ServiceDetail.general:type_name -> GeneralCleaningDetails
+	17, // 1: ServiceDetail.couch:type_name -> CouchCleaningDetails
+	18, // 2: ServiceDetail.mattress:type_name -> MattressCleaningDetails
+	19, // 3: ServiceDetail.car:type_name -> CarCleaningDetails
+	20, // 4: ServiceDetail.post:type_name -> PostConstructionCleaningDetails
+	12, // 5: Booking.base:type_name -> BaseBookingDetails
+	15, // 6: Booking.main_service:type_name -> Services
+	11, // 7: Booking.addons:type_name -> AddOn
+	6,  // 8: Booking.equipment:type_name -> CleaningEquipment
+	7,  // 9: Booking.resources:type_name -> CleaningResources
+	8,  // 10: Booking.cleaners:type_name -> CleanerAssigned
+	15, // 11: AddOn.serviceDetail:type_name -> Services
+	5,  // 12: BaseBookingDetails.address:type_name -> Address
+	32, // 13: BaseBookingDetails.schedule:type_name -> google.protobuf.Timestamp
+	32, // 14: BaseBookingDetails.created_at:type_name -> google.protobuf.Timestamp
+	32, // 15: BaseBookingDetails.updated_at:type_name -> google.protobuf.Timestamp
+	12, // 16: CreateBookingRequest.base:type_name -> BaseBookingDetails
+	15, // 17: CreateBookingRequest.main_service:type_name -> Services
+	11, // 18: CreateBookingRequest.addons:type_name -> AddOn
+	6,  // 19: CreateBookingRequest.equipment:type_name -> CleaningEquipment
+	7,  // 20: CreateBookingRequest.resources:type_name -> CleaningResources
+	8,  // 21: CreateBookingRequest.cleaners:type_name -> CleanerAssigned
+	10, // 22: CreateBookingResponse.book:type_name -> Booking
+	0,  // 23: Services.service_type:type_name -> MainServiceType
+	9,  // 24: Services.details:type_name -> ServiceDetail
+	1,  // 25: GeneralCleaningDetails.home_type:type_name -> HomeType
+	2,  // 26: CouchCleaningDetails.couch_type:type_name -> CouchType
+	3,  // 27: MattressCleaningDetails.bed_type:type_name -> BedType
+	4,  // 28: CarCleaningDetails.car_type:type_name -> CarType
+	16, // 29: QuoteRequest.general:type_name -> GeneralCleaningDetails
+	17, // 30: QuoteRequest.couch:type_name -> CouchCleaningDetails
+	18, // 31: QuoteRequest.mattress:type_name -> MattressCleaningDetails
+	19, // 32: QuoteRequest.car:type_name -> CarCleaningDetails
+	20, // 33: QuoteRequest.post:type_name -> PostConstructionCleaningDetails
+	21, // 34: CalculateQuotePriceRequest.quote:type_name -> QuoteRequest
+	27, // 35: CalculateQuotePriceResponse.breakdown:type_name -> PricingBreakdown
+	13, // 36: CalculatePriceRequest.booking:type_name -> CreateBookingRequest
+	27, // 37: CalculatePriceResponse.breakdown:type_name -> PricingBreakdown
+	10, // 38: GetBookingByIdResponse.booking:type_name -> Booking
+	10, // 39: GetBookingByUIdResponse.booking:type_name -> Booking
+	13, // 40: BookingService.CreateBooking:input_type -> CreateBookingRequest
+	25, // 41: BookingService.CalculatePrice:input_type -> CalculatePriceRequest
+	28, // 42: BookingService.GetBookingById:input_type -> GetBookingByIdRequest
+	30, // 43: BookingService.GetBookingByUId:input_type -> GetBookingByUIdRequest
+	14, // 44: BookingService.CreateBooking:output_type -> CreateBookingResponse
+	26, // 45: BookingService.CalculatePrice:output_type -> CalculatePriceResponse
+	29, // 46: BookingService.GetBookingById:output_type -> GetBookingByIdResponse
+	31, // 47: BookingService.GetBookingByUId:output_type -> GetBookingByUIdResponse
+	44, // [44:48] is the sub-list for method output_type
+	40, // [40:44] is the sub-list for method input_type
+	40, // [40:40] is the sub-list for extension type_name
+	40, // [40:40] is the sub-list for extension extendee
+	0,  // [0:40] is the sub-list for field type_name
 }
 
 func init() { file_booking_proto_init() }
@@ -2225,7 +2411,7 @@ func file_booking_proto_init() {
 		(*ServiceDetail_Car)(nil),
 		(*ServiceDetail_Post)(nil),
 	}
-	file_booking_proto_msgTypes[15].OneofWrappers = []any{
+	file_booking_proto_msgTypes[16].OneofWrappers = []any{
 		(*QuoteRequest_General)(nil),
 		(*QuoteRequest_Couch)(nil),
 		(*QuoteRequest_Mattress)(nil),
@@ -2237,8 +2423,8 @@ func file_booking_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_booking_proto_rawDesc), len(file_booking_proto_rawDesc)),
-			NumEnums:      4,
-			NumMessages:   24,
+			NumEnums:      5,
+			NumMessages:   27,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

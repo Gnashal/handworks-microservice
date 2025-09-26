@@ -22,7 +22,7 @@ func (b *BookingService) CreateBooking(ctx context.Context, in *booking.CreateBo
 	var createdBook *types.Booking
 
 	if err := b.withTx(ctx, b.DB, func(tx pgx.Tx) error {
-		mainService, err := b.createMainServiceBooking(ctx, tx, in.MainService)
+		mainService, err := b.createMainServiceBooking(ctx, tx, in.MainService.Details)
 		if err != nil {
 			return err
 		}
@@ -77,7 +77,7 @@ func (b *BookingService) CreateBooking(ctx context.Context, in *booking.CreateBo
 		}
 
 		totalPrice := float64(100.11)
-		bookingID, err := b.saveBooking(ctx, tx, baseBook.ID, mainService.GetID(), addonIDs, equipmentIDs, resourceIDs, cleanersAssignedIDs, totalPrice)
+		bookingID, err := b.saveBooking(ctx, tx, baseBook.ID, mainService.Id, addonIDs, equipmentIDs, resourceIDs, cleanersAssignedIDs, totalPrice)
 		if err != nil {
 			return err
 		}
@@ -85,9 +85,9 @@ func (b *BookingService) CreateBooking(ctx context.Context, in *booking.CreateBo
 		createdBook = &types.Booking{
 			ID:          bookingID,
 			Base:        *baseBook,
-			MainService: mainService,
+			MainService: types.ConvertBookingServiceToTypesDetail(mainService),
 			Addons:      addons,
-			Equipment:   equipments,
+			Equipments:  equipments,
 			Resources:   resources,
 			Cleaners:    cleanersAssigned,
 			TotalPrice:  float32(totalPrice),
@@ -101,5 +101,28 @@ func (b *BookingService) CreateBooking(ctx context.Context, in *booking.CreateBo
 
 	return &booking.CreateBookingResponse{
 		Book: book,
+	}, nil
+}
+
+func (b *BookingService) GetBookingByUId(ctx context.Context, in *booking.GetBookingByUIdRequest) (*booking.GetBookingByUIdResponse, error) {
+	b.L.Info("Creating Book for User: %s...", in.UserId)
+
+	var book *types.Booking
+
+	if err := b.withTx(ctx, b.DB, func(tx pgx.Tx) error {
+		gotBook, err := b.FetchBookingsByUID(ctx, tx, in.UserId)
+		if err != nil {
+			return err
+		}
+
+		book = gotBook
+
+		return nil
+	}); err != nil {
+		return nil, err
+	}
+
+	return &booking.GetBookingByUIdResponse{
+		Booking: book.ToProto(),
 	}, nil
 }

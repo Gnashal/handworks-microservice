@@ -19,9 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	BookingService_CreateBooking_FullMethodName  = "/BookingService/CreateBooking"
-	BookingService_CalculatePrice_FullMethodName = "/BookingService/CalculatePrice"
-	BookingService_GetBookingById_FullMethodName = "/BookingService/GetBookingById"
+	BookingService_CreateBooking_FullMethodName   = "/BookingService/CreateBooking"
+	BookingService_CalculatePrice_FullMethodName  = "/BookingService/CalculatePrice"
+	BookingService_GetBookingById_FullMethodName  = "/BookingService/GetBookingById"
+	BookingService_GetBookingByUId_FullMethodName = "/BookingService/GetBookingByUId"
 )
 
 // BookingServiceClient is the client API for BookingService service.
@@ -31,6 +32,7 @@ type BookingServiceClient interface {
 	CreateBooking(ctx context.Context, in *CreateBookingRequest, opts ...grpc.CallOption) (*CreateBookingResponse, error)
 	CalculatePrice(ctx context.Context, in *CalculatePriceRequest, opts ...grpc.CallOption) (*CalculatePriceResponse, error)
 	GetBookingById(ctx context.Context, in *GetBookingByIdRequest, opts ...grpc.CallOption) (*GetBookingByIdResponse, error)
+	GetBookingByUId(ctx context.Context, in *GetBookingByUIdRequest, opts ...grpc.CallOption) (*GetBookingByUIdResponse, error)
 }
 
 type bookingServiceClient struct {
@@ -71,6 +73,16 @@ func (c *bookingServiceClient) GetBookingById(ctx context.Context, in *GetBookin
 	return out, nil
 }
 
+func (c *bookingServiceClient) GetBookingByUId(ctx context.Context, in *GetBookingByUIdRequest, opts ...grpc.CallOption) (*GetBookingByUIdResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetBookingByUIdResponse)
+	err := c.cc.Invoke(ctx, BookingService_GetBookingByUId_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BookingServiceServer is the server API for BookingService service.
 // All implementations must embed UnimplementedBookingServiceServer
 // for forward compatibility.
@@ -78,6 +90,7 @@ type BookingServiceServer interface {
 	CreateBooking(context.Context, *CreateBookingRequest) (*CreateBookingResponse, error)
 	CalculatePrice(context.Context, *CalculatePriceRequest) (*CalculatePriceResponse, error)
 	GetBookingById(context.Context, *GetBookingByIdRequest) (*GetBookingByIdResponse, error)
+	GetBookingByUId(context.Context, *GetBookingByUIdRequest) (*GetBookingByUIdResponse, error)
 	mustEmbedUnimplementedBookingServiceServer()
 }
 
@@ -96,6 +109,9 @@ func (UnimplementedBookingServiceServer) CalculatePrice(context.Context, *Calcul
 }
 func (UnimplementedBookingServiceServer) GetBookingById(context.Context, *GetBookingByIdRequest) (*GetBookingByIdResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBookingById not implemented")
+}
+func (UnimplementedBookingServiceServer) GetBookingByUId(context.Context, *GetBookingByUIdRequest) (*GetBookingByUIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBookingByUId not implemented")
 }
 func (UnimplementedBookingServiceServer) mustEmbedUnimplementedBookingServiceServer() {}
 func (UnimplementedBookingServiceServer) testEmbeddedByValue()                        {}
@@ -172,6 +188,24 @@ func _BookingService_GetBookingById_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BookingService_GetBookingByUId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBookingByUIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BookingServiceServer).GetBookingByUId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BookingService_GetBookingByUId_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BookingServiceServer).GetBookingByUId(ctx, req.(*GetBookingByUIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BookingService_ServiceDesc is the grpc.ServiceDesc for BookingService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -190,6 +224,10 @@ var BookingService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetBookingById",
 			Handler:    _BookingService_GetBookingById_Handler,
+		},
+		{
+			MethodName: "GetBookingByUId",
+			Handler:    _BookingService_GetBookingByUId_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -1,15 +1,16 @@
 package types
 
-import "handworks/common/grpc/booking"
+import (
+	"encoding/json"
+	"handworks/common/grpc/booking"
+)
 
 type PostConstructionDetails struct {
-	ID  string
-	SQM int32
+	SQM int32 `json:"sqm"`
 }
 
 func (postConstruction PostConstructionDetails) ToProto() *booking.PostConstructionCleaningDetails {
 	return &booking.PostConstructionCleaningDetails{
-		Id:  postConstruction.ID,
 		Sqm: postConstruction.SQM,
 	}
 }
@@ -19,7 +20,23 @@ func PostConstructionCleaningDetailsFromProto(pb *booking.PostConstructionCleani
 		return PostConstructionDetails{}
 	}
 	return PostConstructionDetails{
-		ID:  pb.Id,
 		SQM: pb.Sqm,
 	}
+}
+
+func (postConstructionCleaning *PostConstructionDetails) MarshalPostConstructionDetails() ([]byte, error) {
+	postConstruction := PostConstructionDetails{
+		SQM: postConstructionCleaning.SQM,
+	}
+	return json.Marshal(postConstruction)
+}
+
+func UnmarshalPostConstructionDetails(detailsOut []byte) (*PostConstructionDetails, error) {
+	var postDetails PostConstructionDetails
+	if err := json.Unmarshal(detailsOut, &postDetails); err != nil {
+		return nil, err
+	}
+	return &PostConstructionDetails{
+		SQM: postDetails.SQM,
+	}, nil
 }

@@ -60,20 +60,3 @@ func (sd ServiceDetail) ToProto() *booking.ServiceDetail {
 
 	return pb
 }
-
-func (sd ServiceDetail) GetID() string {
-	switch {
-	case sd.General.ID != "":
-		return sd.General.ID
-	case sd.Couch.ID != "":
-		return sd.Couch.ID
-	case sd.Mattress.ID != "":
-		return sd.Mattress.ID
-	case sd.Car.ID != "":
-		return sd.Car.ID
-	case sd.Post.ID != "":
-		return sd.Post.ID
-	default:
-		return ""
-	}
-}

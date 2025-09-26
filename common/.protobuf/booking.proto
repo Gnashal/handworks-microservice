@@ -7,6 +7,7 @@ service BookingService {
   rpc CreateBooking(CreateBookingRequest) returns (CreateBookingResponse);
   rpc CalculatePrice(CalculatePriceRequest) returns (CalculatePriceResponse);
   rpc GetBookingById(GetBookingByIdRequest) returns (GetBookingByIdResponse);
+  rpc GetBookingByUId(GetBookingByUIdRequest) returns (GetBookingByUIdResponse);
 }
 
 message Address {
@@ -49,7 +50,7 @@ message ServiceDetail {
 message Booking {
   string id = 1;
   BaseBookingDetails base = 2;
-  ServiceDetail main_service = 3;
+  Services main_service = 3;
   repeated AddOn addons = 4;
   repeated CleaningEquipment equipment = 5;
   repeated CleaningResources resources = 6;
@@ -59,7 +60,7 @@ message Booking {
 
 message AddOn {
   string id = 1;
-  ServiceDetail serviceDetail = 2;
+  Services serviceDetail = 2;
   float price = 3;
 }
 
@@ -80,7 +81,7 @@ message BaseBookingDetails {
 
 message CreateBookingRequest {
   BaseBookingDetails base = 1;
-  ServiceDetail main_service = 2;
+  Services main_service = 2;
   repeated AddOn addons = 3;
   repeated CleaningEquipment equipment = 4;
   repeated CleaningResources resources = 5;
@@ -89,6 +90,21 @@ message CreateBookingRequest {
 
 message CreateBookingResponse {
   Booking book = 1;
+}
+
+message Services {
+  string id = 1;
+  MainServiceType service_type = 2;
+  ServiceDetail details = 3;
+}
+
+enum MainServiceType {
+  SERVICE_TYPE_UNSPECIFIED = 0;
+  GENERAL = 1;
+  COUCH = 2;
+  MATTRESS = 3;
+  CAR = 4;
+  POST = 5;
 }
 
 enum HomeType {
@@ -129,14 +145,12 @@ enum CarType {
 }
 // General cleaning
 message GeneralCleaningDetails {
-  string id = 1;
   HomeType home_type = 2;
   int32 sqm = 3;
 }
 
 // Couch cleaning
 message CouchCleaningDetails {
-  string id = 1;
   CouchType couch_type = 2;
   int32 width_cm = 3;
   int32 depth_cm = 4;
@@ -145,7 +159,6 @@ message CouchCleaningDetails {
 
 // Mattress cleaning
 message MattressCleaningDetails {
-  string id = 1;
   BedType bed_type = 2;
   int32 width_cm = 3;
   int32 depth_cm = 4;
@@ -154,14 +167,12 @@ message MattressCleaningDetails {
 
 // Car interior cleaning
 message CarCleaningDetails {
-  string id = 1;
   CarType car_type = 2;
   int32 child_seats = 3;
 }
 
 // Post-construction cleaning
 message PostConstructionCleaningDetails {
-  string id = 1;
   int32 sqm = 2;
 }
 
@@ -228,3 +239,10 @@ message GetBookingByIdResponse {
   Booking booking = 1;
 }
 
+message GetBookingByUIdRequest {
+  string user_id = 1;
+}
+
+message GetBookingByUIdResponse {
+  Booking booking = 1;
+}
