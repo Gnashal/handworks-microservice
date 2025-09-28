@@ -195,6 +195,7 @@ type InventoryItem struct {
 	Status        ItemStatus             `protobuf:"varint,4,opt,name=status,proto3,enum=ItemStatus" json:"status,omitempty"`
 	Category      ItemCategory           `protobuf:"varint,5,opt,name=category,proto3,enum=ItemCategory" json:"category,omitempty"`
 	Quantity      int32                  `protobuf:"varint,6,opt,name=quantity,proto3" json:"quantity,omitempty"`
+	MaxQuantity   int32                  `protobuf:"varint,7,opt,name=max_quantity,json=maxQuantity,proto3" json:"max_quantity,omitempty"`
 	Unit          string                 `protobuf:"bytes,8,opt,name=unit,proto3" json:"unit,omitempty"`
 	IsAvailable   bool                   `protobuf:"varint,9,opt,name=is_available,json=isAvailable,proto3" json:"is_available,omitempty"`
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
@@ -275,6 +276,13 @@ func (x *InventoryItem) GetQuantity() int32 {
 	return 0
 }
 
+func (x *InventoryItem) GetMaxQuantity() int32 {
+	if x != nil {
+		return x.MaxQuantity
+	}
+	return 0
+}
+
 func (x *InventoryItem) GetUnit() string {
 	if x != nil {
 		return x.Unit
@@ -307,10 +315,9 @@ type CreateItemRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Type          string                 `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
-	Status        string                 `protobuf:"bytes,3,opt,name=status,proto3" json:"status,omitempty"`
-	Category      string                 `protobuf:"bytes,4,opt,name=category,proto3" json:"category,omitempty"`
-	Quantity      int32                  `protobuf:"varint,5,opt,name=quantity,proto3" json:"quantity,omitempty"`
-	Unit          string                 `protobuf:"bytes,6,opt,name=unit,proto3" json:"unit,omitempty"`
+	Category      string                 `protobuf:"bytes,3,opt,name=category,proto3" json:"category,omitempty"`
+	Quantity      int32                  `protobuf:"varint,4,opt,name=quantity,proto3" json:"quantity,omitempty"`
+	Unit          string                 `protobuf:"bytes,5,opt,name=unit,proto3" json:"unit,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -355,13 +362,6 @@ func (x *CreateItemRequest) GetName() string {
 func (x *CreateItemRequest) GetType() string {
 	if x != nil {
 		return x.Type
-	}
-	return ""
-}
-
-func (x *CreateItemRequest) GetStatus() string {
-	if x != nil {
-		return x.Status
 	}
 	return ""
 }
@@ -609,7 +609,13 @@ func (x *ListItemsResponse) GetItems() []*InventoryItem {
 
 type UpdateItemRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Item          *InventoryItem         `protobuf:"bytes,1,opt,name=item,proto3" json:"item,omitempty"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Type          string                 `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
+	Status        string                 `protobuf:"bytes,3,opt,name=status,proto3" json:"status,omitempty"`
+	Category      string                 `protobuf:"bytes,4,opt,name=category,proto3" json:"category,omitempty"`
+	Quantity      string                 `protobuf:"bytes,5,opt,name=quantity,proto3" json:"quantity,omitempty"`
+	MaxQuantity   string                 `protobuf:"bytes,6,opt,name=max_quantity,json=maxQuantity,proto3" json:"max_quantity,omitempty"`
+	Id            string                 `protobuf:"bytes,7,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -644,11 +650,53 @@ func (*UpdateItemRequest) Descriptor() ([]byte, []int) {
 	return file_inventory_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *UpdateItemRequest) GetItem() *InventoryItem {
+func (x *UpdateItemRequest) GetName() string {
 	if x != nil {
-		return x.Item
+		return x.Name
 	}
-	return nil
+	return ""
+}
+
+func (x *UpdateItemRequest) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *UpdateItemRequest) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *UpdateItemRequest) GetCategory() string {
+	if x != nil {
+		return x.Category
+	}
+	return ""
+}
+
+func (x *UpdateItemRequest) GetQuantity() string {
+	if x != nil {
+		return x.Quantity
+	}
+	return ""
+}
+
+func (x *UpdateItemRequest) GetMaxQuantity() string {
+	if x != nil {
+		return x.MaxQuantity
+	}
+	return ""
+}
+
+func (x *UpdateItemRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
 }
 
 type UpdateItemResponse struct {
@@ -787,26 +835,26 @@ var File_inventory_proto protoreflect.FileDescriptor
 
 const file_inventory_proto_rawDesc = "" +
 	"\n" +
-	"\x0finventory.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xe9\x02\n" +
+	"\x0finventory.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x8c\x03\n" +
 	"\rInventoryItem\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1d\n" +
 	"\x04type\x18\x03 \x01(\x0e2\t.ItemTypeR\x04type\x12#\n" +
 	"\x06status\x18\x04 \x01(\x0e2\v.ItemStatusR\x06status\x12)\n" +
 	"\bcategory\x18\x05 \x01(\x0e2\r.ItemCategoryR\bcategory\x12\x1a\n" +
-	"\bquantity\x18\x06 \x01(\x05R\bquantity\x12\x12\n" +
+	"\bquantity\x18\x06 \x01(\x05R\bquantity\x12!\n" +
+	"\fmax_quantity\x18\a \x01(\x05R\vmaxQuantity\x12\x12\n" +
 	"\x04unit\x18\b \x01(\tR\x04unit\x12!\n" +
 	"\fis_available\x18\t \x01(\bR\visAvailable\x128\n" +
 	"\tcreatedAt\x18\n" +
 	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x128\n" +
-	"\tupdatedAt\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x9f\x01\n" +
+	"\tupdatedAt\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x87\x01\n" +
 	"\x11CreateItemRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +
-	"\x04type\x18\x02 \x01(\tR\x04type\x12\x16\n" +
-	"\x06status\x18\x03 \x01(\tR\x06status\x12\x1a\n" +
-	"\bcategory\x18\x04 \x01(\tR\bcategory\x12\x1a\n" +
-	"\bquantity\x18\x05 \x01(\x05R\bquantity\x12\x12\n" +
-	"\x04unit\x18\x06 \x01(\tR\x04unit\"8\n" +
+	"\x04type\x18\x02 \x01(\tR\x04type\x12\x1a\n" +
+	"\bcategory\x18\x03 \x01(\tR\bcategory\x12\x1a\n" +
+	"\bquantity\x18\x04 \x01(\x05R\bquantity\x12\x12\n" +
+	"\x04unit\x18\x05 \x01(\tR\x04unit\"8\n" +
 	"\x12CreateItemResponse\x12\"\n" +
 	"\x04item\x18\x01 \x01(\v2\x0e.InventoryItemR\x04item\" \n" +
 	"\x0eGetItemRequest\x12\x0e\n" +
@@ -817,9 +865,15 @@ const file_inventory_proto_rawDesc = "" +
 	"\vfilter_type\x18\x01 \x01(\x0e2\t.ItemTypeR\n" +
 	"filterType\"9\n" +
 	"\x11ListItemsResponse\x12$\n" +
-	"\x05items\x18\x01 \x03(\v2\x0e.InventoryItemR\x05items\"7\n" +
-	"\x11UpdateItemRequest\x12\"\n" +
-	"\x04item\x18\x01 \x01(\v2\x0e.InventoryItemR\x04item\"8\n" +
+	"\x05items\x18\x01 \x03(\v2\x0e.InventoryItemR\x05items\"\xbe\x01\n" +
+	"\x11UpdateItemRequest\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +
+	"\x04type\x18\x02 \x01(\tR\x04type\x12\x16\n" +
+	"\x06status\x18\x03 \x01(\tR\x06status\x12\x1a\n" +
+	"\bcategory\x18\x04 \x01(\tR\bcategory\x12\x1a\n" +
+	"\bquantity\x18\x05 \x01(\tR\bquantity\x12!\n" +
+	"\fmax_quantity\x18\x06 \x01(\tR\vmaxQuantity\x12\x0e\n" +
+	"\x02id\x18\a \x01(\tR\x02id\"8\n" +
 	"\x12UpdateItemResponse\x12\"\n" +
 	"\x04item\x18\x01 \x01(\v2\x0e.InventoryItemR\x04item\"#\n" +
 	"\x11DeleteItemRequest\x12\x0e\n" +
@@ -898,23 +952,22 @@ var file_inventory_proto_depIdxs = []int32{
 	3,  // 6: GetItemResponse.item:type_name -> InventoryItem
 	0,  // 7: ListItemsRequest.filter_type:type_name -> ItemType
 	3,  // 8: ListItemsResponse.items:type_name -> InventoryItem
-	3,  // 9: UpdateItemRequest.item:type_name -> InventoryItem
-	3,  // 10: UpdateItemResponse.item:type_name -> InventoryItem
-	4,  // 11: InventoryService.CreateItem:input_type -> CreateItemRequest
-	6,  // 12: InventoryService.GetItem:input_type -> GetItemRequest
-	8,  // 13: InventoryService.ListItems:input_type -> ListItemsRequest
-	10, // 14: InventoryService.UpdateItem:input_type -> UpdateItemRequest
-	12, // 15: InventoryService.DeleteItem:input_type -> DeleteItemRequest
-	5,  // 16: InventoryService.CreateItem:output_type -> CreateItemResponse
-	7,  // 17: InventoryService.GetItem:output_type -> GetItemResponse
-	9,  // 18: InventoryService.ListItems:output_type -> ListItemsResponse
-	11, // 19: InventoryService.UpdateItem:output_type -> UpdateItemResponse
-	13, // 20: InventoryService.DeleteItem:output_type -> DeleteItemResponse
-	16, // [16:21] is the sub-list for method output_type
-	11, // [11:16] is the sub-list for method input_type
-	11, // [11:11] is the sub-list for extension type_name
-	11, // [11:11] is the sub-list for extension extendee
-	0,  // [0:11] is the sub-list for field type_name
+	3,  // 9: UpdateItemResponse.item:type_name -> InventoryItem
+	4,  // 10: InventoryService.CreateItem:input_type -> CreateItemRequest
+	6,  // 11: InventoryService.GetItem:input_type -> GetItemRequest
+	8,  // 12: InventoryService.ListItems:input_type -> ListItemsRequest
+	10, // 13: InventoryService.UpdateItem:input_type -> UpdateItemRequest
+	12, // 14: InventoryService.DeleteItem:input_type -> DeleteItemRequest
+	5,  // 15: InventoryService.CreateItem:output_type -> CreateItemResponse
+	7,  // 16: InventoryService.GetItem:output_type -> GetItemResponse
+	9,  // 17: InventoryService.ListItems:output_type -> ListItemsResponse
+	11, // 18: InventoryService.UpdateItem:output_type -> UpdateItemResponse
+	13, // 19: InventoryService.DeleteItem:output_type -> DeleteItemResponse
+	15, // [15:20] is the sub-list for method output_type
+	10, // [10:15] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_inventory_proto_init() }

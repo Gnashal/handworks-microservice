@@ -41,6 +41,7 @@ message InventoryItem {
   ItemStatus status = 4;
   ItemCategory category = 5;
   int32 quantity = 6; 
+  int32 max_quantity = 7;
   string unit = 8;    
   bool is_available = 9; 
   google.protobuf.Timestamp createdAt = 10;
@@ -50,10 +51,9 @@ message InventoryItem {
 message CreateItemRequest {
   string name = 1;
   string type = 2;
-  string status = 3;
-  string category = 4;
-  int32 quantity = 5;
-  string unit = 6;
+  string category = 3;
+  int32 quantity = 4;
+  string unit = 5;
 }
 message CreateItemResponse {
   InventoryItem item = 1;
@@ -74,7 +74,13 @@ message ListItemsResponse {
 }
 
 message UpdateItemRequest {
-  InventoryItem item = 1;
+  string name = 1;
+  string type = 2;
+  string status = 3;
+  string category = 4;
+  string quantity = 5;
+  string max_quantity = 6;
+  string id = 7;
 }
 message UpdateItemResponse {
   InventoryItem item = 1;
