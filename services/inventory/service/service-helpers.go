@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"handworks-services-inventory/types"
+	"handworks/common/grpc/inventory"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -88,6 +89,239 @@ func (i *InventoryService) FetchInventoryItem(
 		&item.UpdatedAt,
 	); err != nil {
 		return nil, fmt.Errorf("could not fetch inventory item with id %s: %w", id, err)
+	}
+
+	return &item, nil
+}
+func (i *InventoryService) FetchInventoryItems(
+	ctx context.Context,
+	tx pgx.Tx,
+) ([]*types.DbInventoryItem, error) {
+	rows, err := tx.Query(ctx, `
+        SELECT id, name, type, status, unit, category, quantity, max_quantity, is_available, created_at, updated_at
+        FROM inventory.items
+        ORDER BY created_at DESC
+    `)
+	if err != nil {
+		return nil, fmt.Errorf("could not fetch inventory items: %w", err)
+	}
+	defer rows.Close()
+
+	var items []*types.DbInventoryItem
+	for rows.Next() {
+		var item types.DbInventoryItem
+		if err := rows.Scan(
+			&item.ID,
+			&item.Name,
+			&item.Type,
+			&item.Status,
+			&item.Unit,
+			&item.Category,
+			&item.Quantity,
+			&item.MaxQuantity,
+			&item.IsAvailable,
+			&item.CreatedAt,
+			&item.UpdatedAt,
+		); err != nil {
+			return nil, fmt.Errorf("could not scan inventory row: %w", err)
+		}
+		items = append(items, &item)
+	}
+
+	return items, nil
+}
+func (i *InventoryService) FetchInventoryItemsByType(
+	ctx context.Context,
+	tx pgx.Tx,
+	itemType string,
+) ([]*types.DbInventoryItem, error) {
+	rows, err := tx.Query(ctx, `
+        SELECT id, name, type, status, unit, category, quantity, max_quantity, is_available, created_at, updated_at
+        FROM inventory.items
+		WHERE type = $1
+        ORDER BY created_at DESC
+    `, itemType)
+	if err != nil {
+		return nil, fmt.Errorf("could not fetch inventory items: %w", err)
+	}
+	defer rows.Close()
+
+	var items []*types.DbInventoryItem
+	for rows.Next() {
+		var item types.DbInventoryItem
+		if err := rows.Scan(
+			&item.ID,
+			&item.Name,
+			&item.Type,
+			&item.Status,
+			&item.Unit,
+			&item.Category,
+			&item.Quantity,
+			&item.MaxQuantity,
+			&item.IsAvailable,
+			&item.CreatedAt,
+			&item.UpdatedAt,
+		); err != nil {
+			return nil, fmt.Errorf("could not scan inventory row: %w", err)
+		}
+		items = append(items, &item)
+	}
+
+	return items, nil
+}
+func (i *InventoryService) FetchInventoryItemsByCategory(
+	ctx context.Context,
+	tx pgx.Tx,
+	category string,
+) ([]*types.DbInventoryItem, error) {
+	rows, err := tx.Query(ctx, `
+        SELECT id, name, type, status, unit, category, quantity, max_quantity, is_available, created_at, updated_at
+        FROM inventory.items
+		WHERE category = $1
+        ORDER BY created_at DESC
+    `, category)
+	if err != nil {
+		return nil, fmt.Errorf("could not fetch inventory items: %w", err)
+	}
+	defer rows.Close()
+
+	var items []*types.DbInventoryItem
+	for rows.Next() {
+		var item types.DbInventoryItem
+		if err := rows.Scan(
+			&item.ID,
+			&item.Name,
+			&item.Type,
+			&item.Status,
+			&item.Unit,
+			&item.Category,
+			&item.Quantity,
+			&item.MaxQuantity,
+			&item.IsAvailable,
+			&item.CreatedAt,
+			&item.UpdatedAt,
+		); err != nil {
+			return nil, fmt.Errorf("could not scan inventory row: %w", err)
+		}
+		items = append(items, &item)
+	}
+
+	return items, nil
+}
+func (i *InventoryService) FetchInventoryItemsByStatus(
+	ctx context.Context,
+	tx pgx.Tx,
+	status string,
+) ([]*types.DbInventoryItem, error) {
+	rows, err := tx.Query(ctx, `
+        SELECT id, name, type, status, unit, category, quantity, max_quantity, is_available, created_at, updated_at
+        FROM inventory.items
+		WHERE status = $1
+        ORDER BY created_at DESC
+    `, status)
+	if err != nil {
+		return nil, fmt.Errorf("could not fetch inventory items: %w", err)
+	}
+	defer rows.Close()
+
+	var items []*types.DbInventoryItem
+	for rows.Next() {
+		var item types.DbInventoryItem
+		if err := rows.Scan(
+			&item.ID,
+			&item.Name,
+			&item.Type,
+			&item.Status,
+			&item.Unit,
+			&item.Category,
+			&item.Quantity,
+			&item.MaxQuantity,
+			&item.IsAvailable,
+			&item.CreatedAt,
+			&item.UpdatedAt,
+		); err != nil {
+			return nil, fmt.Errorf("could not scan inventory row: %w", err)
+		}
+		items = append(items, &item)
+	}
+
+	return items, nil
+}
+func (i *InventoryService) UpdateInventoryItem(
+	ctx context.Context,
+	tx pgx.Tx,
+	in *inventory.UpdateItemRequest,
+) (*types.DbInventoryItem, error) {
+	args := pgx.NamedArgs{
+		"id":           in.Id,
+		"name":         in.Name,
+		"type":         in.Type,
+		"status":       in.Status,
+		"category":     in.Category,
+		"quantity":     in.Quantity,
+		"max_quantity": in.MaxQuantity,
+	}
+
+	row := tx.QueryRow(ctx, `
+		UPDATE inventory.items
+		SET
+			name = COALESCE(NULLIF(@name, ''), name),
+			type = COALESCE(NULLIF(@type, ''), type),
+			status = COALESCE(NULLIF(@status, ''), status),
+			category = COALESCE(NULLIF(@category, ''), category),
+			quantity = COALESCE(NULLIF(@quantity, '')::int, quantity),
+			max_quantity = COALESCE(NULLIF(@max_quantity, '')::int, max_quantity),
+			updated_at = NOW()
+		WHERE id = @id
+		RETURNING id, name, type, status, unit, category, quantity, max_quantity, is_available, created_at, updated_at
+	`, args)
+
+	var item types.DbInventoryItem
+	if err := row.Scan(
+		&item.ID,
+		&item.Name,
+		&item.Type,
+		&item.Status,
+		&item.Unit,
+		&item.Category,
+		&item.Quantity,
+		&item.MaxQuantity,
+		&item.IsAvailable,
+		&item.CreatedAt,
+		&item.UpdatedAt,
+	); err != nil {
+		return nil, fmt.Errorf("could not update inventory item: %w", err)
+	}
+
+	return &item, nil
+}
+func (i *InventoryService) DeleteInventoryItem(
+	ctx context.Context,
+	tx pgx.Tx,
+	id string,
+) (*types.DbInventoryItem, error) {
+	var item types.DbInventoryItem
+
+	err := tx.QueryRow(ctx, `
+		DELETE FROM inventory.items
+		WHERE id = $1
+		RETURNING id, name, type, status, unit, category, quantity, max_quantity, is_available, created_at, updated_at
+	`, id).Scan(
+		&item.ID,
+		&item.Name,
+		&item.Type,
+		&item.Status,
+		&item.Unit,
+		&item.Category,
+		&item.Quantity,
+		&item.MaxQuantity,
+		&item.IsAvailable,
+		&item.CreatedAt,
+		&item.UpdatedAt,
+	)
+
+	if err != nil {
+		return nil, fmt.Errorf("could not delete inventory item with id %s: %w", id, err)
 	}
 
 	return &item, nil

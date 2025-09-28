@@ -6,7 +6,10 @@ import "google/protobuf/timestamp.proto";
 service InventoryService {
   rpc CreateItem(CreateItemRequest) returns (CreateItemResponse);
   rpc GetItem(GetItemRequest) returns (GetItemResponse);
-  rpc ListItems(ListItemsRequest) returns (ListItemsResponse);
+  rpc ListAllItems(Empty) returns (ListItemsResponse);
+  rpc ListItemsByType(ListItemsByTypeRequest) returns (ListItemsResponse);
+  rpc ListItemsByStatus(ListItemsByStatusRequest) returns (ListItemsResponse);
+  rpc ListItemsByCategory(ListItemsByCategoryRequest) returns (ListItemsResponse);
   rpc UpdateItem(UpdateItemRequest) returns (UpdateItemResponse);
   rpc DeleteItem(DeleteItemRequest) returns (DeleteItemResponse);
 }
@@ -65,10 +68,16 @@ message GetItemRequest {
 message GetItemResponse {
   InventoryItem item = 1;
 }
-
-message ListItemsRequest {
-  ItemType filter_type = 1;
+message ListItemsByTypeRequest {
+  string type = 1;
 }
+message ListItemsByStatusRequest {
+  string status = 1;
+}
+message ListItemsByCategoryRequest {
+  string category = 1;
+}
+message Empty {}
 message ListItemsResponse {
   repeated InventoryItem items = 1;
 }
@@ -78,8 +87,8 @@ message UpdateItemRequest {
   string type = 2;
   string status = 3;
   string category = 4;
-  string quantity = 5;
-  string max_quantity = 6;
+  int32 quantity = 5;
+  int32 max_quantity = 6;
   string id = 7;
 }
 message UpdateItemResponse {
@@ -90,6 +99,6 @@ message DeleteItemRequest {
   string id = 1;
 }
 message DeleteItemResponse {
-  bool success = 1;
+  InventoryItem item = 1;
 }
 
