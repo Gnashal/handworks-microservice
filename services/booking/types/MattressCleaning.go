@@ -48,10 +48,5 @@ func UnmarshalMattressDetails(detailsOut []byte) (*MattressCleaningDetails, erro
 	if err := json.Unmarshal(detailsOut, &mattressDetails); err != nil {
 		return nil, err
 	}
-	return &MattressCleaningDetails{
-		BedType:  mattressDetails.BedType,
-		WidthCM:  mattressDetails.WidthCM,
-		DepthCM:  mattressDetails.DepthCM,
-		HeightCM: mattressDetails.HeightCM,
-	}, nil
+	return &mattressDetails, nil
 }

@@ -40,8 +40,5 @@ func UnmarshalCarDetails(detailsOut []byte) (*CarCleaningDetails, error) {
 	if err := json.Unmarshal(detailsOut, &carDetails); err != nil {
 		return nil, err
 	}
-	return &CarCleaningDetails{
-		CarType:    carDetails.CarType,
-		ChildSeats: carDetails.ChildSeats,
-	}, nil
+	return &carDetails, nil
 }

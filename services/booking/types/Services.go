@@ -1,6 +1,7 @@
 package types
 
 import (
+	"fmt"
 	"handworks/common/grpc/booking"
 )
 
@@ -14,36 +15,18 @@ func (mainService ServiceDetails) ToProto() *booking.Services {
 	var detail *booking.ServiceDetail
 
 	switch types := mainService.Details.(type) {
-	case GeneralCleaningDetails:
-		detail = &booking.ServiceDetail{
-			Type: &booking.ServiceDetail_General{
-				General: types.ToProto(),
-			},
-		}
-	case CouchCleaningDetails:
-		detail = &booking.ServiceDetail{
-			Type: &booking.ServiceDetail_Couch{
-				Couch: types.ToProto(),
-			},
-		}
-	case MattressCleaningDetails:
-		detail = &booking.ServiceDetail{
-			Type: &booking.ServiceDetail_Mattress{
-				Mattress: types.ToProto(),
-			},
-		}
-	case CarCleaningDetails:
-		detail = &booking.ServiceDetail{
-			Type: &booking.ServiceDetail_Car{
-				Car: types.ToProto(),
-			},
-		}
-	case PostConstructionDetails:
-		detail = &booking.ServiceDetail{
-			Type: &booking.ServiceDetail_Post{
-				Post: types.ToProto(),
-			},
-		}
+	case *GeneralCleaningDetails:
+		detail = &booking.ServiceDetail{Type: &booking.ServiceDetail_General{General: types.ToProto()}}
+	case *CouchCleaningDetails:
+		detail = &booking.ServiceDetail{Type: &booking.ServiceDetail_Couch{Couch: types.ToProto()}}
+	case *MattressCleaningDetails:
+		detail = &booking.ServiceDetail{Type: &booking.ServiceDetail_Mattress{Mattress: types.ToProto()}}
+	case *CarCleaningDetails:
+		detail = &booking.ServiceDetail{Type: &booking.ServiceDetail_Car{Car: types.ToProto()}}
+	case *PostConstructionDetails:
+		detail = &booking.ServiceDetail{Type: &booking.ServiceDetail_Post{Post: types.ToProto()}}
+	default:
+		detail = nil
 	}
 
 	return &booking.Services{
@@ -80,14 +63,19 @@ func ServiceFromProto(pb *booking.Services) ServiceDetails {
 	}
 }
 
-func ConvertBookingServiceToTypesDetail(service *booking.Services) ServiceDetails {
-	if service == nil {
-		return ServiceDetails{}
-	}
-
-	return ServiceDetails{
-		ID:          service.Id,
-		ServiceType: service.ServiceType.String(),
-		Details:     service.Details,
+func UnmarshalServiceDetails(serviceType string, raw []byte) (any, error) {
+	switch serviceType {
+	case "GENERAL":
+		return UnmarshalGeneralDetails(raw)
+	case "COUCH":
+		return UnmarshalCouchDetails(raw)
+	case "MATTRESS":
+		return UnmarshalMattressDetails(raw)
+	case "CAR":
+		return UnmarshalCarDetails(raw)
+	case "POST":
+		return UnmarshalPostConstructionDetails(raw)
+	default:
+		return nil, fmt.Errorf("unsupported service type: %s", serviceType)
 	}
 }

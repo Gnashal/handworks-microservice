@@ -48,10 +48,5 @@ func UnmarshalCouchDetails(detailsOut []byte) (*CouchCleaningDetails, error) {
 	if err := json.Unmarshal(detailsOut, &couchDetails); err != nil {
 		return nil, err
 	}
-	return &CouchCleaningDetails{
-		CouchType: couchDetails.CouchType,
-		WidthCM:   couchDetails.WidthCM,
-		DepthCM:   couchDetails.DepthCM,
-		HeightCM:  couchDetails.HeightCM,
-	}, nil
+	return &couchDetails, nil
 }

@@ -2063,7 +2063,7 @@ func (x *GetBookingByUIdRequest) GetUserId() string {
 
 type GetBookingByUIdResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Booking       *Booking               `protobuf:"bytes,1,opt,name=booking,proto3" json:"booking,omitempty"`
+	Booking       []*Booking             `protobuf:"bytes,1,rep,name=Booking,proto3" json:"Booking,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2098,7 +2098,7 @@ func (*GetBookingByUIdResponse) Descriptor() ([]byte, []int) {
 	return file_booking_proto_rawDescGZIP(), []int{26}
 }
 
-func (x *GetBookingByUIdResponse) GetBooking() *Booking {
+func (x *GetBookingByUIdResponse) GetBooking() []*Booking {
 	if x != nil {
 		return x.Booking
 	}
@@ -2240,7 +2240,7 @@ const file_booking_proto_rawDesc = "" +
 	"\x16GetBookingByUIdRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\"=\n" +
 	"\x17GetBookingByUIdResponse\x12\"\n" +
-	"\abooking\x18\x01 \x01(\v2\b.BookingR\abooking*h\n" +
+	"\aBooking\x18\x01 \x03(\v2\b.BookingR\aBooking*h\n" +
 	"\x0fMainServiceType\x12\x1c\n" +
 	"\x18SERVICE_TYPE_UNSPECIFIED\x10\x00\x12\v\n" +
 	"\aGENERAL\x10\x01\x12\t\n" +
@@ -2383,7 +2383,7 @@ var file_booking_proto_depIdxs = []int32{
 	13, // 36: CalculatePriceRequest.booking:type_name -> CreateBookingRequest
 	27, // 37: CalculatePriceResponse.breakdown:type_name -> PricingBreakdown
 	10, // 38: GetBookingByIdResponse.booking:type_name -> Booking
-	10, // 39: GetBookingByUIdResponse.booking:type_name -> Booking
+	10, // 39: GetBookingByUIdResponse.Booking:type_name -> Booking
 	13, // 40: BookingService.CreateBooking:input_type -> CreateBookingRequest
 	25, // 41: BookingService.CalculatePrice:input_type -> CalculatePriceRequest
 	28, // 42: BookingService.GetBookingById:input_type -> GetBookingByIdRequest

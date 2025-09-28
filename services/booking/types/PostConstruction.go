@@ -36,7 +36,5 @@ func UnmarshalPostConstructionDetails(detailsOut []byte) (*PostConstructionDetai
 	if err := json.Unmarshal(detailsOut, &postDetails); err != nil {
 		return nil, err
 	}
-	return &PostConstructionDetails{
-		SQM: postDetails.SQM,
-	}, nil
+	return &postDetails, nil
 }

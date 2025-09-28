@@ -40,8 +40,5 @@ func UnmarshalGeneralDetails(detailsOut []byte) (*GeneralCleaningDetails, error)
 	if err := json.Unmarshal(detailsOut, &generalDetails); err != nil {
 		return nil, err
 	}
-	return &GeneralCleaningDetails{
-		HomeType: generalDetails.HomeType,
-		SQM:      generalDetails.SQM,
-	}, nil
+	return &generalDetails, nil
 }

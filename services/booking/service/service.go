@@ -77,7 +77,7 @@ func (b *BookingService) CreateBooking(ctx context.Context, in *booking.CreateBo
 		}
 
 		totalPrice := float64(100.11)
-		bookingID, err := b.saveBooking(ctx, tx, baseBook.ID, mainService.Id, addonIDs, equipmentIDs, resourceIDs, cleanersAssignedIDs, totalPrice)
+		bookingID, err := b.saveBooking(ctx, tx, baseBook.ID, mainService.ID, addonIDs, equipmentIDs, resourceIDs, cleanersAssignedIDs, totalPrice)
 		if err != nil {
 			return err
 		}
@@ -85,7 +85,7 @@ func (b *BookingService) CreateBooking(ctx context.Context, in *booking.CreateBo
 		createdBook = &types.Booking{
 			ID:          bookingID,
 			Base:        *baseBook,
-			MainService: types.ConvertBookingServiceToTypesDetail(mainService),
+			MainService: *mainService,
 			Addons:      addons,
 			Equipments:  equipments,
 			Resources:   resources,
@@ -105,16 +105,15 @@ func (b *BookingService) CreateBooking(ctx context.Context, in *booking.CreateBo
 }
 
 func (b *BookingService) GetBookingByUId(ctx context.Context, in *booking.GetBookingByUIdRequest) (*booking.GetBookingByUIdResponse, error) {
-	b.L.Info("Creating Book for User: %s...", in.UserId)
+	b.L.Info("Getting Book for User: %s...", in.UserId)
 
-	var book *types.Booking
+	var book []*types.Booking
 
 	if err := b.withTx(ctx, b.DB, func(tx pgx.Tx) error {
 		gotBook, err := b.FetchBookingsByUID(ctx, tx, in.UserId)
 		if err != nil {
 			return err
 		}
-
 		book = gotBook
 
 		return nil
@@ -122,7 +121,11 @@ func (b *BookingService) GetBookingByUId(ctx context.Context, in *booking.GetBoo
 		return nil, err
 	}
 
+	var protoBookings []*booking.Booking
+	for _, b := range book {
+		protoBookings = append(protoBookings, b.ToProto())
+	}
 	return &booking.GetBookingByUIdResponse{
-		Booking: book.ToProto(),
+		Booking: protoBookings,
 	}, nil
 }

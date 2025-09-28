@@ -244,5 +244,5 @@ message GetBookingByUIdRequest {
 }
 
 message GetBookingByUIdResponse {
-  Booking booking = 1;
+  repeated Booking Booking = 1;
 }

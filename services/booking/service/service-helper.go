@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"handworks-services-booking/types"
 	"handworks/common/grpc/booking"
@@ -58,9 +59,11 @@ func (b *BookingService) MakeBaseBooking(
             dirty_scale,
             payment_status,
             review_status,
-            photos
+            photos,
+			created_at,
+			updated_at
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
         RETURNING id, cust_id, customer_first_name, customer_last_name, address, schedule, dirty_scale, payment_status, review_status, photos, created_at, updated_at`,
 		custID,
 		customerFirstName,
@@ -71,6 +74,8 @@ func (b *BookingService) MakeBaseBooking(
 		paymentStatus,
 		reviewStatus,
 		photos,
+		time.Now(),
+		time.Now(),
 	).Scan(
 		&createdBaseBook.ID,
 		&createdBaseBook.CustID,
@@ -93,7 +98,7 @@ func (b *BookingService) MakeBaseBooking(
 	return &createdBaseBook, nil
 }
 
-func (b *BookingService) MakeGeneralBooking(ctx context.Context, tx pgx.Tx, general *booking.GeneralCleaningDetails) (*booking.Services, error) {
+func (b *BookingService) MakeGeneralBooking(ctx context.Context, tx pgx.Tx, general *booking.GeneralCleaningDetails) (*types.ServiceDetails, error) {
 	generalDetails := types.GeneralCleaningDetails{
 		HomeType: general.HomeType.String(),
 		SQM:      general.Sqm,
@@ -104,7 +109,7 @@ func (b *BookingService) MakeGeneralBooking(ctx context.Context, tx pgx.Tx, gene
 		return nil, err
 	}
 
-	var service types.ServiceDetails
+	service := types.ServiceDetails{}
 	var rawDetails []byte
 
 	err = tx.QueryRow(ctx, `
@@ -112,7 +117,7 @@ func (b *BookingService) MakeGeneralBooking(ctx context.Context, tx pgx.Tx, gene
 		(service_type, details)
 		VALUES ($1, $2)
 		RETURNING id, service_type, details`,
-		"general", detailsJSON,
+		"GENERAL", detailsJSON,
 	).Scan(&service.ID, &service.ServiceType, &rawDetails)
 	if err != nil {
 		return nil, err
@@ -124,12 +129,10 @@ func (b *BookingService) MakeGeneralBooking(ctx context.Context, tx pgx.Tx, gene
 	}
 	service.Details = generalOut
 
-	protoService := service.ToProto()
-
-	return protoService, nil
+	return &service, nil
 }
 
-func (b *BookingService) MakeCouchBooking(ctx context.Context, tx pgx.Tx, couch *booking.CouchCleaningDetails) (*booking.Services, error) {
+func (b *BookingService) MakeCouchBooking(ctx context.Context, tx pgx.Tx, couch *booking.CouchCleaningDetails) (*types.ServiceDetails, error) {
 	couchDetails := types.CouchCleaningDetails{
 		CouchType: couch.CouchType.String(),
 		WidthCM:   couch.WidthCm,
@@ -142,7 +145,7 @@ func (b *BookingService) MakeCouchBooking(ctx context.Context, tx pgx.Tx, couch 
 		return nil, err
 	}
 
-	var service types.ServiceDetails
+	service := types.ServiceDetails{}
 	var rawDetails []byte
 
 	err = tx.QueryRow(ctx, `
@@ -150,7 +153,7 @@ func (b *BookingService) MakeCouchBooking(ctx context.Context, tx pgx.Tx, couch 
 		(service_type, details)
 		VALUES ($1, $2)
 		RETURNING id, service_type, details`,
-		"couch", detailsJSON,
+		"COUCH", detailsJSON,
 	).Scan(&service.ID, &service.ServiceType, &rawDetails)
 	if err != nil {
 		return nil, err
@@ -162,12 +165,10 @@ func (b *BookingService) MakeCouchBooking(ctx context.Context, tx pgx.Tx, couch 
 	}
 	service.Details = couchOut
 
-	protoService := service.ToProto()
-
-	return protoService, nil
+	return &service, nil
 }
 
-func (b *BookingService) MakeMattressBooking(ctx context.Context, tx pgx.Tx, mattress *booking.MattressCleaningDetails) (*booking.Services, error) {
+func (b *BookingService) MakeMattressBooking(ctx context.Context, tx pgx.Tx, mattress *booking.MattressCleaningDetails) (*types.ServiceDetails, error) {
 	mattressDetails := types.MattressCleaningDetails{
 		BedType:  mattress.BedType.String(),
 		WidthCM:  mattress.WidthCm,
@@ -180,7 +181,7 @@ func (b *BookingService) MakeMattressBooking(ctx context.Context, tx pgx.Tx, mat
 		return nil, err
 	}
 
-	var service types.ServiceDetails
+	service := types.ServiceDetails{}
 	var rawDetails []byte
 
 	err = tx.QueryRow(ctx, `
@@ -188,7 +189,7 @@ func (b *BookingService) MakeMattressBooking(ctx context.Context, tx pgx.Tx, mat
 		(service_type, details)
 		VALUES ($1, $2)
 		RETURNING id, service_type, details`,
-		"mattress", detailsJSON,
+		"MATTRESS", detailsJSON,
 	).Scan(&service.ID, &service.ServiceType, &rawDetails)
 	if err != nil {
 		return nil, err
@@ -200,12 +201,11 @@ func (b *BookingService) MakeMattressBooking(ctx context.Context, tx pgx.Tx, mat
 	}
 	service.Details = mattressOut
 
-	protoService := service.ToProto()
-	return protoService, nil
+	return &service, nil
 }
 
-func (b *BookingService) MakeCarBooking(ctx context.Context, tx pgx.Tx, car *booking.CarCleaningDetails) (*booking.Services, error) {
-	carDetails := types.CarCleaningDetails{
+func (b *BookingService) MakeCarBooking(ctx context.Context, tx pgx.Tx, car *booking.CarCleaningDetails) (*types.ServiceDetails, error) {
+	carDetails := &types.CarCleaningDetails{
 		CarType:    car.CarType.String(),
 		ChildSeats: car.ChildSeats,
 	}
@@ -215,15 +215,15 @@ func (b *BookingService) MakeCarBooking(ctx context.Context, tx pgx.Tx, car *boo
 		return nil, err
 	}
 
-	var service types.ServiceDetails
+	service := types.ServiceDetails{}
 	var rawDetails []byte
 
 	err = tx.QueryRow(ctx, `
-		INSERT INTO booking.services 
-		(service_type, details)
-		VALUES ($1, $2)
-		RETURNING id, service_type, details`,
-		"car", detailsJSON,
+        INSERT INTO booking.services 
+        (service_type, details)
+        VALUES ($1, $2)
+        RETURNING id, service_type, details`,
+		"CAR", detailsJSON,
 	).Scan(&service.ID, &service.ServiceType, &rawDetails)
 	if err != nil {
 		return nil, err
@@ -233,13 +233,13 @@ func (b *BookingService) MakeCarBooking(ctx context.Context, tx pgx.Tx, car *boo
 	if err != nil {
 		return nil, err
 	}
+
 	service.Details = carOut
 
-	protoService := service.ToProto()
-	return protoService, nil
+	return &service, nil
 }
 
-func (b *BookingService) MakePostConstructionBooking(ctx context.Context, tx pgx.Tx, postConstruction *booking.PostConstructionCleaningDetails) (*booking.Services, error) {
+func (b *BookingService) MakePostConstructionBooking(ctx context.Context, tx pgx.Tx, postConstruction *booking.PostConstructionCleaningDetails) (*types.ServiceDetails, error) {
 	postDetails := types.PostConstructionDetails{
 		SQM: postConstruction.Sqm,
 	}
@@ -249,7 +249,7 @@ func (b *BookingService) MakePostConstructionBooking(ctx context.Context, tx pgx
 		return nil, err
 	}
 
-	var service types.ServiceDetails
+	service := types.ServiceDetails{}
 	var rawDetails []byte
 
 	err = tx.QueryRow(ctx, `
@@ -257,7 +257,7 @@ func (b *BookingService) MakePostConstructionBooking(ctx context.Context, tx pgx
 		(service_type, details)
 		VALUES ($1, $2)
 		RETURNING id, service_type, details`,
-		"post", detailsJSON,
+		"POST", detailsJSON,
 	).Scan(&service.ID, &service.ServiceType, &rawDetails)
 	if err != nil {
 		return nil, err
@@ -269,15 +269,14 @@ func (b *BookingService) MakePostConstructionBooking(ctx context.Context, tx pgx
 	}
 	service.Details = postOut
 
-	protoService := service.ToProto()
-	return protoService, nil
+	return &service, nil
 }
 
 func (b *BookingService) createMainServiceBooking(
 	ctx context.Context,
 	tx pgx.Tx,
 	mainService *booking.ServiceDetail,
-) (*booking.Services, error) {
+) (*types.ServiceDetails, error) {
 	switch details := mainService.Type.(type) {
 	case *booking.ServiceDetail_General:
 		return b.MakeGeneralBooking(ctx, tx, details.General)
@@ -304,13 +303,16 @@ func (b *BookingService) createAddOn(
 		return nil, fmt.Errorf("failed to create service details: %w", err)
 	}
 
-	var createdAddon types.AddOns
+	createdAddon := &types.AddOns{
+		ServiceDetail: *addOnServiceDetails,
+	}
+
 	err = tx.QueryRow(ctx,
 		`INSERT INTO booking.addons 
 		(service_id, price)
 		 VALUES ($1, $2)
 		 RETURNING id, service_id, price`,
-		addOnServiceDetails.Id,
+		addOnServiceDetails.ID,
 		addon.Price,
 	).Scan(
 		&createdAddon.ID,
@@ -321,7 +323,7 @@ func (b *BookingService) createAddOn(
 		return nil, fmt.Errorf("failed to insert addon: %w", err)
 	}
 
-	return &createdAddon, nil
+	return createdAddon, nil
 }
 
 func (b *BookingService) createEquipment(
@@ -405,85 +407,308 @@ func (b *BookingService) saveBooking(
 	return id, nil
 }
 
-func (b *BookingService) FetchBookingsByUID(
-	ctx context.Context,
-	tx pgx.Tx,
-	userID string,
-) (*types.Booking, error) {
-	var booking types.Booking
-	var addonIDs []string
-	var equipmentIDs []string
-	var resourceIDs []string
-	var cleanerIDs []string
+// func (b *BookingService) FetchBookingsByUID(
+// 	ctx context.Context,
+// 	tx pgx.Tx,
+// 	userID string,
+// ) (*types.Booking, error) {
+// 	query := `
+//         SELECT
+// 		b.id                   AS booking_id,
+// 		b.base_booking_id,
+// 		b.main_service_id,
+// 		b.addon_ids,
+// 		b.equipment_ids,
+// 		b.resource_ids,
+// 		b.cleaner_ids,
+// 		b.total_price,
 
+// 		bb.id                  AS base_id,
+// 		bb.cust_id,
+// 		bb.customer_first_name,
+// 		bb.customer_last_name,
+// 		bb.address,
+// 		bb.schedule,
+// 		bb.dirty_scale,
+// 		bb.payment_status,
+// 		bb.review_status,
+// 		bb.photos,
+// 		bb.created_at,
+// 		bb.updated_at,
+
+// 		a.id                   AS addon_id,
+// 		a.service_id           AS addon_service_id,
+// 		a.price                AS addon_price,
+
+// 		ms.service_type        AS main_service_type,
+// 		ms.details             AS main_service_details,
+// 		s.service_type         AS addon_service_type,
+// 		s.details              AS addon_service_details
+
+// 		FROM booking.bookings b
+// 		JOIN booking.basebookings bb ON b.base_booking_id = bb.id
+// 		JOIN booking.services ms      ON b.main_service_id = ms.id
+// 		LEFT JOIN LATERAL unnest(b.addon_ids) AS addon_id(addon_id) ON true
+// 		LEFT JOIN booking.addons a     ON addon_id.addon_id = a.id
+// 		LEFT JOIN booking.services s   ON a.service_id = s.id
+//         WHERE bb.cust_id = $1;
+//     `
+// 	rows, err := tx.Query(ctx, query, userID)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	defer rows.Close()
+
+// 	var booking types.Booking
+// 	booking.Addons = make([]types.AddOns, 0)
+
+// 	for rows.Next() {
+// 		var addonID, addonServiceID, mainServiceType, addonServiceType string
+// 		var addonPrice sql.NullFloat64
+// 		var mainRawDetails, addonRawDetails []byte
+
+// 		var addonIDs, equipmentIDs, resourceIDs, cleanerIDs []string
+
+// 		if err := rows.Scan(
+// 			&booking.ID,
+// 			&booking.Base.ID,
+// 			&booking.MainService.ID,
+// 			&addonIDs,
+// 			&equipmentIDs,
+// 			&resourceIDs,
+// 			&cleanerIDs,
+// 			&booking.TotalPrice,
+
+// 			&booking.Base.ID,
+// 			&booking.Base.CustID,
+// 			&booking.Base.CustomerFirstName,
+// 			&booking.Base.CustomerLastName,
+// 			&booking.Base.Address,
+// 			&booking.Base.Schedule,
+// 			&booking.Base.DirtyScale,
+// 			&booking.Base.PaymentStatus,
+// 			&booking.Base.ReviewStatus,
+// 			&booking.Base.Photos,
+// 			&booking.Base.CreatedAt,
+// 			&booking.Base.UpdatedAt,
+
+// 			&addonID,
+// 			&addonServiceID,
+// 			&addonPrice,
+
+// 			&mainServiceType,
+// 			&mainRawDetails,
+// 			&addonServiceType,
+// 			&addonRawDetails,
+// 		); err != nil {
+// 			return nil, err
+// 		}
+
+// 		if booking.MainService.ServiceType == "" {
+// 			var details any
+// 			details, err := types.UnmarshalServiceDetails(mainServiceType, mainRawDetails)
+// 			if err != nil {
+// 				return nil, err
+// 			}
+// 			booking.MainService.ServiceType = mainServiceType
+// 			booking.MainService.Details = details
+// 		}
+
+// 		if addonID != "" {
+// 			var details any
+// 			details, err := types.UnmarshalServiceDetails(addonServiceType, addonRawDetails)
+// 			if err != nil {
+// 				return nil, err
+// 			}
+
+// 			booking.Addons = append(booking.Addons, types.AddOns{
+// 				ID:    addonID,
+// 				Price: float32(addonPrice.Float64),
+// 				ServiceDetail: types.ServiceDetails{
+// 					ID:          addonServiceID,
+// 					ServiceType: addonServiceType,
+// 					Details:     details,
+// 				},
+// 			})
+// 		}
+
+// 		for _, id := range equipmentIDs {
+// 			booking.Equipments = append(booking.Equipments, types.CleaningEquipment{ID: id})
+// 		}
+// 		for _, id := range resourceIDs {
+// 			booking.Resources = append(booking.Resources, types.CleaningResources{ID: id})
+// 		}
+// 		for _, id := range cleanerIDs {
+// 			booking.Cleaners = append(booking.Cleaners, types.CleanerAssigned{ID: id})
+// 		}
+// 	}
+
+// 	if rows.Err() != nil {
+// 		return nil, rows.Err()
+// 	}
+
+// 	return &booking, nil
+// }
+
+func (b *BookingService) FetchBookingsByUID(ctx context.Context, tx pgx.Tx, userID string) ([]*types.Booking, error) {
 	query := `
-		SELECT
-			b.id AS booking_id,
-			b.base_booking_id,
-			b.total_price,
-			b.addon_ids,
-			b.equipment_ids,
-			b.resource_ids,
-			b.cleaner_ids,
-			bb.id AS base_id,
-			bb.cust_id,
-			bb.customer_first_name,
-			bb.customer_last_name,
-			bb.address,
-			bb.schedule,
-			bb.dirty_scale,
-			bb.payment_status,
-			bb.review_status,
-			bb.photos,
-			bb.created_at,
-			bb.updated_at
-		FROM booking.bookings b
-		JOIN booking.basebookings bb
-		ON b.base_booking_id = bb.id
-		WHERE bb.cust_id = $1;`
+        SELECT
+		b.id                   AS booking_id,
+		b.base_booking_id,
+		b.main_service_id,
+		b.addon_ids,
+		b.equipment_ids,
+		b.resource_ids,
+		b.cleaner_ids,
+		b.total_price,
 
-	err := tx.QueryRow(ctx, query,
-		userID,
-	).Scan(
-		&booking.ID,
-		&booking.Base.CustID,
-		&booking.TotalPrice,
-		&addonIDs,
-		&equipmentIDs,
-		&resourceIDs,
-		&cleanerIDs,
-		&booking.Base.ID,
-		&booking.Base.CustID,
-		&booking.Base.CustomerFirstName,
-		&booking.Base.CustomerLastName,
-		&booking.Base.Address,
-		&booking.Base.Schedule,
-		&booking.Base.DirtyScale,
-		&booking.Base.PaymentStatus,
-		&booking.Base.ReviewStatus,
-		&booking.Base.Photos,
-		&booking.Base.CreatedAt,
-		&booking.Base.UpdatedAt,
-	)
+		bb.id                  AS base_id,
+		bb.cust_id,
+		bb.customer_first_name,
+		bb.customer_last_name,
+		bb.address,
+		bb.schedule,
+		bb.dirty_scale,
+		bb.payment_status,
+		bb.review_status,
+		bb.photos,
+		bb.created_at,
+		bb.updated_at,
+
+		a.id                   AS addon_id,
+		a.service_id           AS addon_service_id,
+		a.price                AS addon_price,
+
+		ms.service_type        AS main_service_type,
+		ms.details             AS main_service_details,
+		s.service_type         AS addon_service_type,
+		s.details              AS addon_service_details
+
+		FROM booking.bookings b
+		JOIN booking.basebookings bb ON b.base_booking_id = bb.id
+		JOIN booking.services ms      ON b.main_service_id = ms.id
+		LEFT JOIN LATERAL unnest(b.addon_ids) AS addon_id(addon_id) ON true
+		LEFT JOIN booking.addons a     ON addon_id.addon_id = a.id
+		LEFT JOIN booking.services s   ON a.service_id = s.id
+        WHERE bb.cust_id = $1;
+    `
+
+	rows, err := tx.Query(ctx, query, userID)
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
-	for _, id := range addonIDs {
-		booking.Addons = append(booking.Addons, types.AddOns{ID: id})
+	bookingsMap := make(map[string]*types.Booking)
+
+	for rows.Next() {
+		var bookingID, baseID, mainServiceID string
+		var addonID, addonServiceID, mainServiceType, addonServiceType string
+		var addonPrice sql.NullFloat64
+		var mainRawDetails, addonRawDetails []byte
+		var addonIDs, equipmentIDs, resourceIDs, cleanerIDs []string
+		var base types.BaseBookingDetails
+		var totalPrice float32
+
+		if err := rows.Scan(
+			&bookingID,
+			&baseID,
+			&mainServiceID,
+			&addonIDs,
+			&equipmentIDs,
+			&resourceIDs,
+			&cleanerIDs,
+			&totalPrice,
+			// Base fields
+			&base.ID,
+			&base.CustID,
+			&base.CustomerFirstName,
+			&base.CustomerLastName,
+			&base.Address,
+			&base.Schedule,
+			&base.DirtyScale,
+			&base.PaymentStatus,
+			&base.ReviewStatus,
+			&base.Photos,
+			&base.CreatedAt,
+			&base.UpdatedAt,
+			// addon fields
+			&addonID,
+			&addonServiceID,
+			&addonPrice,
+			// service details
+			&mainServiceType,
+			&mainRawDetails,
+			&addonServiceType,
+			&addonRawDetails,
+		); err != nil {
+			return nil, err
+		}
+
+		bk, exists := bookingsMap[bookingID]
+		if !exists {
+			// First row for this booking, create Booking
+			details, err := types.UnmarshalServiceDetails(mainServiceType, mainRawDetails)
+			if err != nil {
+				return nil, err
+			}
+
+			bk = &types.Booking{
+				ID:   bookingID,
+				Base: base,
+				MainService: types.ServiceDetails{
+					ID:          mainServiceID,
+					ServiceType: mainServiceType,
+					Details:     details,
+				},
+				Addons:     []types.AddOns{},
+				Equipments: []types.CleaningEquipment{},
+				Resources:  []types.CleaningResources{},
+				Cleaners:   []types.CleanerAssigned{},
+				TotalPrice: totalPrice,
+			}
+
+			// populate equipments/resources/cleaners from IDs
+			for _, id := range equipmentIDs {
+				bk.Equipments = append(bk.Equipments, types.CleaningEquipment{ID: id})
+			}
+			for _, id := range resourceIDs {
+				bk.Resources = append(bk.Resources, types.CleaningResources{ID: id})
+			}
+			for _, id := range cleanerIDs {
+				bk.Cleaners = append(bk.Cleaners, types.CleanerAssigned{ID: id})
+			}
+
+			bookingsMap[bookingID] = bk
+		}
+
+		// Add addon if present
+		if addonID != "" {
+			details, err := types.UnmarshalServiceDetails(addonServiceType, addonRawDetails)
+			if err != nil {
+				return nil, err
+			}
+			bk.Addons = append(bk.Addons, types.AddOns{
+				ID:    addonID,
+				Price: float32(addonPrice.Float64),
+				ServiceDetail: types.ServiceDetails{
+					ID:          addonServiceID,
+					ServiceType: addonServiceType,
+					Details:     details,
+				},
+			})
+		}
 	}
 
-	for _, id := range equipmentIDs {
-		booking.Equipments = append(booking.Equipments, types.CleaningEquipment{ID: id})
+	if rows.Err() != nil {
+		return nil, rows.Err()
 	}
 
-	for _, id := range resourceIDs {
-		booking.Resources = append(booking.Resources, types.CleaningResources{ID: id})
+	// convert map to slice
+	bookings := make([]*types.Booking, 0, len(bookingsMap))
+	for _, b := range bookingsMap {
+		bookings = append(bookings, b)
 	}
 
-	for _, id := range cleanerIDs {
-		booking.Cleaners = append(booking.Cleaners, types.CleanerAssigned{ID: id})
-	}
-
-	return &booking, nil
+	return bookings, nil
 }
