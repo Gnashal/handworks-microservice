@@ -43,7 +43,7 @@ func main() {
 	go func() {
 		defer wg.Done()
 		if err := server.StartGrpcServer(&bookService, logger); err != nil {
-			logger.Fatal("Initialization of Account GRPC Server Failed: %v", err)
+			logger.Fatal("Initialization of Booking GRPC Server Failed: %v", err)
 		}
 	}()
 
