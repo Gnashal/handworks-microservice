@@ -1,0 +1,104 @@
+syntax = "proto3";
+
+option go_package="handworks/common/grpc/inventory";
+import "google/protobuf/timestamp.proto";
+
+service InventoryService {
+  rpc CreateItem(CreateItemRequest) returns (CreateItemResponse);
+  rpc GetItem(GetItemRequest) returns (GetItemResponse);
+  rpc ListAllItems(Empty) returns (ListItemsResponse);
+  rpc ListItemsByType(ListItemsByTypeRequest) returns (ListItemsResponse);
+  rpc ListItemsByStatus(ListItemsByStatusRequest) returns (ListItemsResponse);
+  rpc ListItemsByCategory(ListItemsByCategoryRequest) returns (ListItemsResponse);
+  rpc UpdateItem(UpdateItemRequest) returns (UpdateItemResponse);
+  rpc DeleteItem(DeleteItemRequest) returns (DeleteItemResponse);
+}
+
+
+enum ItemType {
+  ITEM_TYPE_UNSPECIFIED = 0;
+  RESOURCE = 1; // consumables: soap, sosa, detergent
+  EQUIPMENT = 2; // tools: broom, vacuum, brushes
+}
+enum ItemStatus {
+    ITEM_STATUS_UNSPECIFIED = 0;
+    HIGH = 1;
+    LOW = 2;
+    DANGER = 3;
+    OUT_OF_STOCK = 4;
+}
+enum ItemCategory {
+    ITEM_CATEGORY_UNSPECIFIED = 0;
+    GENERAL = 1;
+    ELECTRONICS = 2;
+    FURNITURE = 3;
+    APPLIANCES = 4;
+    VEHICLES = 5;
+    OTHER = 6;
+}
+
+message InventoryItem {
+  string id = 1;
+  string name = 2;
+  ItemType type = 3;
+  ItemStatus status = 4;
+  ItemCategory category = 5;
+  int32 quantity = 6; 
+  int32 max_quantity = 7;
+  string unit = 8;    
+  bool is_available = 9; 
+  google.protobuf.Timestamp createdAt = 10;
+  google.protobuf.Timestamp updatedAt = 11;
+}
+
+message CreateItemRequest {
+  string name = 1;
+  string type = 2;
+  string category = 3;
+  int32 quantity = 4;
+  string unit = 5;
+}
+message CreateItemResponse {
+  InventoryItem item = 1;
+}
+
+message GetItemRequest {
+  string id = 1;
+}
+message GetItemResponse {
+  InventoryItem item = 1;
+}
+message ListItemsByTypeRequest {
+  string type = 1;
+}
+message ListItemsByStatusRequest {
+  string status = 1;
+}
+message ListItemsByCategoryRequest {
+  string category = 1;
+}
+message Empty {}
+message ListItemsResponse {
+  repeated InventoryItem items = 1;
+}
+
+message UpdateItemRequest {
+  string name = 1;
+  string type = 2;
+  string status = 3;
+  string category = 4;
+  int32 quantity = 5;
+  int32 max_quantity = 6;
+  string id = 7;
+}
+message UpdateItemResponse {
+  InventoryItem item = 1;
+}
+
+message DeleteItemRequest {
+  string id = 1;
+}
+message DeleteItemResponse {
+  InventoryItem item = 1;
+}
+
