@@ -2193,6 +2193,102 @@ func (x *DeleteBookingByIDResponse) GetSuccess() bool {
 	return false
 }
 
+type DeleteBookingAddonByIdRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	AddonId       string                 `protobuf:"bytes,1,opt,name=addon_id,json=addonId,proto3" json:"addon_id,omitempty"`
+	BookingId     string                 `protobuf:"bytes,2,opt,name=booking_id,json=bookingId,proto3" json:"booking_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteBookingAddonByIdRequest) Reset() {
+	*x = DeleteBookingAddonByIdRequest{}
+	mi := &file_booking_proto_msgTypes[29]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteBookingAddonByIdRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteBookingAddonByIdRequest) ProtoMessage() {}
+
+func (x *DeleteBookingAddonByIdRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_booking_proto_msgTypes[29]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteBookingAddonByIdRequest.ProtoReflect.Descriptor instead.
+func (*DeleteBookingAddonByIdRequest) Descriptor() ([]byte, []int) {
+	return file_booking_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *DeleteBookingAddonByIdRequest) GetAddonId() string {
+	if x != nil {
+		return x.AddonId
+	}
+	return ""
+}
+
+func (x *DeleteBookingAddonByIdRequest) GetBookingId() string {
+	if x != nil {
+		return x.BookingId
+	}
+	return ""
+}
+
+type DeleteBookingAddonByIdResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteBookingAddonByIdResponse) Reset() {
+	*x = DeleteBookingAddonByIdResponse{}
+	mi := &file_booking_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteBookingAddonByIdResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteBookingAddonByIdResponse) ProtoMessage() {}
+
+func (x *DeleteBookingAddonByIdResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_booking_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteBookingAddonByIdResponse.ProtoReflect.Descriptor instead.
+func (*DeleteBookingAddonByIdResponse) Descriptor() ([]byte, []int) {
+	return file_booking_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *DeleteBookingAddonByIdResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
 var File_booking_proto protoreflect.FileDescriptor
 
 const file_booking_proto_rawDesc = "" +
@@ -2333,6 +2429,12 @@ const file_booking_proto_rawDesc = "" +
 	"\n" +
 	"booking_id\x18\x01 \x01(\tR\tbookingId\"5\n" +
 	"\x19DeleteBookingByIDResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"Y\n" +
+	"\x1dDeleteBookingAddonByIdRequest\x12\x19\n" +
+	"\baddon_id\x18\x01 \x01(\tR\aaddonId\x12\x1d\n" +
+	"\n" +
+	"booking_id\x18\x02 \x01(\tR\tbookingId\":\n" +
+	"\x1eDeleteBookingAddonByIdResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess*h\n" +
 	"\x0fMainServiceType\x12\x1c\n" +
 	"\x18SERVICE_TYPE_UNSPECIFIED\x10\x00\x12\v\n" +
@@ -2380,14 +2482,15 @@ const file_booking_proto_rawDesc = "" +
 	"\n" +
 	"\x06PICKUP\x10\x03\x12\a\n" +
 	"\x03VAN\x10\x04\x12\r\n" +
-	"\tCAR_SMALL\x10\x052\x89\x03\n" +
+	"\tCAR_SMALL\x10\x052\xe4\x03\n" +
 	"\x0eBookingService\x12>\n" +
 	"\rCreateBooking\x12\x15.CreateBookingRequest\x1a\x16.CreateBookingResponse\x12A\n" +
 	"\x0eCalculatePrice\x12\x16.CalculatePriceRequest\x1a\x17.CalculatePriceResponse\x12A\n" +
 	"\x0eGetBookingById\x12\x16.GetBookingByIdRequest\x1a\x17.GetBookingByIdResponse\x12D\n" +
 	"\x0fGetBookingByUId\x12\x17.GetBookingByUIdRequest\x1a\x18.GetBookingByUIdResponse\x12#\n" +
 	"\rUpdateBooking\x12\b.Booking\x1a\b.Booking\x12F\n" +
-	"\rDeleteBooking\x12\x19.DeleteBookingByIDRequest\x1a\x1a.DeleteBookingByIDResponseB\x1fZ\x1dhandworks/common/grpc/bookingb\x06proto3"
+	"\rDeleteBooking\x12\x19.DeleteBookingByIDRequest\x1a\x1a.DeleteBookingByIDResponse\x12Y\n" +
+	"\x16DeleteBookingAddonById\x12\x1e.DeleteBookingAddonByIdRequest\x1a\x1f.DeleteBookingAddonByIdResponseB\x1fZ\x1dhandworks/common/grpc/bookingb\x06proto3"
 
 var (
 	file_booking_proto_rawDescOnce sync.Once
@@ -2402,7 +2505,7 @@ func file_booking_proto_rawDescGZIP() []byte {
 }
 
 var file_booking_proto_enumTypes = make([]protoimpl.EnumInfo, 5)
-var file_booking_proto_msgTypes = make([]protoimpl.MessageInfo, 29)
+var file_booking_proto_msgTypes = make([]protoimpl.MessageInfo, 31)
 var file_booking_proto_goTypes = []any{
 	(MainServiceType)(0),                    // 0: MainServiceType
 	(HomeType)(0),                           // 1: HomeType
@@ -2438,7 +2541,9 @@ var file_booking_proto_goTypes = []any{
 	(*GetBookingByUIdResponse)(nil),         // 31: GetBookingByUIdResponse
 	(*DeleteBookingByIDRequest)(nil),        // 32: DeleteBookingByIDRequest
 	(*DeleteBookingByIDResponse)(nil),       // 33: DeleteBookingByIDResponse
-	(*timestamppb.Timestamp)(nil),           // 34: google.protobuf.Timestamp
+	(*DeleteBookingAddonByIdRequest)(nil),   // 34: DeleteBookingAddonByIdRequest
+	(*DeleteBookingAddonByIdResponse)(nil),  // 35: DeleteBookingAddonByIdResponse
+	(*timestamppb.Timestamp)(nil),           // 36: google.protobuf.Timestamp
 }
 var file_booking_proto_depIdxs = []int32{
 	16, // 0: ServiceDetail.general:type_name -> GeneralCleaningDetails
@@ -2454,9 +2559,9 @@ var file_booking_proto_depIdxs = []int32{
 	8,  // 10: Booking.cleaners:type_name -> CleanerAssigned
 	15, // 11: AddOn.serviceDetail:type_name -> Services
 	5,  // 12: BaseBookingDetails.address:type_name -> Address
-	34, // 13: BaseBookingDetails.schedule:type_name -> google.protobuf.Timestamp
-	34, // 14: BaseBookingDetails.created_at:type_name -> google.protobuf.Timestamp
-	34, // 15: BaseBookingDetails.updated_at:type_name -> google.protobuf.Timestamp
+	36, // 13: BaseBookingDetails.schedule:type_name -> google.protobuf.Timestamp
+	36, // 14: BaseBookingDetails.created_at:type_name -> google.protobuf.Timestamp
+	36, // 15: BaseBookingDetails.updated_at:type_name -> google.protobuf.Timestamp
 	12, // 16: CreateBookingRequest.base:type_name -> BaseBookingDetails
 	15, // 17: CreateBookingRequest.main_service:type_name -> Services
 	11, // 18: CreateBookingRequest.addons:type_name -> AddOn
@@ -2487,14 +2592,16 @@ var file_booking_proto_depIdxs = []int32{
 	30, // 43: BookingService.GetBookingByUId:input_type -> GetBookingByUIdRequest
 	10, // 44: BookingService.UpdateBooking:input_type -> Booking
 	32, // 45: BookingService.DeleteBooking:input_type -> DeleteBookingByIDRequest
-	14, // 46: BookingService.CreateBooking:output_type -> CreateBookingResponse
-	26, // 47: BookingService.CalculatePrice:output_type -> CalculatePriceResponse
-	29, // 48: BookingService.GetBookingById:output_type -> GetBookingByIdResponse
-	31, // 49: BookingService.GetBookingByUId:output_type -> GetBookingByUIdResponse
-	10, // 50: BookingService.UpdateBooking:output_type -> Booking
-	33, // 51: BookingService.DeleteBooking:output_type -> DeleteBookingByIDResponse
-	46, // [46:52] is the sub-list for method output_type
-	40, // [40:46] is the sub-list for method input_type
+	34, // 46: BookingService.DeleteBookingAddonById:input_type -> DeleteBookingAddonByIdRequest
+	14, // 47: BookingService.CreateBooking:output_type -> CreateBookingResponse
+	26, // 48: BookingService.CalculatePrice:output_type -> CalculatePriceResponse
+	29, // 49: BookingService.GetBookingById:output_type -> GetBookingByIdResponse
+	31, // 50: BookingService.GetBookingByUId:output_type -> GetBookingByUIdResponse
+	10, // 51: BookingService.UpdateBooking:output_type -> Booking
+	33, // 52: BookingService.DeleteBooking:output_type -> DeleteBookingByIDResponse
+	35, // 53: BookingService.DeleteBookingAddonById:output_type -> DeleteBookingAddonByIdResponse
+	47, // [47:54] is the sub-list for method output_type
+	40, // [40:47] is the sub-list for method input_type
 	40, // [40:40] is the sub-list for extension type_name
 	40, // [40:40] is the sub-list for extension extendee
 	0,  // [0:40] is the sub-list for field type_name
@@ -2525,7 +2632,7 @@ func file_booking_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_booking_proto_rawDesc), len(file_booking_proto_rawDesc)),
 			NumEnums:      5,
-			NumMessages:   29,
+			NumMessages:   31,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

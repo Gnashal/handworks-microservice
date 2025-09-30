@@ -10,6 +10,7 @@ service BookingService {
   rpc GetBookingByUId(GetBookingByUIdRequest) returns (GetBookingByUIdResponse);
   rpc UpdateBooking(Booking) returns (Booking);
   rpc DeleteBooking(DeleteBookingByIDRequest) returns (DeleteBookingByIDResponse);
+  rpc DeleteBookingAddonById(DeleteBookingAddonByIdRequest) returns (DeleteBookingAddonByIdResponse);
 }
 
 message Address {
@@ -238,5 +239,14 @@ message DeleteBookingByIDRequest {
 }
 
 message DeleteBookingByIDResponse {
+  bool success = 1;
+}
+
+message DeleteBookingAddonByIdRequest {
+  string addon_id = 1;
+  string booking_id = 2;
+}
+
+message DeleteBookingAddonByIdResponse {
   bool success = 1;
 }

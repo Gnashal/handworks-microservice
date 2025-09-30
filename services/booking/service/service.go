@@ -151,3 +151,25 @@ func (b *BookingService) DeleteBooking(ctx context.Context, in *booking.DeleteBo
 		Success: success,
 	}, nil
 }
+
+func (b *BookingService) DeleteBookingAddonById(ctx context.Context, in *booking.DeleteBookingAddonByIdRequest) (*booking.DeleteBookingAddonByIdResponse, error) {
+	b.L.Info("Deleting Book Addon with ID: %s, from Booking with ID: %s", in.AddonId, in.BookingId)
+
+	var success bool
+
+	if err := b.withTx(ctx, b.DB, func(tx pgx.Tx) error {
+		isDeleted, err := b.RemoveBookingAddonById(ctx, tx, in.BookingId, in.AddonId)
+		if err != nil {
+			return err
+		}
+		success = isDeleted
+
+		return nil
+	}); err != nil {
+		return nil, err
+	}
+
+	return &booking.DeleteBookingAddonByIdResponse{
+		Success: success,
+	}, nil
+}

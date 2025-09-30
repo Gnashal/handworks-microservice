@@ -638,3 +638,11 @@ func (b *BookingService) RemoveBooking(ctx context.Context, tx pgx.Tx, bookingID
 
 	return true, nil
 }
+
+func (b *BookingService) RemoveBookingAddonById(ctx context.Context, tx pgx.Tx, bookingId string, addonId string) (bool, error) {
+	// Fetch the IDs from booking then we remove the addon Id by marshalling and unmarshalling
+	// the json data from the database then delete the addons from the addon table and the services
+	// its connected to the services table
+
+	return true, nil
+}
