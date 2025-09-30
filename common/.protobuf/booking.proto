@@ -8,6 +8,8 @@ service BookingService {
   rpc CalculatePrice(CalculatePriceRequest) returns (CalculatePriceResponse);
   rpc GetBookingById(GetBookingByIdRequest) returns (GetBookingByIdResponse);
   rpc GetBookingByUId(GetBookingByUIdRequest) returns (GetBookingByUIdResponse);
+  rpc UpdateBooking(Booking) returns (Booking);
+  rpc DeleteBooking(DeleteBookingByIDRequest) returns (DeleteBookingByIDResponse);
 }
 
 message Address {
@@ -229,4 +231,12 @@ message GetBookingByUIdRequest {
 
 message GetBookingByUIdResponse {
   repeated Booking Booking = 1;
+}
+
+message DeleteBookingByIDRequest {
+  string booking_id = 1;
+}
+
+message DeleteBookingByIDResponse {
+  bool success = 1;
 }

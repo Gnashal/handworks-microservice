@@ -129,3 +129,25 @@ func (b *BookingService) GetBookingByUId(ctx context.Context, in *booking.GetBoo
 		Booking: protoBookings,
 	}, nil
 }
+
+func (b *BookingService) DeleteBooking(ctx context.Context, in *booking.DeleteBookingByIDRequest) (*booking.DeleteBookingByIDResponse, error) {
+	b.L.Info("Deleting Book with ID: %s", in.BookingId)
+
+	var success bool
+
+	if err := b.withTx(ctx, b.DB, func(tx pgx.Tx) error {
+		isDeleted, err := b.RemoveBooking(ctx, tx, in.BookingId)
+		if err != nil {
+			return err
+		}
+		success = isDeleted
+
+		return nil
+	}); err != nil {
+		return nil, err
+	}
+
+	return &booking.DeleteBookingByIDResponse{
+		Success: success,
+	}, nil
+}

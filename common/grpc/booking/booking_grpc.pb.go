@@ -23,6 +23,8 @@ const (
 	BookingService_CalculatePrice_FullMethodName  = "/BookingService/CalculatePrice"
 	BookingService_GetBookingById_FullMethodName  = "/BookingService/GetBookingById"
 	BookingService_GetBookingByUId_FullMethodName = "/BookingService/GetBookingByUId"
+	BookingService_UpdateBooking_FullMethodName   = "/BookingService/UpdateBooking"
+	BookingService_DeleteBooking_FullMethodName   = "/BookingService/DeleteBooking"
 )
 
 // BookingServiceClient is the client API for BookingService service.
@@ -33,6 +35,8 @@ type BookingServiceClient interface {
 	CalculatePrice(ctx context.Context, in *CalculatePriceRequest, opts ...grpc.CallOption) (*CalculatePriceResponse, error)
 	GetBookingById(ctx context.Context, in *GetBookingByIdRequest, opts ...grpc.CallOption) (*GetBookingByIdResponse, error)
 	GetBookingByUId(ctx context.Context, in *GetBookingByUIdRequest, opts ...grpc.CallOption) (*GetBookingByUIdResponse, error)
+	UpdateBooking(ctx context.Context, in *Booking, opts ...grpc.CallOption) (*Booking, error)
+	DeleteBooking(ctx context.Context, in *DeleteBookingByIDRequest, opts ...grpc.CallOption) (*DeleteBookingByIDResponse, error)
 }
 
 type bookingServiceClient struct {
@@ -83,6 +87,26 @@ func (c *bookingServiceClient) GetBookingByUId(ctx context.Context, in *GetBooki
 	return out, nil
 }
 
+func (c *bookingServiceClient) UpdateBooking(ctx context.Context, in *Booking, opts ...grpc.CallOption) (*Booking, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Booking)
+	err := c.cc.Invoke(ctx, BookingService_UpdateBooking_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *bookingServiceClient) DeleteBooking(ctx context.Context, in *DeleteBookingByIDRequest, opts ...grpc.CallOption) (*DeleteBookingByIDResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteBookingByIDResponse)
+	err := c.cc.Invoke(ctx, BookingService_DeleteBooking_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BookingServiceServer is the server API for BookingService service.
 // All implementations must embed UnimplementedBookingServiceServer
 // for forward compatibility.
@@ -91,6 +115,8 @@ type BookingServiceServer interface {
 	CalculatePrice(context.Context, *CalculatePriceRequest) (*CalculatePriceResponse, error)
 	GetBookingById(context.Context, *GetBookingByIdRequest) (*GetBookingByIdResponse, error)
 	GetBookingByUId(context.Context, *GetBookingByUIdRequest) (*GetBookingByUIdResponse, error)
+	UpdateBooking(context.Context, *Booking) (*Booking, error)
+	DeleteBooking(context.Context, *DeleteBookingByIDRequest) (*DeleteBookingByIDResponse, error)
 	mustEmbedUnimplementedBookingServiceServer()
 }
 
@@ -112,6 +138,12 @@ func (UnimplementedBookingServiceServer) GetBookingById(context.Context, *GetBoo
 }
 func (UnimplementedBookingServiceServer) GetBookingByUId(context.Context, *GetBookingByUIdRequest) (*GetBookingByUIdResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBookingByUId not implemented")
+}
+func (UnimplementedBookingServiceServer) UpdateBooking(context.Context, *Booking) (*Booking, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateBooking not implemented")
+}
+func (UnimplementedBookingServiceServer) DeleteBooking(context.Context, *DeleteBookingByIDRequest) (*DeleteBookingByIDResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteBooking not implemented")
 }
 func (UnimplementedBookingServiceServer) mustEmbedUnimplementedBookingServiceServer() {}
 func (UnimplementedBookingServiceServer) testEmbeddedByValue()                        {}
@@ -206,6 +238,42 @@ func _BookingService_GetBookingByUId_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BookingService_UpdateBooking_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Booking)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BookingServiceServer).UpdateBooking(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BookingService_UpdateBooking_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BookingServiceServer).UpdateBooking(ctx, req.(*Booking))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BookingService_DeleteBooking_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteBookingByIDRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BookingServiceServer).DeleteBooking(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BookingService_DeleteBooking_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BookingServiceServer).DeleteBooking(ctx, req.(*DeleteBookingByIDRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BookingService_ServiceDesc is the grpc.ServiceDesc for BookingService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -228,6 +296,14 @@ var BookingService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetBookingByUId",
 			Handler:    _BookingService_GetBookingByUId_Handler,
+		},
+		{
+			MethodName: "UpdateBooking",
+			Handler:    _BookingService_UpdateBooking_Handler,
+		},
+		{
+			MethodName: "DeleteBooking",
+			Handler:    _BookingService_DeleteBooking_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

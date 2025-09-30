@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"handworks-services-booking/types"
 	"handworks/common/grpc/booking"
@@ -407,149 +408,6 @@ func (b *BookingService) saveBooking(
 	return id, nil
 }
 
-// func (b *BookingService) FetchBookingsByUID(
-// 	ctx context.Context,
-// 	tx pgx.Tx,
-// 	userID string,
-// ) (*types.Booking, error) {
-// 	query := `
-//         SELECT
-// 		b.id                   AS booking_id,
-// 		b.base_booking_id,
-// 		b.main_service_id,
-// 		b.addon_ids,
-// 		b.equipment_ids,
-// 		b.resource_ids,
-// 		b.cleaner_ids,
-// 		b.total_price,
-
-// 		bb.id                  AS base_id,
-// 		bb.cust_id,
-// 		bb.customer_first_name,
-// 		bb.customer_last_name,
-// 		bb.address,
-// 		bb.schedule,
-// 		bb.dirty_scale,
-// 		bb.payment_status,
-// 		bb.review_status,
-// 		bb.photos,
-// 		bb.created_at,
-// 		bb.updated_at,
-
-// 		a.id                   AS addon_id,
-// 		a.service_id           AS addon_service_id,
-// 		a.price                AS addon_price,
-
-// 		ms.service_type        AS main_service_type,
-// 		ms.details             AS main_service_details,
-// 		s.service_type         AS addon_service_type,
-// 		s.details              AS addon_service_details
-
-// 		FROM booking.bookings b
-// 		JOIN booking.basebookings bb ON b.base_booking_id = bb.id
-// 		JOIN booking.services ms      ON b.main_service_id = ms.id
-// 		LEFT JOIN LATERAL unnest(b.addon_ids) AS addon_id(addon_id) ON true
-// 		LEFT JOIN booking.addons a     ON addon_id.addon_id = a.id
-// 		LEFT JOIN booking.services s   ON a.service_id = s.id
-//         WHERE bb.cust_id = $1;
-//     `
-// 	rows, err := tx.Query(ctx, query, userID)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	defer rows.Close()
-
-// 	var booking types.Booking
-// 	booking.Addons = make([]types.AddOns, 0)
-
-// 	for rows.Next() {
-// 		var addonID, addonServiceID, mainServiceType, addonServiceType string
-// 		var addonPrice sql.NullFloat64
-// 		var mainRawDetails, addonRawDetails []byte
-
-// 		var addonIDs, equipmentIDs, resourceIDs, cleanerIDs []string
-
-// 		if err := rows.Scan(
-// 			&booking.ID,
-// 			&booking.Base.ID,
-// 			&booking.MainService.ID,
-// 			&addonIDs,
-// 			&equipmentIDs,
-// 			&resourceIDs,
-// 			&cleanerIDs,
-// 			&booking.TotalPrice,
-
-// 			&booking.Base.ID,
-// 			&booking.Base.CustID,
-// 			&booking.Base.CustomerFirstName,
-// 			&booking.Base.CustomerLastName,
-// 			&booking.Base.Address,
-// 			&booking.Base.Schedule,
-// 			&booking.Base.DirtyScale,
-// 			&booking.Base.PaymentStatus,
-// 			&booking.Base.ReviewStatus,
-// 			&booking.Base.Photos,
-// 			&booking.Base.CreatedAt,
-// 			&booking.Base.UpdatedAt,
-
-// 			&addonID,
-// 			&addonServiceID,
-// 			&addonPrice,
-
-// 			&mainServiceType,
-// 			&mainRawDetails,
-// 			&addonServiceType,
-// 			&addonRawDetails,
-// 		); err != nil {
-// 			return nil, err
-// 		}
-
-// 		if booking.MainService.ServiceType == "" {
-// 			var details any
-// 			details, err := types.UnmarshalServiceDetails(mainServiceType, mainRawDetails)
-// 			if err != nil {
-// 				return nil, err
-// 			}
-// 			booking.MainService.ServiceType = mainServiceType
-// 			booking.MainService.Details = details
-// 		}
-
-// 		if addonID != "" {
-// 			var details any
-// 			details, err := types.UnmarshalServiceDetails(addonServiceType, addonRawDetails)
-// 			if err != nil {
-// 				return nil, err
-// 			}
-
-// 			booking.Addons = append(booking.Addons, types.AddOns{
-// 				ID:    addonID,
-// 				Price: float32(addonPrice.Float64),
-// 				ServiceDetail: types.ServiceDetails{
-// 					ID:          addonServiceID,
-// 					ServiceType: addonServiceType,
-// 					Details:     details,
-// 				},
-// 			})
-// 		}
-
-// 		for _, id := range equipmentIDs {
-// 			booking.Equipments = append(booking.Equipments, types.CleaningEquipment{ID: id})
-// 		}
-// 		for _, id := range resourceIDs {
-// 			booking.Resources = append(booking.Resources, types.CleaningResources{ID: id})
-// 		}
-// 		for _, id := range cleanerIDs {
-// 			booking.Cleaners = append(booking.Cleaners, types.CleanerAssigned{ID: id})
-// 		}
-// 	}
-
-// 	if rows.Err() != nil {
-// 		return nil, rows.Err()
-// 	}
-
-// 	return &booking, nil
-// }
-
 func (b *BookingService) FetchBookingsByUID(ctx context.Context, tx pgx.Tx, userID string) ([]*types.Booking, error) {
 	query := `
         SELECT
@@ -647,7 +505,6 @@ func (b *BookingService) FetchBookingsByUID(ctx context.Context, tx pgx.Tx, user
 
 		bk, exists := bookingsMap[bookingID]
 		if !exists {
-			// First row for this booking, create Booking
 			details, err := types.UnmarshalServiceDetails(mainServiceType, mainRawDetails)
 			if err != nil {
 				return nil, err
@@ -668,7 +525,6 @@ func (b *BookingService) FetchBookingsByUID(ctx context.Context, tx pgx.Tx, user
 				TotalPrice: totalPrice,
 			}
 
-			// populate equipments/resources/cleaners from IDs
 			for _, id := range equipmentIDs {
 				bk.Equipments = append(bk.Equipments, types.CleaningEquipment{ID: id})
 			}
@@ -682,7 +538,6 @@ func (b *BookingService) FetchBookingsByUID(ctx context.Context, tx pgx.Tx, user
 			bookingsMap[bookingID] = bk
 		}
 
-		// Add addon if present
 		if addonID != "" {
 			details, err := types.UnmarshalServiceDetails(addonServiceType, addonRawDetails)
 			if err != nil {
@@ -704,11 +559,82 @@ func (b *BookingService) FetchBookingsByUID(ctx context.Context, tx pgx.Tx, user
 		return nil, rows.Err()
 	}
 
-	// convert map to slice
 	bookings := make([]*types.Booking, 0, len(bookingsMap))
 	for _, b := range bookingsMap {
 		bookings = append(bookings, b)
 	}
 
 	return bookings, nil
+}
+
+func (b *BookingService) RemoveBooking(ctx context.Context, tx pgx.Tx, bookingID string) (bool, error) {
+	var baseBookingID string
+	var addonIDs []string
+	var mainServiceID sql.NullString
+
+	err := tx.QueryRow(ctx,
+		`SELECT base_booking_id, addon_ids, main_service_id FROM booking.bookings WHERE id = $1`,
+		bookingID,
+	).Scan(&baseBookingID, &addonIDs, &mainServiceID)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return false, fmt.Errorf("booking %s not found", bookingID)
+		}
+		return false, err
+	}
+
+	var addonServiceIDs []string
+	if len(addonIDs) > 0 {
+		err = tx.QueryRow(ctx,
+			`SELECT COALESCE(array_agg(service_id), ARRAY[]::uuid[]) FROM booking.addons WHERE id = ANY($1::uuid[])`,
+			addonIDs,
+		).Scan(&addonServiceIDs)
+		if err != nil {
+			return false, err
+		}
+	}
+
+	serviceMap := map[string]struct{}{}
+	if mainServiceID.Valid {
+		serviceMap[mainServiceID.String] = struct{}{}
+	}
+	for _, s := range addonServiceIDs {
+		if s != "" {
+			serviceMap[s] = struct{}{}
+		}
+	}
+	var serviceIDs []string
+	for k := range serviceMap {
+		serviceIDs = append(serviceIDs, k)
+	}
+
+	if len(addonIDs) > 0 {
+		if _, err = tx.Exec(ctx, `DELETE FROM booking.addons WHERE id = ANY($1::uuid[])`, addonIDs); err != nil {
+			return false, err
+		}
+	}
+
+	cmdB, err := tx.Exec(ctx, `DELETE FROM booking.bookings WHERE id = $1`, bookingID)
+	if err != nil {
+		return false, err
+	}
+	if cmdB.RowsAffected() == 0 {
+		return false, fmt.Errorf("booking %s not found", bookingID)
+	}
+
+	cmdBB, err := tx.Exec(ctx, `DELETE FROM booking.basebookings WHERE id = $1`, baseBookingID)
+	if err != nil {
+		return false, err
+	}
+	if cmdBB.RowsAffected() == 0 {
+		return false, fmt.Errorf("base booking %s not found", baseBookingID)
+	}
+
+	if len(serviceIDs) > 0 {
+		if _, err = tx.Exec(ctx, `DELETE FROM booking.services WHERE id = ANY($1::uuid[])`, serviceIDs); err != nil {
+			return false, err
+		}
+	}
+
+	return true, nil
 }
