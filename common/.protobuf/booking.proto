@@ -5,12 +5,11 @@ import "google/protobuf/timestamp.proto";
 
 service BookingService {
   rpc CreateBooking(CreateBookingRequest) returns (CreateBookingResponse);
-  rpc CalculatePrice(CalculatePriceRequest) returns (CalculatePriceResponse);
+  rpc CalculatePrice(CalculatePriceRequest) returns (CalculatePriceResponse); // Implement soon
   rpc GetBookingById(GetBookingByIdRequest) returns (GetBookingByIdResponse);
   rpc GetBookingByUId(GetBookingByUIdRequest) returns (GetBookingByUIdResponse);
-  rpc UpdateBooking(Booking) returns (Booking);
+  rpc UpdateBooking(Booking) returns (UpdateBookingResponse);
   rpc DeleteBooking(DeleteBookingByIDRequest) returns (DeleteBookingByIDResponse);
-  rpc DeleteBookingAddonById(DeleteBookingAddonByIdRequest) returns (DeleteBookingAddonByIdResponse);
 }
 
 message Address {
@@ -242,11 +241,6 @@ message DeleteBookingByIDResponse {
   bool success = 1;
 }
 
-message DeleteBookingAddonByIdRequest {
-  string addon_id = 1;
-  string booking_id = 2;
-}
-
-message DeleteBookingAddonByIdResponse {
-  bool success = 1;
+message UpdateBookingResponse {
+  Booking booking = 1;
 }
