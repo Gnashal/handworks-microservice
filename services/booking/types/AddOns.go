@@ -6,7 +6,7 @@ import (
 
 type AddOns struct {
 	ID            string
-	ServiceDetail ServiceDetail
+	ServiceDetail ServiceDetails
 	Price         float32
 }
 

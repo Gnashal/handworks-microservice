@@ -1,16 +1,17 @@
 package types
 
-import "handworks/common/grpc/booking"
+import (
+	"encoding/json"
+	"handworks/common/grpc/booking"
+)
 
 type GeneralCleaningDetails struct {
-	ID       string
-	HomeType string
-	SQM      int32
+	HomeType string `json:"home_type"`
+	SQM      int32  `json:"sqm"`
 }
 
 func (generalCleaning GeneralCleaningDetails) ToProto() *booking.GeneralCleaningDetails {
 	return &booking.GeneralCleaningDetails{
-		Id:       generalCleaning.ID,
 		HomeType: booking.HomeType(booking.HomeType_value[generalCleaning.HomeType]),
 		Sqm:      generalCleaning.SQM,
 	}
@@ -21,8 +22,23 @@ func GeneralCleaningDetailsFromProto(pb *booking.GeneralCleaningDetails) General
 		return GeneralCleaningDetails{}
 	}
 	return GeneralCleaningDetails{
-		ID:       pb.Id,
 		HomeType: pb.HomeType.String(),
 		SQM:      pb.Sqm,
 	}
+}
+
+func (generalCleaning *GeneralCleaningDetails) MarshalGeneralDetails() ([]byte, error) {
+	general := GeneralCleaningDetails{
+		HomeType: generalCleaning.HomeType,
+		SQM:      generalCleaning.SQM,
+	}
+	return json.Marshal(general)
+}
+
+func UnmarshalGeneralDetails(detailsOut []byte) (*GeneralCleaningDetails, error) {
+	var generalDetails GeneralCleaningDetails
+	if err := json.Unmarshal(detailsOut, &generalDetails); err != nil {
+		return nil, err
+	}
+	return &generalDetails, nil
 }
