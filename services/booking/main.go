@@ -6,6 +6,7 @@ import (
 	"handworks-services-booking/server"
 	"handworks-services-booking/service"
 	"handworks/common/grpc/booking"
+	"handworks/common/natsconn"
 	"handworks/common/utils"
 	"sync"
 
@@ -22,6 +23,11 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	nc := natsconn.ConnectNATS()
+	defer nc.Close()
+	if nc != nil {
+		logger.Info("NATS connection established")
+	}
 
 	ctx := context.Background()
 	pool, err := db.InitDb(ctx)
@@ -34,6 +40,7 @@ func main() {
 	bookService := service.BookingService{
 		L:                                 logger,
 		DB:                                pool,
+		NC:                                nc,
 		UnimplementedBookingServiceServer: booking.UnimplementedBookingServiceServer{},
 	}
 

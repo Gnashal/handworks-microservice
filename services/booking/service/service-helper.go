@@ -5,8 +5,8 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"handworks-services-booking/types"
 	"handworks/common/grpc/booking"
+	types "handworks/common/types/booking"
 	"time"
 
 	"github.com/jackc/pgx/v5"
@@ -297,7 +297,7 @@ func (b *BookingService) createMainServiceBooking(
 func (b *BookingService) createAddOn(
 	ctx context.Context,
 	tx pgx.Tx,
-	addon *booking.AddOn,
+	addon *booking.AddOnRequest,
 ) (*types.AddOns, error) {
 	addOnServiceDetails, err := b.createMainServiceBooking(ctx, tx, addon.ServiceDetail.Details)
 	if err != nil {
@@ -325,57 +325,6 @@ func (b *BookingService) createAddOn(
 	}
 
 	return createdAddon, nil
-}
-
-func (b *BookingService) createEquipment(
-	// ctx context.Context,
-	// tx pgx.Tx,
-	equipment *booking.CleaningEquipment,
-) (*types.CleaningEquipment, error) {
-	var createdEquipment types.CleaningEquipment
-
-	createdEquipment.ID = "d3b07384-4e6f-4f7e-bf6a-2e7f3c2c1f9a"
-	createdEquipment.Name = equipment.Name
-	createdEquipment.Type = equipment.Type
-	createdEquipment.PhotoURL = equipment.PhotoUrl
-
-	fmt.Print(createdEquipment)
-
-	return &createdEquipment, nil
-}
-
-func (b *BookingService) createResource(
-	// ctx context.Context,
-	// tx pgx.Tx,
-	resource *booking.CleaningResources,
-) (*types.CleaningResources, error) {
-	var createdResource types.CleaningResources
-
-	createdResource.ID = "8f14e45f-ea9d-4c3d-9b1c-ff99a5b6d7c1"
-	createdResource.Name = resource.Name
-	createdResource.Type = resource.Type
-	createdResource.PhotoURL = resource.PhotoUrl
-
-	fmt.Print(createdResource)
-
-	return &createdResource, nil
-}
-
-func (b *BookingService) createCleanersAssigned(
-	// ctx context.Context,
-	// tx pgx.Tx,
-	cleaner *booking.CleanerAssigned,
-) (*types.CleanerAssigned, error) {
-	var createdCleaner types.CleanerAssigned
-
-	createdCleaner.ID = "45c48cce-0f0e-4b8f-8c4e-9d1a7f2f5e2d"
-	createdCleaner.CleanerFirstName = cleaner.CleanerFirstName
-	createdCleaner.CleanerLastName = cleaner.CleanerLastName
-	createdCleaner.PFPUrl = cleaner.PfpUrl
-
-	fmt.Print(createdCleaner)
-
-	return &createdCleaner, nil
 }
 
 func (b *BookingService) saveBooking(

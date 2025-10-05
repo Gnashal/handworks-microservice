@@ -73,11 +73,11 @@ func DetermineCarType(car_Type string) string {
 }
 
 var validServiceType = map[string]struct{}{
-	booking.MainServiceType_GENERAL.String():  {},
-	booking.MainServiceType_COUCH.String():    {},
-	booking.MainServiceType_CAR.String():      {},
-	booking.MainServiceType_MATTRESS.String(): {},
-	booking.MainServiceType_POST.String():     {},
+	booking.MainServiceType_GENERAL_CLEANING.String(): {},
+	booking.MainServiceType_COUCH.String():            {},
+	booking.MainServiceType_CAR.String():              {},
+	booking.MainServiceType_MATTRESS.String():         {},
+	booking.MainServiceType_POST.String():             {},
 }
 
 func DetermineServiceType(service_Type string) string {

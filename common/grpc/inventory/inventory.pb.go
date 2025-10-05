@@ -198,8 +198,9 @@ type InventoryItem struct {
 	MaxQuantity   int32                  `protobuf:"varint,7,opt,name=max_quantity,json=maxQuantity,proto3" json:"max_quantity,omitempty"`
 	Unit          string                 `protobuf:"bytes,8,opt,name=unit,proto3" json:"unit,omitempty"`
 	IsAvailable   bool                   `protobuf:"varint,9,opt,name=is_available,json=isAvailable,proto3" json:"is_available,omitempty"`
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
+	ImageUrl      string                 `protobuf:"bytes,10,opt,name=image_url,json=imageUrl,proto3" json:"image_url,omitempty"`
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
+	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -297,6 +298,13 @@ func (x *InventoryItem) GetIsAvailable() bool {
 	return false
 }
 
+func (x *InventoryItem) GetImageUrl() string {
+	if x != nil {
+		return x.ImageUrl
+	}
+	return ""
+}
+
 func (x *InventoryItem) GetCreatedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.CreatedAt
@@ -318,6 +326,7 @@ type CreateItemRequest struct {
 	Category      string                 `protobuf:"bytes,3,opt,name=category,proto3" json:"category,omitempty"`
 	Quantity      int32                  `protobuf:"varint,4,opt,name=quantity,proto3" json:"quantity,omitempty"`
 	Unit          string                 `protobuf:"bytes,5,opt,name=unit,proto3" json:"unit,omitempty"`
+	ImageUrl      string                 `protobuf:"bytes,6,opt,name=image_url,json=imageUrl,proto3" json:"image_url,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -383,6 +392,13 @@ func (x *CreateItemRequest) GetQuantity() int32 {
 func (x *CreateItemRequest) GetUnit() string {
 	if x != nil {
 		return x.Unit
+	}
+	return ""
+}
+
+func (x *CreateItemRequest) GetImageUrl() string {
+	if x != nil {
+		return x.ImageUrl
 	}
 	return ""
 }
@@ -959,7 +975,7 @@ var File_inventory_proto protoreflect.FileDescriptor
 
 const file_inventory_proto_rawDesc = "" +
 	"\n" +
-	"\x0finventory.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x8c\x03\n" +
+	"\x0finventory.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xa9\x03\n" +
 	"\rInventoryItem\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1d\n" +
@@ -969,16 +985,18 @@ const file_inventory_proto_rawDesc = "" +
 	"\bquantity\x18\x06 \x01(\x05R\bquantity\x12!\n" +
 	"\fmax_quantity\x18\a \x01(\x05R\vmaxQuantity\x12\x12\n" +
 	"\x04unit\x18\b \x01(\tR\x04unit\x12!\n" +
-	"\fis_available\x18\t \x01(\bR\visAvailable\x128\n" +
-	"\tcreatedAt\x18\n" +
-	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x128\n" +
-	"\tupdatedAt\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x87\x01\n" +
+	"\fis_available\x18\t \x01(\bR\visAvailable\x12\x1b\n" +
+	"\timage_url\x18\n" +
+	" \x01(\tR\bimageUrl\x128\n" +
+	"\tcreatedAt\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x128\n" +
+	"\tupdatedAt\x18\f \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xa4\x01\n" +
 	"\x11CreateItemRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +
 	"\x04type\x18\x02 \x01(\tR\x04type\x12\x1a\n" +
 	"\bcategory\x18\x03 \x01(\tR\bcategory\x12\x1a\n" +
 	"\bquantity\x18\x04 \x01(\x05R\bquantity\x12\x12\n" +
-	"\x04unit\x18\x05 \x01(\tR\x04unit\"8\n" +
+	"\x04unit\x18\x05 \x01(\tR\x04unit\x12\x1b\n" +
+	"\timage_url\x18\x06 \x01(\tR\bimageUrl\"8\n" +
 	"\x12CreateItemResponse\x12\"\n" +
 	"\x04item\x18\x01 \x01(\v2\x0e.InventoryItemR\x04item\" \n" +
 	"\x0eGetItemRequest\x12\x0e\n" +

@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 	"fmt"
-	"handworks-services-inventory/types"
 	"handworks/common/grpc/inventory"
+	types "handworks/common/types/inventory"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -34,17 +34,17 @@ func (i *InventoryService) withTx(
 func (i *InventoryService) CreateInventoryItem(
 	c context.Context,
 	tx pgx.Tx,
-	name, itemType, unit, category string,
+	name, itemType, unit, category, imageUrl string,
 	quantity, maxQuantity int32,
 ) (*types.DbInventoryItem, error) {
 	var item types.DbInventoryItem
 
 	if err := tx.QueryRow(c,
 		`INSERT INTO inventory.items
-		 (name, type, unit, quantity, max_quantity, category ,is_available)
-		 VALUES ($1, $2, $3, $4, $5, $6, true)
-		 RETURNING id, name, type, status, unit, category, quantity, max_quantity, is_available, created_at, updated_at`,
-		name, itemType, unit, quantity, maxQuantity, category,
+		 (name, type, unit, quantity, max_quantity, category ,image_url, is_available)
+		 VALUES ($1, $2, $3, $4, $5, $6, $7, true)
+		 RETURNING id, name, type, status, unit, category, quantity, max_quantity, image_url, is_available, created_at, updated_at`,
+		name, itemType, unit, quantity, maxQuantity, category, imageUrl,
 	).Scan(
 		&item.ID,
 		&item.Name,
@@ -54,6 +54,7 @@ func (i *InventoryService) CreateInventoryItem(
 		&item.Category,
 		&item.Quantity,
 		&item.MaxQuantity,
+		&item.ImageUrl,
 		&item.IsAvailable,
 		&item.CreatedAt,
 		&item.UpdatedAt,

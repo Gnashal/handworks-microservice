@@ -65,6 +65,10 @@ message AddOn {
   Services serviceDetail = 2;
   float price = 3;
 }
+message AddOnRequest {
+  Services serviceDetail = 1;
+  float price = 2;
+}
 
 message BaseBookingDetails {
     string id = 1;
@@ -80,18 +84,33 @@ message BaseBookingDetails {
     google.protobuf.Timestamp created_at = 11;
     google.protobuf.Timestamp updated_at = 12;
 }
+message BaseBookingDetailsRequest{
+    string cust_id = 1;
+    string customer_first_name = 2;
+    string customer_last_name = 3;
+    Address address = 4;
+    google.protobuf.Timestamp schedule = 5;
+    int32 dirty_scale = 6; // 1 - 5
+    string payment_status = 7;
+    string review_status = 8;
+    repeated string photos = 9; // file IDs or URLs
+    google.protobuf.Timestamp created_at = 10;
+    google.protobuf.Timestamp updated_at = 11;
+}
 
 message CreateBookingRequest {
-  BaseBookingDetails base = 1;
-  Services main_service = 2;
-  repeated AddOn addons = 3;
-  repeated CleaningEquipment equipment = 4;
-  repeated CleaningResources resources = 5;
-  repeated CleanerAssigned cleaners = 6;
+  BaseBookingDetailsRequest base = 1;
+  ServicesRequest main_service = 2;
+  repeated AddOnRequest addons = 3;
 }
 
 message CreateBookingResponse {
   Booking book = 1;
+}
+
+message ServicesRequest{
+  MainServiceType service_type = 1;
+  ServiceDetail details = 2;
 }
 
 message Services {
@@ -102,7 +121,7 @@ message Services {
 
 enum MainServiceType {
   SERVICE_TYPE_UNSPECIFIED = 0;
-  GENERAL = 1;
+  GENERAL_CLEANING = 1;
   COUCH = 2;
   MATTRESS = 3;
   CAR = 4;

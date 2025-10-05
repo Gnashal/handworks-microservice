@@ -8,7 +8,7 @@ import (
 )
 
 func InitDb(ctx context.Context) (*pgxpool.Pool, error) {
-	connStr := os.Getenv("DATABASE_URL")
+	connStr := os.Getenv("DEV_DB_CONN")
 
 	pool, err := pgxpool.New(ctx, connStr)
 	if err != nil {
