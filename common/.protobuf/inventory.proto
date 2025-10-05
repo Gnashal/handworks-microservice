@@ -47,8 +47,9 @@ message InventoryItem {
   int32 max_quantity = 7;
   string unit = 8;    
   bool is_available = 9; 
-  google.protobuf.Timestamp createdAt = 10;
-  google.protobuf.Timestamp updatedAt = 11;
+  string image_url = 10;
+  google.protobuf.Timestamp createdAt = 11;
+  google.protobuf.Timestamp updatedAt = 12;
 }
 
 message CreateItemRequest {
@@ -57,6 +58,7 @@ message CreateItemRequest {
   string category = 3;
   int32 quantity = 4;
   string unit = 5;
+  string image_url = 6;
 }
 message CreateItemResponse {
   InventoryItem item = 1;

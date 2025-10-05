@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 	"fmt"
-	"handworks-services-account/types"
 	"handworks/common/grpc/account"
+	types "handworks/common/types/account"
 	"time"
 
 	"github.com/jackc/pgx/v5"

@@ -6,7 +6,9 @@ import (
 	"handworks-services-account/server"
 	"handworks-services-account/service"
 	"handworks/common/grpc/account"
+	"handworks/common/natsconn"
 	"handworks/common/utils"
+	"time"
 
 	"github.com/joho/godotenv"
 )
@@ -20,8 +22,13 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
-	ctx := context.Background()
+	nc := natsconn.ConnectNATS()
+	defer nc.Close()
+	if nc != nil {
+		logger.Info("Connected to NATS")
+	}
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	pool, err := db.InitDb(ctx)
 	if err != nil {
 		logger.Fatal("Account DB Initialization Failed: %v", err)
@@ -32,10 +39,28 @@ func main() {
 	accService := &service.AccountService{
 		L:                                 logger,
 		DB:                                pool,
+		NC:                                nc,
 		UnimplementedAccountServiceServer: account.UnimplementedAccountServiceServer{},
 	}
 
-	if err := server.StartGrpcServer(accService, logger); err != nil {
-		logger.Fatal("Account gRPC Server failed: %v", err)
-	}
+	go func() {
+		if err := accService.HandleSubscriptions(ctx); err != nil {
+			logger.Error("NATS subscription error: %v", err)
+			cancel()
+		}
+	}()
+
+	go func() {
+		if err := server.StartGrpcServer(ctx, accService, logger); err != nil {
+			logger.Error("gRPC server error: %v", err)
+			cancel()
+		}
+	}()
+
+	// Block until cancel
+	<-ctx.Done()
+	logger.Warn("Shutting down Account service...")
+
+	time.Sleep(1 * time.Second)
+	logger.Info("Shutdown complete")
 }

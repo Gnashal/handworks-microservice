@@ -2,24 +2,26 @@ package service
 
 import (
 	"context"
-	"handworks-services-inventory/types"
 	"handworks/common/grpc/inventory"
+	types "handworks/common/types/inventory"
 	"handworks/common/utils"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/nats-io/nats.go"
 )
 
 type InventoryService struct {
 	L  *utils.Logger
 	DB *pgxpool.Pool
+	NC *nats.Conn
 	inventory.UnimplementedInventoryServiceServer
 }
 
 func (i *InventoryService) CreateItem(ctx context.Context, in *inventory.CreateItemRequest) (*inventory.CreateItemResponse, error) {
 	var dbInv types.DbInventoryItem
 	if err := i.withTx(ctx, i.DB, func(tx pgx.Tx) error {
-		inv, err := i.CreateInventoryItem(ctx, tx, in.Name, in.Type, in.Unit, in.Category, in.Quantity, in.Quantity)
+		inv, err := i.CreateInventoryItem(ctx, tx, in.Name, in.Type, in.Unit, in.Category, in.ImageUrl, in.Quantity, in.Quantity)
 		if err != nil {
 			return err
 		}

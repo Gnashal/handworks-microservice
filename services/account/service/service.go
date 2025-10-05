@@ -3,17 +3,19 @@ package service
 import (
 	"context"
 	"fmt"
-	"handworks-services-account/types"
 	"handworks/common/grpc/account"
+	types "handworks/common/types/account"
 	"handworks/common/utils"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/nats-io/nats.go"
 )
 
 type AccountService struct {
 	L  *utils.Logger
 	DB *pgxpool.Pool
+	NC *nats.Conn
 	account.UnimplementedAccountServiceServer
 }
 

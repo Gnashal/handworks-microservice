@@ -2,17 +2,22 @@ package service
 
 import (
 	"context"
-	"handworks-services-booking/types"
+	"encoding/json"
+	"fmt"
 	"handworks/common/grpc/booking"
 	"handworks/common/utils"
 
+	types "handworks/common/types/booking"
+
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/nats-io/nats.go"
 )
 
 type BookingService struct {
 	L  *utils.Logger
 	DB *pgxpool.Pool
+	NC *nats.Conn
 	booking.UnimplementedBookingServiceServer
 }
 
@@ -20,7 +25,29 @@ func (b *BookingService) CreateBooking(ctx context.Context, in *booking.CreateBo
 	b.L.Info("Creating Book for User: %s...", in.Base.CustomerFirstName)
 
 	var createdBook *types.Booking
+	event := types.FromProtoCreateBooking(in)
+	payload, err := json.Marshal(event)
+	if err != nil {
+		b.L.Error("Could not marshal booking data: %s", err)
+	}
+	inbox := nats.NewInbox()
+	sub, err := b.NC.SubscribeSync(inbox)
+	if err != nil {
+		return nil, fmt.Errorf("subscribe inbox: %v", err)
+	}
+	defer sub.Unsubscribe()
 
+	if err := b.NC.PublishMsg(&nats.Msg{
+		Subject: "booking.created",
+		Reply:   inbox,
+		Data:    payload,
+	}); err != nil {
+		return nil, fmt.Errorf("publish booking.created: %v", err)
+	}
+
+	b.L.Info("Published booking.created event; waiting for replies...")
+	responses := b.CollectResponses(sub)
+	equipments, resources, cleaners := b.MergeBookingReplies(responses)
 	if err := b.withTx(ctx, b.DB, func(tx pgx.Tx) error {
 		mainService, err := b.createMainServiceBooking(ctx, tx, in.MainService.Details)
 		if err != nil {
@@ -43,41 +70,17 @@ func (b *BookingService) CreateBooking(ctx context.Context, in *booking.CreateBo
 			addonIDs = append(addonIDs, addon.ID)
 		}
 
-		var equipments []types.CleaningEquipment
-		var equipmentIDs []string
-		for _, equipment := range in.Equipment {
-			equipment, err := b.createEquipment( /*ctx, tx,*/ equipment)
-			if err != nil {
-				return nil
-			}
-			equipments = append(equipments, *equipment)
-			equipmentIDs = append(equipmentIDs, equipment.ID)
-		}
-
-		var resources []types.CleaningResources
-		var resourceIDs []string
-		for _, resource := range in.Resources {
-			resource, err := b.createResource( /*ctx, tx,*/ resource)
-			if err != nil {
-				return nil
-			}
-			resources = append(resources, *resource)
-			resourceIDs = append(resourceIDs, resource.ID)
-		}
-
-		var cleanersAssigned []types.CleanerAssigned
-		var cleanersAssignedIDs []string
-		for _, cleanerAssigned := range in.Cleaners {
-			cleanerAssigned, err := b.createCleanersAssigned( /*ctx, tx,*/ cleanerAssigned)
-			if err != nil {
-				return nil
-			}
-			cleanersAssigned = append(cleanersAssigned, *cleanerAssigned)
-			cleanersAssignedIDs = append(cleanersAssignedIDs, cleanerAssigned.ID)
-		}
+		equipmentIDs := b.ExtractEquipmentIDs(types.CleaningEquipmentsToProto(equipments))
+		resourceIDs := b.ExtractResourceIDs(types.CleaningResourceToProto(resources))
+		cleanerIDs := b.ExtractCleanerIDs(types.CleanerAssignedToProto(cleaners))
 
 		totalPrice := float32(100.11)
-		bookingID, err := b.saveBooking(ctx, tx, baseBook.ID, mainService.ID, addonIDs, equipmentIDs, resourceIDs, cleanersAssignedIDs, totalPrice)
+		bookingID, err := b.saveBooking(ctx, tx, baseBook.ID, mainService.ID,
+			addonIDs,
+			equipmentIDs,
+			resourceIDs,
+			cleanerIDs,
+			totalPrice)
 		if err != nil {
 			return err
 		}
@@ -89,7 +92,7 @@ func (b *BookingService) CreateBooking(ctx context.Context, in *booking.CreateBo
 			Addons:      addons,
 			Equipments:  equipments,
 			Resources:   resources,
-			Cleaners:    cleanersAssigned,
+			Cleaners:    cleaners,
 			TotalPrice:  totalPrice,
 		}
 
@@ -131,7 +134,7 @@ func (b *BookingService) GetBookingByUId(ctx context.Context, in *booking.GetBoo
 }
 
 func (b *BookingService) GetBookingById(ctx context.Context, in *booking.GetBookingByIdRequest) (*booking.GetBookingByIdResponse, error) {
-	b.L.Info("Deleting Book from Booking with ID: %s", in.BookingId)
+	b.L.Info("Getting Book from Booking with ID: %s", in.BookingId)
 
 	var protoBooking *types.Booking
 
