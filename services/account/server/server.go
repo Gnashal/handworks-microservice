@@ -1,19 +1,18 @@
 package server
 
 import (
+	"context"
 	"fmt"
 	"handworks-services-account/service"
 	"handworks/common/grpc/account"
 	"handworks/common/utils"
 	"net"
 	"os"
-	"os/signal"
-	"syscall"
 
 	"google.golang.org/grpc"
 )
 
-func StartGrpcServer(s *service.AccountService, logger *utils.Logger) error {
+func StartGrpcServer(ctx context.Context, s *service.AccountService, logger *utils.Logger) error {
 	host := getEnv("DEV_URL", "localhost")
 	port := getEnv("PORT", "9090")
 	addr := fmt.Sprintf("%s:%s", host, port)
@@ -28,10 +27,8 @@ func StartGrpcServer(s *service.AccountService, logger *utils.Logger) error {
 
 	// graceful shutdown
 	go func() {
-		c := make(chan os.Signal, 1)
-		signal.Notify(c, os.Interrupt, syscall.SIGTERM)
-		<-c
-		logger.Warn("Shutting down Account gRPC server...")
+		<-ctx.Done()
+		logger.Warn("Gracefully stopping gRPC server...")
 		grpcServer.GracefulStop()
 		lis.Close()
 	}()
