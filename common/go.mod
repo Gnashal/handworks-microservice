@@ -3,13 +3,13 @@ module handworks/common
 go 1.23.11
 
 require (
+	github.com/nats-io/nats.go v1.46.0
 	google.golang.org/grpc v1.75.1
 	google.golang.org/protobuf v1.36.8
 )
 
 require (
 	github.com/klauspost/compress v1.18.0 // indirect
-	github.com/nats-io/nats.go v1.46.0 // indirect
 	github.com/nats-io/nkeys v0.4.11 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
 	golang.org/x/crypto v0.39.0 // indirect

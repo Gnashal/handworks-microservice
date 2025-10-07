@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"handworks/common/grpc/booking"
@@ -41,7 +42,8 @@ func (b *BookingService) makeBaseBooking(
 	customerFirstName string,
 	customerLastName string,
 	address types.Address,
-	schedule time.Time,
+	startSched time.Time,
+	endSched time.Time,
 	dirtyScale int32,
 	paymentStatus string,
 	reviewStatus string,
@@ -56,7 +58,8 @@ func (b *BookingService) makeBaseBooking(
             customer_first_name,
             customer_last_name,
             address,
-            schedule,
+            start_sched,
+			end_sched,
             dirty_scale,
             payment_status,
             review_status,
@@ -65,12 +68,13 @@ func (b *BookingService) makeBaseBooking(
 			updated_at
         )
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
-        RETURNING id, cust_id, customer_first_name, customer_last_name, address, schedule, dirty_scale, payment_status, review_status, photos, created_at, updated_at`,
+        RETURNING id, cust_id, customer_first_name, customer_last_name, address, start_sched, end_sched, dirty_scale, payment_status, review_status, photos, created_at, updated_at`,
 		custID,
 		customerFirstName,
 		customerLastName,
 		address,
-		schedule,
+		startSched,
+		endSched,
 		dirtyScale,
 		paymentStatus,
 		reviewStatus,
@@ -83,7 +87,8 @@ func (b *BookingService) makeBaseBooking(
 		&createdBaseBook.CustomerFirstName,
 		&createdBaseBook.CustomerLastName,
 		&createdBaseBook.Address,
-		&createdBaseBook.Schedule,
+		&createdBaseBook.StartSched,
+		&createdBaseBook.EndSched,
 		&createdBaseBook.DirtyScale,
 		&createdBaseBook.PaymentStatus,
 		&createdBaseBook.ReviewStatus,
@@ -134,14 +139,20 @@ func (b *BookingService) makeGeneralBooking(ctx context.Context, tx pgx.Tx, gene
 }
 
 func (b *BookingService) makeCouchBooking(ctx context.Context, tx pgx.Tx, couch *booking.CouchCleaningDetails) (*types.ServiceDetails, error) {
-	couchDetails := types.CouchCleaningDetails{
-		CouchType: couch.CouchType.String(),
-		WidthCM:   couch.WidthCm,
-		DepthCM:   couch.DepthCm,
-		HeightCM:  couch.HeightCm,
+	specs := make([]types.CouchCleaningSpecifications, 0, len(couch.CleaningSpecs))
+	for _, s := range couch.CleaningSpecs {
+		specs = append(specs, types.CouchCleaningSpecifications{
+			CouchType: s.CouchType.String(),
+			WidthCM:   s.WidthCm,
+			DepthCM:   s.DepthCm,
+			HeightCM:  s.HeightCm,
+			Quantity:  s.Quantity,
+		})
 	}
 
-	detailsJSON, err := couchDetails.MarshalCouchDetails()
+	couchDetails := types.CouchCleaningDetails{CleaningSpecs: specs}
+
+	detailsJSON, err := json.Marshal(couchDetails)
 	if err != nil {
 		return nil, err
 	}
@@ -150,8 +161,7 @@ func (b *BookingService) makeCouchBooking(ctx context.Context, tx pgx.Tx, couch 
 	var rawDetails []byte
 
 	err = tx.QueryRow(ctx, `
-		INSERT INTO booking.services 
-		(service_type, details)
+		INSERT INTO booking.services (service_type, details)
 		VALUES ($1, $2)
 		RETURNING id, service_type, details`,
 		"COUCH", detailsJSON,
@@ -160,24 +170,29 @@ func (b *BookingService) makeCouchBooking(ctx context.Context, tx pgx.Tx, couch 
 		return nil, err
 	}
 
-	couchOut, err := types.UnmarshalCouchDetails(rawDetails)
-	if err != nil {
+	var couchOut types.CouchCleaningDetails
+	if err := json.Unmarshal(rawDetails, &couchOut); err != nil {
 		return nil, err
 	}
 	service.Details = couchOut
 
 	return &service, nil
 }
-
 func (b *BookingService) makeMattressBooking(ctx context.Context, tx pgx.Tx, mattress *booking.MattressCleaningDetails) (*types.ServiceDetails, error) {
-	mattressDetails := types.MattressCleaningDetails{
-		BedType:  mattress.BedType.String(),
-		WidthCM:  mattress.WidthCm,
-		DepthCM:  mattress.DepthCm,
-		HeightCM: mattress.HeightCm,
+	specs := make([]types.MattressCleaningSpecifications, 0, len(mattress.CleaningSpecs))
+	for _, s := range mattress.CleaningSpecs {
+		specs = append(specs, types.MattressCleaningSpecifications{
+			BedType:  s.BedType.String(),
+			WidthCM:  s.WidthCm,
+			DepthCM:  s.DepthCm,
+			HeightCM: s.HeightCm,
+			Quantity: s.Quantity,
+		})
 	}
 
-	detailsJSON, err := mattressDetails.MarshalMattressDetails()
+	mattressDetails := types.MattressCleaningDetails{CleaningSpecs: specs}
+
+	detailsJSON, err := json.Marshal(mattressDetails)
 	if err != nil {
 		return nil, err
 	}
@@ -186,8 +201,7 @@ func (b *BookingService) makeMattressBooking(ctx context.Context, tx pgx.Tx, mat
 	var rawDetails []byte
 
 	err = tx.QueryRow(ctx, `
-		INSERT INTO booking.services 
-		(service_type, details)
+		INSERT INTO booking.services (service_type, details)
 		VALUES ($1, $2)
 		RETURNING id, service_type, details`,
 		"MATTRESS", detailsJSON,
@@ -196,8 +210,8 @@ func (b *BookingService) makeMattressBooking(ctx context.Context, tx pgx.Tx, mat
 		return nil, err
 	}
 
-	mattressOut, err := types.UnmarshalMattressDetails(rawDetails)
-	if err != nil {
+	var mattressOut types.MattressCleaningDetails
+	if err := json.Unmarshal(rawDetails, &mattressOut); err != nil {
 		return nil, err
 	}
 	service.Details = mattressOut
@@ -206,12 +220,20 @@ func (b *BookingService) makeMattressBooking(ctx context.Context, tx pgx.Tx, mat
 }
 
 func (b *BookingService) makeCarBooking(ctx context.Context, tx pgx.Tx, car *booking.CarCleaningDetails) (*types.ServiceDetails, error) {
-	carDetails := &types.CarCleaningDetails{
-		CarType:    car.CarType.String(),
-		ChildSeats: car.ChildSeats,
+	specs := make([]types.CarCleaningSpecifications, 0, len(car.CleaningSpecs))
+	for _, s := range car.CleaningSpecs {
+		specs = append(specs, types.CarCleaningSpecifications{
+			CarType:  s.CarType.String(),
+			Quantity: s.Quantity,
+		})
 	}
 
-	detailsJSON, err := carDetails.MarshalCarDetails()
+	carDetails := types.CarCleaningDetails{
+		CleaningSpecs: specs,
+		ChildSeats:    car.ChildSeats,
+	}
+
+	detailsJSON, err := json.Marshal(carDetails)
 	if err != nil {
 		return nil, err
 	}
@@ -220,21 +242,19 @@ func (b *BookingService) makeCarBooking(ctx context.Context, tx pgx.Tx, car *boo
 	var rawDetails []byte
 
 	err = tx.QueryRow(ctx, `
-        INSERT INTO booking.services 
-        (service_type, details)
-        VALUES ($1, $2)
-        RETURNING id, service_type, details`,
+		INSERT INTO booking.services (service_type, details)
+		VALUES ($1, $2)
+		RETURNING id, service_type, details`,
 		"CAR", detailsJSON,
 	).Scan(&service.ID, &service.ServiceType, &rawDetails)
 	if err != nil {
 		return nil, err
 	}
 
-	carOut, err := types.UnmarshalCarDetails(rawDetails)
-	if err != nil {
+	var carOut types.CarCleaningDetails
+	if err := json.Unmarshal(rawDetails, &carOut); err != nil {
 		return nil, err
 	}
-
 	service.Details = carOut
 
 	return &service, nil
@@ -303,10 +323,11 @@ func (b *BookingService) createAddOn(
 	if err != nil {
 		return nil, fmt.Errorf("failed to create service details: %w", err)
 	}
-
 	createdAddon := &types.AddOns{
 		ServiceDetail: *addOnServiceDetails,
 	}
+
+	addOnPrice := b.CalculatePriceByServiceType(addon.ServiceDetail)
 
 	err = tx.QueryRow(ctx,
 		`INSERT INTO booking.addons 
@@ -314,7 +335,7 @@ func (b *BookingService) createAddOn(
 		 VALUES ($1, $2)
 		 RETURNING id, service_id, price`,
 		addOnServiceDetails.ID,
-		addon.Price,
+		addOnPrice,
 	).Scan(
 		&createdAddon.ID,
 		&createdAddon.ServiceDetail.ID,
@@ -374,7 +395,8 @@ func (b *BookingService) fetchBookingsByUID(ctx context.Context, tx pgx.Tx, user
 		bb.customer_first_name,
 		bb.customer_last_name,
 		bb.address,
-		bb.schedule,
+		bb.start_sched,
+		bb.end_sched,
 		bb.dirty_scale,
 		bb.payment_status,
 		bb.review_status,
@@ -432,7 +454,8 @@ func (b *BookingService) fetchBookingsByUID(ctx context.Context, tx pgx.Tx, user
 			&base.CustomerFirstName,
 			&base.CustomerLastName,
 			&base.Address,
-			&base.Schedule,
+			&base.StartSched,
+			&base.EndSched,
 			&base.DirtyScale,
 			&base.PaymentStatus,
 			&base.ReviewStatus,
@@ -533,7 +556,8 @@ func (b *BookingService) FetchBookingsByID(ctx context.Context, tx pgx.Tx, bookI
 		bb.customer_first_name,
 		bb.customer_last_name,
 		bb.address,
-		bb.schedule,
+		bb.start_sched,
+		bb.end_sched,
 		bb.dirty_scale,
 		bb.payment_status,
 		bb.review_status,
@@ -591,7 +615,8 @@ func (b *BookingService) FetchBookingsByID(ctx context.Context, tx pgx.Tx, bookI
 			&base.CustomerFirstName,
 			&base.CustomerLastName,
 			&base.Address,
-			&base.Schedule,
+			&base.StartSched,
+			&base.EndSched,
 			&base.DirtyScale,
 			&base.PaymentStatus,
 			&base.ReviewStatus,
@@ -751,7 +776,8 @@ func (b *BookingService) updateBaseBooking(
 	customerFirstName string,
 	customerLastName string,
 	address types.Address,
-	schedule time.Time,
+	startSched time.Time,
+	endSched time.Time,
 	dirtyScale int32,
 	paymentStatus string,
 	reviewStatus string,
@@ -766,20 +792,22 @@ func (b *BookingService) updateBaseBooking(
             customer_first_name = $3,
             customer_last_name = $4,
             address = $5,
-            schedule = $6,
-            dirty_scale = $7,
-            payment_status = $8,
-            review_status = $9,
-            photos = $10,
-			updated_at = $11
+            start_sched = $6,
+			end_sched = $7,
+            dirty_scale = $8,
+            payment_status = $9,
+            review_status = $10,
+            photos = $11,
+			updated_at = $12
         WHERE id = $1
-        RETURNING id, cust_id, customer_first_name, customer_last_name, address, schedule, dirty_scale, payment_status, review_status, photos, created_at, updated_at`,
+        RETURNING id, cust_id, customer_first_name, customer_last_name, address, start_sched, end_sched, dirty_scale, payment_status, review_status, photos, created_at, updated_at`,
 		ID,
 		custID,
 		customerFirstName,
 		customerLastName,
 		address,
-		schedule,
+		startSched,
+		endSched,
 		dirtyScale,
 		paymentStatus,
 		reviewStatus,
@@ -791,7 +819,8 @@ func (b *BookingService) updateBaseBooking(
 		&updatedBaseBook.CustomerFirstName,
 		&updatedBaseBook.CustomerLastName,
 		&updatedBaseBook.Address,
-		&updatedBaseBook.Schedule,
+		&updatedBaseBook.StartSched,
+		&updatedBaseBook.EndSched,
 		&updatedBaseBook.DirtyScale,
 		&updatedBaseBook.PaymentStatus,
 		&updatedBaseBook.ReviewStatus,
@@ -850,12 +879,18 @@ func (b *BookingService) updateGeneralBooking(ctx context.Context, tx pgx.Tx, ge
 }
 
 func (b *BookingService) updateCouchBooking(ctx context.Context, tx pgx.Tx, couch *booking.CouchCleaningDetails, serviceId string) (*types.ServiceDetails, error) {
-	couchDetails := types.CouchCleaningDetails{
-		CouchType: couch.CouchType.String(),
-		WidthCM:   couch.WidthCm,
-		DepthCM:   couch.DepthCm,
-		HeightCM:  couch.HeightCm,
+	specs := make([]types.CouchCleaningSpecifications, 0, len(couch.CleaningSpecs))
+	for _, s := range couch.CleaningSpecs {
+		specs = append(specs, types.CouchCleaningSpecifications{
+			CouchType: s.CouchType.String(),
+			WidthCM:   s.WidthCm,
+			DepthCM:   s.DepthCm,
+			HeightCM:  s.HeightCm,
+			Quantity:  s.Quantity,
+		})
 	}
+
+	couchDetails := types.CouchCleaningDetails{CleaningSpecs: specs}
 
 	detailsJSON, err := couchDetails.MarshalCouchDetails()
 	if err != nil {
@@ -890,12 +925,18 @@ func (b *BookingService) updateCouchBooking(ctx context.Context, tx pgx.Tx, couc
 }
 
 func (b *BookingService) updateMattressBooking(ctx context.Context, tx pgx.Tx, mattress *booking.MattressCleaningDetails, serviceId string) (*types.ServiceDetails, error) {
-	mattressDetails := types.MattressCleaningDetails{
-		BedType:  mattress.BedType.String(),
-		WidthCM:  mattress.WidthCm,
-		DepthCM:  mattress.DepthCm,
-		HeightCM: mattress.HeightCm,
+	specs := make([]types.MattressCleaningSpecifications, 0, len(mattress.CleaningSpecs))
+	for _, s := range mattress.CleaningSpecs {
+		specs = append(specs, types.MattressCleaningSpecifications{
+			BedType:  s.BedType.String(),
+			WidthCM:  s.WidthCm,
+			DepthCM:  s.DepthCm,
+			HeightCM: s.HeightCm,
+			Quantity: s.Quantity,
+		})
 	}
+
+	mattressDetails := types.MattressCleaningDetails{CleaningSpecs: specs}
 
 	detailsJSON, err := mattressDetails.MarshalMattressDetails()
 	if err != nil {
@@ -930,9 +971,17 @@ func (b *BookingService) updateMattressBooking(ctx context.Context, tx pgx.Tx, m
 }
 
 func (b *BookingService) updateCarBooking(ctx context.Context, tx pgx.Tx, car *booking.CarCleaningDetails, serviceId string) (*types.ServiceDetails, error) {
-	carDetails := &types.CarCleaningDetails{
-		CarType:    car.CarType.String(),
-		ChildSeats: car.ChildSeats,
+	specs := make([]types.CarCleaningSpecifications, 0, len(car.CleaningSpecs))
+	for _, s := range car.CleaningSpecs {
+		specs = append(specs, types.CarCleaningSpecifications{
+			CarType:  s.CarType.String(),
+			Quantity: s.Quantity,
+		})
+	}
+
+	carDetails := types.CarCleaningDetails{
+		CleaningSpecs: specs,
+		ChildSeats:    car.ChildSeats,
 	}
 
 	detailsJSON, err := carDetails.MarshalCarDetails()

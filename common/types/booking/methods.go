@@ -42,86 +42,107 @@ func UnmarshalGeneralDetails(detailsOut []byte) (*GeneralCleaningDetails, error)
 	return &generalDetails, nil
 }
 
-func (couchCleaning CouchCleaningDetails) ToProto() *booking.CouchCleaningDetails {
-	return &booking.CouchCleaningDetails{
-		CouchType: booking.CouchType(booking.CouchType_value[couchCleaning.CouchType]),
-		WidthCm:   couchCleaning.WidthCM,
-		DepthCm:   couchCleaning.DepthCM,
-		HeightCm:  couchCleaning.HeightCM,
+func (c CouchCleaningDetails) ToProto() *booking.CouchCleaningDetails {
+	specs := make([]*booking.CouchCleaningSpecifications, len(c.CleaningSpecs))
+	for i, s := range c.CleaningSpecs {
+		specs[i] = &booking.CouchCleaningSpecifications{
+			CouchType: booking.CouchType(booking.CouchType_value[s.CouchType]),
+			WidthCm:   s.WidthCM,
+			DepthCm:   s.DepthCM,
+			HeightCm:  s.HeightCM,
+			Quantity:  s.Quantity,
+		}
 	}
+	return &booking.CouchCleaningDetails{CleaningSpecs: specs}
 }
 
 func CouchCleaningDetailsFromProto(pb *booking.CouchCleaningDetails) *CouchCleaningDetails {
 	if pb == nil {
 		return &CouchCleaningDetails{}
 	}
-	return &CouchCleaningDetails{
-		CouchType: pb.CouchType.String(),
-		WidthCM:   pb.WidthCm,
-		DepthCM:   pb.DepthCm,
-		HeightCM:  pb.HeightCm,
+	specs := make([]CouchCleaningSpecifications, len(pb.CleaningSpecs))
+	for i, s := range pb.CleaningSpecs {
+		specs[i] = CouchCleaningSpecifications{
+			CouchType: s.CouchType.String(),
+			WidthCM:   s.WidthCm,
+			DepthCM:   s.DepthCm,
+			HeightCM:  s.HeightCm,
+			Quantity:  s.Quantity,
+		}
 	}
+	return &CouchCleaningDetails{CleaningSpecs: specs}
 }
 
-func (couchCleaning *CouchCleaningDetails) MarshalCouchDetails() ([]byte, error) {
-	couch := CouchCleaningDetails{
-		CouchType: couchCleaning.CouchType,
-		WidthCM:   couchCleaning.WidthCM,
-		DepthCM:   couchCleaning.DepthCM,
-		HeightCM:  couchCleaning.HeightCM,
-	}
-	return json.Marshal(couch)
+func (c *CouchCleaningDetails) MarshalCouchDetails() ([]byte, error) {
+	return json.Marshal(c)
 }
 
-func UnmarshalCouchDetails(detailsOut []byte) (*CouchCleaningDetails, error) {
-	var couchDetails CouchCleaningDetails
-	if err := json.Unmarshal(detailsOut, &couchDetails); err != nil {
+func UnmarshalCouchDetails(data []byte) (*CouchCleaningDetails, error) {
+	var details CouchCleaningDetails
+	if err := json.Unmarshal(data, &details); err != nil {
 		return nil, err
 	}
-	return &couchDetails, nil
+	return &details, nil
 }
-func (mattressCleaning MattressCleaningDetails) ToProto() *booking.MattressCleaningDetails {
-	return &booking.MattressCleaningDetails{
-		BedType:  booking.BedType(booking.CarType_value[mattressCleaning.BedType]),
-		WidthCm:  mattressCleaning.WidthCM,
-		DepthCm:  mattressCleaning.DepthCM,
-		HeightCm: mattressCleaning.HeightCM,
+
+// --- Mattress Cleaning ---
+
+func (m MattressCleaningDetails) ToProto() *booking.MattressCleaningDetails {
+	specs := make([]*booking.MattressCleaningSpecifications, len(m.CleaningSpecs))
+	for i, s := range m.CleaningSpecs {
+		specs[i] = &booking.MattressCleaningSpecifications{
+			BedType:  booking.BedType(booking.BedType_value[s.BedType]),
+			WidthCm:  s.WidthCM,
+			DepthCm:  s.DepthCM,
+			HeightCm: s.HeightCM,
+			Quantity: s.Quantity,
+		}
 	}
+	return &booking.MattressCleaningDetails{CleaningSpecs: specs}
 }
 
 func MattressCleaningDetailsFromProto(pb *booking.MattressCleaningDetails) *MattressCleaningDetails {
 	if pb == nil {
 		return &MattressCleaningDetails{}
 	}
-	return &MattressCleaningDetails{
-		BedType:  pb.BedType.String(),
-		WidthCM:  pb.WidthCm,
-		DepthCM:  pb.DepthCm,
-		HeightCM: pb.HeightCm,
+	specs := make([]MattressCleaningSpecifications, len(pb.CleaningSpecs))
+	for i, s := range pb.CleaningSpecs {
+		specs[i] = MattressCleaningSpecifications{
+			BedType:  s.BedType.String(),
+			WidthCM:  s.WidthCm,
+			DepthCM:  s.DepthCm,
+			HeightCM: s.HeightCm,
+			Quantity: s.Quantity,
+		}
 	}
+	return &MattressCleaningDetails{CleaningSpecs: specs}
 }
 
-func (mattressCleaning *MattressCleaningDetails) MarshalMattressDetails() ([]byte, error) {
-	mattress := MattressCleaningDetails{
-		BedType:  mattressCleaning.BedType,
-		WidthCM:  mattressCleaning.WidthCM,
-		DepthCM:  mattressCleaning.DepthCM,
-		HeightCM: mattressCleaning.HeightCM,
-	}
-	return json.Marshal(mattress)
+func (m *MattressCleaningDetails) MarshalMattressDetails() ([]byte, error) {
+	return json.Marshal(m)
 }
 
-func UnmarshalMattressDetails(detailsOut []byte) (*MattressCleaningDetails, error) {
-	var mattressDetails MattressCleaningDetails
-	if err := json.Unmarshal(detailsOut, &mattressDetails); err != nil {
+func UnmarshalMattressDetails(data []byte) (*MattressCleaningDetails, error) {
+	var details MattressCleaningDetails
+	if err := json.Unmarshal(data, &details); err != nil {
 		return nil, err
 	}
-	return &mattressDetails, nil
+	return &details, nil
 }
-func (carCleaning CarCleaningDetails) ToProto() *booking.CarCleaningDetails {
+
+// --- Car Cleaning ---
+
+func (c CarCleaningDetails) ToProto() *booking.CarCleaningDetails {
+	specs := make([]*booking.CarCleaningSpecifications, len(c.CleaningSpecs))
+	for i, s := range c.CleaningSpecs {
+		specs[i] = &booking.CarCleaningSpecifications{
+			CarType:  booking.CarType(booking.CarType_value[s.CarType]),
+			Quantity: s.Quantity,
+		}
+	}
 	return &booking.CarCleaningDetails{
-		CarType:    booking.CarType(booking.CarType_value[carCleaning.CarType]),
-		ChildSeats: carCleaning.ChildSeats,
+		CleaningSpecs: specs,
+		ChildSeats:    c.ChildSeats,
 	}
 }
 
@@ -129,26 +150,29 @@ func CarCleaningDetailsFromProto(pb *booking.CarCleaningDetails) *CarCleaningDet
 	if pb == nil {
 		return &CarCleaningDetails{}
 	}
+	specs := make([]CarCleaningSpecifications, len(pb.CleaningSpecs))
+	for i, s := range pb.CleaningSpecs {
+		specs[i] = CarCleaningSpecifications{
+			CarType:  s.CarType.String(),
+			Quantity: s.Quantity,
+		}
+	}
 	return &CarCleaningDetails{
-		CarType:    pb.CarType.String(),
-		ChildSeats: pb.ChildSeats,
+		CleaningSpecs: specs,
+		ChildSeats:    pb.ChildSeats,
 	}
 }
 
-func (carCleaning *CarCleaningDetails) MarshalCarDetails() ([]byte, error) {
-	car := CarCleaningDetails{
-		CarType:    carCleaning.CarType,
-		ChildSeats: carCleaning.ChildSeats,
-	}
-	return json.Marshal(car)
+func (c *CarCleaningDetails) MarshalCarDetails() ([]byte, error) {
+	return json.Marshal(c)
 }
 
-func UnmarshalCarDetails(detailsOut []byte) (*CarCleaningDetails, error) {
-	var carDetails CarCleaningDetails
-	if err := json.Unmarshal(detailsOut, &carDetails); err != nil {
+func UnmarshalCarDetails(data []byte) (*CarCleaningDetails, error) {
+	var details CarCleaningDetails
+	if err := json.Unmarshal(data, &details); err != nil {
 		return nil, err
 	}
-	return &carDetails, nil
+	return &details, nil
 }
 
 func (postConstruction PostConstructionDetails) ToProto() *booking.PostConstructionCleaningDetails {
@@ -246,7 +270,8 @@ func FromProtoCreateBooking(req *booking.CreateBookingRequest) *CreateBookingEve
 				AddressLat:   req.Base.Address.AddressLat,
 				AddressLng:   req.Base.Address.AddressLng,
 			},
-			Schedule:      req.Base.Schedule.AsTime(),
+			StartSched:    req.Base.StartSched.AsTime(),
+			EndSched:      req.Base.EndSched.AsTime(),
 			DirtyScale:    req.Base.DirtyScale,
 			PaymentStatus: req.Base.PaymentStatus,
 			ReviewStatus:  req.Base.ReviewStatus,
@@ -270,7 +295,6 @@ func convertAddons(addons []*booking.AddOnRequest) []AddOnRequest {
 				ServiceType: MainServiceType(a.ServiceDetail.ServiceType.String()),
 				Details:     convertServiceDetail(a.ServiceDetail.Details),
 			},
-			Price: a.Price,
 		})
 	}
 	return out
@@ -280,39 +304,73 @@ func convertServiceDetail(sd *booking.ServiceDetail) ServiceDetail {
 	if sd == nil {
 		return ServiceDetail{}
 	}
+
 	switch t := sd.Type.(type) {
 	case *booking.ServiceDetail_General:
-		return ServiceDetail{General: &GeneralCleaningDetails{
-			HomeType: t.General.HomeType.String(),
-			SQM:      t.General.Sqm,
-		}}
+		return ServiceDetail{
+			General: &GeneralCleaningDetails{
+				HomeType: t.General.HomeType.String(),
+				SQM:      t.General.Sqm,
+			},
+		}
+
 	case *booking.ServiceDetail_Couch:
-		return ServiceDetail{Couch: &CouchCleaningDetails{
-			CouchType: t.Couch.CouchType.String(),
-			WidthCM:   t.Couch.WidthCm,
-			DepthCM:   t.Couch.DepthCm,
-			HeightCM:  t.Couch.HeightCm,
-		}}
+		specs := make([]CouchCleaningSpecifications, 0, len(t.Couch.CleaningSpecs))
+		for _, s := range t.Couch.CleaningSpecs {
+			specs = append(specs, CouchCleaningSpecifications{
+				CouchType: s.CouchType.String(),
+				WidthCM:   s.WidthCm,
+				DepthCM:   s.DepthCm,
+				HeightCM:  s.HeightCm,
+				Quantity:  s.Quantity,
+			})
+		}
+		return ServiceDetail{
+			Couch: &CouchCleaningDetails{CleaningSpecs: specs},
+		}
+
 	case *booking.ServiceDetail_Mattress:
-		return ServiceDetail{Mattress: &MattressCleaningDetails{
-			BedType:  t.Mattress.BedType.String(),
-			WidthCM:  t.Mattress.WidthCm,
-			DepthCM:  t.Mattress.DepthCm,
-			HeightCM: t.Mattress.HeightCm,
-		}}
+		specs := make([]MattressCleaningSpecifications, 0, len(t.Mattress.CleaningSpecs))
+		for _, s := range t.Mattress.CleaningSpecs {
+			specs = append(specs, MattressCleaningSpecifications{
+				BedType:  s.BedType.String(),
+				WidthCM:  s.WidthCm,
+				DepthCM:  s.DepthCm,
+				HeightCM: s.HeightCm,
+				Quantity: s.Quantity,
+			})
+		}
+		return ServiceDetail{
+			Mattress: &MattressCleaningDetails{CleaningSpecs: specs},
+		}
+
 	case *booking.ServiceDetail_Car:
-		return ServiceDetail{Car: &CarCleaningDetails{
-			CarType:    t.Car.CarType.String(),
-			ChildSeats: t.Car.ChildSeats,
-		}}
+		specs := make([]CarCleaningSpecifications, 0, len(t.Car.CleaningSpecs))
+		for _, s := range t.Car.CleaningSpecs {
+			specs = append(specs, CarCleaningSpecifications{
+				CarType:  s.CarType.String(),
+				Quantity: s.Quantity,
+			})
+		}
+		return ServiceDetail{
+			Car: &CarCleaningDetails{
+				CleaningSpecs: specs,
+				ChildSeats:    t.Car.ChildSeats,
+			},
+		}
+
 	case *booking.ServiceDetail_Post:
-		return ServiceDetail{Post: &PostConstructionDetails{
-			SQM: t.Post.Sqm,
-		}}
+		return ServiceDetail{
+			Post: &PostConstructionDetails{
+				SQM: t.Post.Sqm,
+			},
+		}
+
 	default:
 		return ServiceDetail{}
 	}
 }
+
 func (mainService ServiceDetails) ToProto() *booking.Services {
 	var detail *booking.ServiceDetail
 
@@ -459,7 +517,8 @@ func (baseBooking BaseBookingDetails) ToProto() *booking.BaseBookingDetails {
 		CustomerFirstName: baseBooking.CustomerFirstName,
 		CustomerLastName:  baseBooking.CustomerLastName,
 		Address:           baseBooking.Address.ToProto(),
-		Schedule:          timestamppb.New(baseBooking.Schedule),
+		StartSched:        timestamppb.New(baseBooking.StartSched),
+		EndSched:          timestamppb.New(baseBooking.EndSched),
 		DirtyScale:        baseBooking.DirtyScale,
 		PaymentStatus:     baseBooking.PaymentStatus,
 		ReviewStatus:      baseBooking.ReviewStatus,
@@ -486,7 +545,8 @@ func BaseBookingDetailsFromProto(pb *booking.BaseBookingDetails) BaseBookingDeta
 		CustomerFirstName: pb.CustomerFirstName,
 		CustomerLastName:  pb.CustomerLastName,
 		Address:           AddressFromProto(pb.Address),
-		Schedule:          pb.Schedule.AsTime(),
+		StartSched:        pb.StartSched.AsTime(),
+		EndSched:          pb.EndSched.AsTime(),
 		DirtyScale:        pb.DirtyScale,
 		PaymentStatus:     pb.PaymentStatus,
 		ReviewStatus:      pb.ReviewStatus,

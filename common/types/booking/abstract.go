@@ -41,21 +41,42 @@ type GeneralCleaningDetails struct {
 	HomeType string `json:"home_type"`
 	SQM      int32  `json:"sqm"`
 }
-type CouchCleaningDetails struct {
+
+// Couch cleaning
+type CouchCleaningSpecifications struct {
 	CouchType string `json:"couch_type"`
 	WidthCM   int32  `json:"width_cm"`
 	DepthCM   int32  `json:"depth_cm"`
 	HeightCM  int32  `json:"height_cm"`
+	Quantity  int32  `json:"quantity"`
 }
-type MattressCleaningDetails struct {
+
+type CouchCleaningDetails struct {
+	CleaningSpecs []CouchCleaningSpecifications `json:"cleaning_specs"`
+}
+
+// Mattress cleaning
+type MattressCleaningSpecifications struct {
 	BedType  string `json:"bed_type"`
 	WidthCM  int32  `json:"width_cm"`
 	DepthCM  int32  `json:"depth_cm"`
 	HeightCM int32  `json:"height_cm"`
+	Quantity int32  `json:"quantity"`
 }
+
+type MattressCleaningDetails struct {
+	CleaningSpecs []MattressCleaningSpecifications `json:"cleaning_specs"`
+}
+
+// Car cleaning
+type CarCleaningSpecifications struct {
+	CarType  string `json:"car_type"`
+	Quantity int32  `json:"quantity"`
+}
+
 type CarCleaningDetails struct {
-	CarType    string `json:"car_type"`
-	ChildSeats int32  `json:"child_seats"`
+	CleaningSpecs []CarCleaningSpecifications `json:"cleaning_specs"`
+	ChildSeats    int32                       `json:"child_seats"`
 }
 type PostConstructionDetails struct {
 	SQM int32 `json:"sqm"`
@@ -66,7 +87,8 @@ type BaseBookingDetails struct {
 	CustomerFirstName string
 	CustomerLastName  string
 	Address           Address
-	Schedule          time.Time
+	StartSched        time.Time
+	EndSched          time.Time
 	DirtyScale        int32
 	PaymentStatus     string
 	ReviewStatus      string
@@ -104,7 +126,6 @@ type ServicesRequest struct {
 }
 type AddOnRequest struct {
 	ServiceDetail ServicesRequest `json:"service_detail"`
-	Price         float32         `json:"price"`
 }
 
 type CreateBookingEvent struct {

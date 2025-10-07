@@ -54,7 +54,11 @@ func (b *BookingService) CreateBooking(ctx context.Context, in *booking.CreateBo
 			return err
 		}
 
-		baseBook, err := b.makeBaseBooking(ctx, tx, in.Base.CustId, in.Base.CustomerFirstName, in.Base.CustomerLastName, types.AddressFromProto(in.Base.Address), in.Base.Schedule.AsTime(), in.Base.DirtyScale, in.Base.PaymentStatus, in.Base.ReviewStatus, in.Base.Photos)
+		baseBook, err := b.makeBaseBooking(ctx, tx, in.Base.CustId,
+			in.Base.CustomerFirstName, in.Base.CustomerLastName,
+			types.AddressFromProto(in.Base.Address),
+			in.Base.StartSched.AsTime(), in.Base.EndSched.AsTime(), in.Base.DirtyScale,
+			in.Base.PaymentStatus, in.Base.ReviewStatus, in.Base.Photos)
 		if err != nil {
 			return err
 		}
@@ -75,6 +79,7 @@ func (b *BookingService) CreateBooking(ctx context.Context, in *booking.CreateBo
 		cleanerIDs := b.ExtractCleanerIDs(types.CleanerAssignedToProto(cleaners))
 
 		totalPrice := float32(100.11)
+
 		bookingID, err := b.saveBooking(ctx, tx, baseBook.ID, mainService.ID,
 			addonIDs,
 			equipmentIDs,
@@ -167,7 +172,11 @@ func (b *BookingService) UpdateBooking(ctx context.Context, in *booking.Booking)
 			return err
 		}
 
-		baseBook, err := b.updateBaseBooking(ctx, tx, in.Base.Id, in.Base.CustId, in.Base.CustomerFirstName, in.Base.CustomerLastName, types.AddressFromProto(in.Base.Address), in.Base.Schedule.AsTime(), in.Base.DirtyScale, in.Base.PaymentStatus, in.Base.ReviewStatus, in.Base.Photos)
+		baseBook, err := b.updateBaseBooking(ctx, tx, in.Base.Id, in.Base.CustId,
+			in.Base.CustomerFirstName, in.Base.CustomerLastName,
+			types.AddressFromProto(in.Base.Address),
+			in.Base.StartSched.AsTime(), in.Base.EndSched.AsTime(), in.Base.DirtyScale,
+			in.Base.PaymentStatus, in.Base.ReviewStatus, in.Base.Photos)
 		if err != nil {
 			return err
 		}
