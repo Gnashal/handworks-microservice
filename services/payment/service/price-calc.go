@@ -142,6 +142,15 @@ func CalculatePostConstructionCleaning(details *booking.PostConstructionCleaning
 }
 
 func (b *PaymentService) CalculatePriceByServiceType(service *booking.ServicesRequest) float32 {
+	if service == nil {
+		b.L.Error("service is nil")
+		return 0
+	}
+
+	if service.GetDetails() == nil {
+		b.L.Error("service.Details is nil for service type: %v", service.ServiceType)
+		return 0
+	}
 	var calculatedPrice float32 = 0.00
 
 	switch service.ServiceType {

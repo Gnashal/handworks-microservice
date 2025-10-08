@@ -283,11 +283,11 @@ func FromProtoCreateBooking(req *booking.CreateBookingRequest) *CreateBookingEve
 			ServiceType: MainServiceType(req.MainService.ServiceType.String()),
 			Details:     convertServiceDetail(req.MainService.Details),
 		},
-		Addons: convertAddons(req.Addons),
+		Addons: ConvertAddons(req.Addons),
 	}
 }
 
-func convertAddons(addons []*booking.AddOnRequest) []AddOnRequest {
+func ConvertAddons(addons []*booking.AddOnRequest) []AddOnRequest {
 	out := make([]AddOnRequest, 0, len(addons))
 	for _, a := range addons {
 		out = append(out, AddOnRequest{

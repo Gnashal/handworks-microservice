@@ -20,8 +20,8 @@ func (q DbQuote) ToProto() *payment.QuoteResponse {
 
 func (a DbQuoteAddon) ToAddOnBreakdownProto() *payment.AddOnBreakdown {
 	return &payment.AddOnBreakdown{
-		AddonId:   a.AddonID,
-		AddonName: a.AddonName,
+		AddonId:   a.ID,
+		AddonName: a.ServiceType,
 		Price:     a.AddonPrice,
 	}
 }

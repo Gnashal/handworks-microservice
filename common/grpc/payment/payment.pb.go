@@ -24,8 +24,9 @@ const (
 
 type QuoteRequest struct {
 	state         protoimpl.MessageState   `protogen:"open.v1"`
-	Service       *booking.ServicesRequest `protobuf:"bytes,1,opt,name=service,proto3" json:"service,omitempty"`
-	Addons        []*booking.AddOnRequest  `protobuf:"bytes,2,rep,name=addons,proto3" json:"addons,omitempty"`
+	CustId        string                   `protobuf:"bytes,1,opt,name=cust_id,json=custId,proto3" json:"cust_id,omitempty"`
+	Service       *booking.ServicesRequest `protobuf:"bytes,2,opt,name=service,proto3" json:"service,omitempty"`
+	Addons        []*booking.AddOnRequest  `protobuf:"bytes,3,rep,name=addons,proto3" json:"addons,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -58,6 +59,13 @@ func (x *QuoteRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use QuoteRequest.ProtoReflect.Descriptor instead.
 func (*QuoteRequest) Descriptor() ([]byte, []int) {
 	return file_payment_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *QuoteRequest) GetCustId() string {
+	if x != nil {
+		return x.CustId
+	}
+	return ""
 }
 
 func (x *QuoteRequest) GetService() *booking.ServicesRequest {
@@ -206,10 +214,11 @@ var File_payment_proto protoreflect.FileDescriptor
 
 const file_payment_proto_rawDesc = "" +
 	"\n" +
-	"\rpayment.proto\x1a\rbooking.proto\"a\n" +
-	"\fQuoteRequest\x12*\n" +
-	"\aservice\x18\x01 \x01(\v2\x10.ServicesRequestR\aservice\x12%\n" +
-	"\x06addons\x18\x02 \x03(\v2\r.AddOnRequestR\x06addons\"\xa7\x01\n" +
+	"\rpayment.proto\x1a\rbooking.proto\"z\n" +
+	"\fQuoteRequest\x12\x17\n" +
+	"\acust_id\x18\x01 \x01(\tR\x06custId\x12*\n" +
+	"\aservice\x18\x02 \x01(\v2\x10.ServicesRequestR\aservice\x12%\n" +
+	"\x06addons\x18\x03 \x03(\v2\r.AddOnRequestR\x06addons\"\xa7\x01\n" +
 	"\rQuoteResponse\x128\n" +
 	"\x0faddon_breakdown\x18\x01 \x03(\v2\x0f.AddOnBreakdownR\x0eaddonBreakdown\x12\x1f\n" +
 	"\vaddon_total\x18\x02 \x01(\x02R\n" +
