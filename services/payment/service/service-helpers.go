@@ -49,6 +49,7 @@ func (p *PaymentService) CreateQuote(c context.Context, tx pgx.Tx, in *payment.Q
 
 	// Calculate each addon price
 	for _, addon := range in.Addons {
+		// i genuinely dunno why addon.ServiceDetail wont work lmao
 		addonService := &booking.ServicesRequest{
 			ServiceType: addon.ServiceDetail.ServiceType,
 			Details:     addon.ServiceDetail.Details,

@@ -198,7 +198,7 @@ message MattressCleaningDetails {
 }
 // Car interior cleaning
 message CarCleaningSpecifications {
-  CarType carType = 1;
+  CarType car_type = 1;
   int32 quantity = 2;
 }
 message CarCleaningDetails {

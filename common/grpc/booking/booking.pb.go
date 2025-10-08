@@ -1732,7 +1732,7 @@ func (x *MattressCleaningDetails) GetCleaningSpecs() []*MattressCleaningSpecific
 // Car interior cleaning
 type CarCleaningSpecifications struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	CarType       CarType                `protobuf:"varint,1,opt,name=carType,proto3,enum=CarType" json:"carType,omitempty"`
+	CarType       CarType                `protobuf:"varint,1,opt,name=car_type,json=carType,proto3,enum=CarType" json:"car_type,omitempty"`
 	Quantity      int32                  `protobuf:"varint,2,opt,name=quantity,proto3" json:"quantity,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -2312,9 +2312,9 @@ const file_booking_proto_rawDesc = "" +
 	"\theight_cm\x18\x04 \x01(\x05R\bheightCm\x12\x1a\n" +
 	"\bquantity\x18\x05 \x01(\x05R\bquantity\"`\n" +
 	"\x17MattressCleaningDetails\x12E\n" +
-	"\rcleaningSpecs\x18\x01 \x03(\v2\x1f.MattressCleaningSpecificationsR\rcleaningSpecs\"[\n" +
-	"\x19CarCleaningSpecifications\x12\"\n" +
-	"\acarType\x18\x01 \x01(\x0e2\b.CarTypeR\acarType\x12\x1a\n" +
+	"\rcleaningSpecs\x18\x01 \x03(\v2\x1f.MattressCleaningSpecificationsR\rcleaningSpecs\"\\\n" +
+	"\x19CarCleaningSpecifications\x12#\n" +
+	"\bcar_type\x18\x01 \x01(\x0e2\b.CarTypeR\acarType\x12\x1a\n" +
 	"\bquantity\x18\x02 \x01(\x05R\bquantity\"w\n" +
 	"\x12CarCleaningDetails\x12@\n" +
 	"\rcleaningSpecs\x18\x01 \x03(\v2\x1a.CarCleaningSpecificationsR\rcleaningSpecs\x12\x1f\n" +
@@ -2480,7 +2480,7 @@ var file_booking_proto_depIdxs = []int32{
 	20, // 33: CouchCleaningDetails.cleaningSpecs:type_name -> CouchCleaningSpecifications
 	3,  // 34: MattressCleaningSpecifications.bed_type:type_name -> BedType
 	22, // 35: MattressCleaningDetails.cleaningSpecs:type_name -> MattressCleaningSpecifications
-	4,  // 36: CarCleaningSpecifications.carType:type_name -> CarType
+	4,  // 36: CarCleaningSpecifications.car_type:type_name -> CarType
 	24, // 37: CarCleaningDetails.cleaningSpecs:type_name -> CarCleaningSpecifications
 	10, // 38: GetBookingByIdResponse.booking:type_name -> Booking
 	10, // 39: GetBookingByUIdResponse.Booking:type_name -> Booking

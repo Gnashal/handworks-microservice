@@ -11,10 +11,12 @@ func (q DbQuote) ToProto() *payment.QuoteResponse {
 	}
 
 	return &payment.QuoteResponse{
-		AddonBreakdown: breakdowns,
-		AddonTotal:     q.AddonTotal,
-		Subtotal:       q.Subtotal,
-		TotalPrice:     q.TotalPrice,
+		AddonBreakdown:   breakdowns,
+		AddonTotal:       q.AddonTotal,
+		MainServiceName:  q.MainService,
+		MainServiceTotal: q.Subtotal,
+		TotalPrice:       q.TotalPrice,
+		QuoteId:          q.ID,
 	}
 }
 

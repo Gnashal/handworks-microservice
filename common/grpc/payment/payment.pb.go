@@ -83,13 +83,15 @@ func (x *QuoteRequest) GetAddons() []*booking.AddOnRequest {
 }
 
 type QuoteResponse struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	AddonBreakdown []*AddOnBreakdown      `protobuf:"bytes,1,rep,name=addon_breakdown,json=addonBreakdown,proto3" json:"addon_breakdown,omitempty"`
-	AddonTotal     float32                `protobuf:"fixed32,2,opt,name=addon_total,json=addonTotal,proto3" json:"addon_total,omitempty"`
-	Subtotal       float32                `protobuf:"fixed32,3,opt,name=subtotal,proto3" json:"subtotal,omitempty"`
-	TotalPrice     float32                `protobuf:"fixed32,4,opt,name=total_price,json=totalPrice,proto3" json:"total_price,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	QuoteId          string                 `protobuf:"bytes,1,opt,name=quote_id,json=quoteId,proto3" json:"quote_id,omitempty"`
+	MainServiceName  string                 `protobuf:"bytes,2,opt,name=main_service_name,json=mainServiceName,proto3" json:"main_service_name,omitempty"`
+	MainServiceTotal float32                `protobuf:"fixed32,3,opt,name=main_service_total,json=mainServiceTotal,proto3" json:"main_service_total,omitempty"`
+	AddonBreakdown   []*AddOnBreakdown      `protobuf:"bytes,4,rep,name=addon_breakdown,json=addonBreakdown,proto3" json:"addon_breakdown,omitempty"`
+	AddonTotal       float32                `protobuf:"fixed32,5,opt,name=addon_total,json=addonTotal,proto3" json:"addon_total,omitempty"`
+	TotalPrice       float32                `protobuf:"fixed32,6,opt,name=total_price,json=totalPrice,proto3" json:"total_price,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *QuoteResponse) Reset() {
@@ -122,6 +124,27 @@ func (*QuoteResponse) Descriptor() ([]byte, []int) {
 	return file_payment_proto_rawDescGZIP(), []int{1}
 }
 
+func (x *QuoteResponse) GetQuoteId() string {
+	if x != nil {
+		return x.QuoteId
+	}
+	return ""
+}
+
+func (x *QuoteResponse) GetMainServiceName() string {
+	if x != nil {
+		return x.MainServiceName
+	}
+	return ""
+}
+
+func (x *QuoteResponse) GetMainServiceTotal() float32 {
+	if x != nil {
+		return x.MainServiceTotal
+	}
+	return 0
+}
+
 func (x *QuoteResponse) GetAddonBreakdown() []*AddOnBreakdown {
 	if x != nil {
 		return x.AddonBreakdown
@@ -132,13 +155,6 @@ func (x *QuoteResponse) GetAddonBreakdown() []*AddOnBreakdown {
 func (x *QuoteResponse) GetAddonTotal() float32 {
 	if x != nil {
 		return x.AddonTotal
-	}
-	return 0
-}
-
-func (x *QuoteResponse) GetSubtotal() float32 {
-	if x != nil {
-		return x.Subtotal
 	}
 	return 0
 }
@@ -218,13 +234,15 @@ const file_payment_proto_rawDesc = "" +
 	"\fQuoteRequest\x12\x17\n" +
 	"\acust_id\x18\x01 \x01(\tR\x06custId\x12*\n" +
 	"\aservice\x18\x02 \x01(\v2\x10.ServicesRequestR\aservice\x12%\n" +
-	"\x06addons\x18\x03 \x03(\v2\r.AddOnRequestR\x06addons\"\xa7\x01\n" +
-	"\rQuoteResponse\x128\n" +
-	"\x0faddon_breakdown\x18\x01 \x03(\v2\x0f.AddOnBreakdownR\x0eaddonBreakdown\x12\x1f\n" +
-	"\vaddon_total\x18\x02 \x01(\x02R\n" +
-	"addonTotal\x12\x1a\n" +
-	"\bsubtotal\x18\x03 \x01(\x02R\bsubtotal\x12\x1f\n" +
-	"\vtotal_price\x18\x04 \x01(\x02R\n" +
+	"\x06addons\x18\x03 \x03(\v2\r.AddOnRequestR\x06addons\"\x80\x02\n" +
+	"\rQuoteResponse\x12\x19\n" +
+	"\bquote_id\x18\x01 \x01(\tR\aquoteId\x12*\n" +
+	"\x11main_service_name\x18\x02 \x01(\tR\x0fmainServiceName\x12,\n" +
+	"\x12main_service_total\x18\x03 \x01(\x02R\x10mainServiceTotal\x128\n" +
+	"\x0faddon_breakdown\x18\x04 \x03(\v2\x0f.AddOnBreakdownR\x0eaddonBreakdown\x12\x1f\n" +
+	"\vaddon_total\x18\x05 \x01(\x02R\n" +
+	"addonTotal\x12\x1f\n" +
+	"\vtotal_price\x18\x06 \x01(\x02R\n" +
 	"totalPrice\"`\n" +
 	"\x0eAddOnBreakdown\x12\x19\n" +
 	"\baddon_id\x18\x01 \x01(\tR\aaddonId\x12\x1d\n" +

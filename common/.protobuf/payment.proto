@@ -14,10 +14,12 @@ message QuoteRequest {
 }
 
 message QuoteResponse {
-  repeated AddOnBreakdown addon_breakdown = 1;
-  float addon_total = 2;
-  float subtotal = 3;
-  float total_price = 4;
+  string quote_id = 1;
+  string main_service_name = 2;
+  float main_service_total = 3;
+  repeated AddOnBreakdown addon_breakdown = 4;
+  float addon_total = 5;
+  float total_price = 6;
 }
 message AddOnBreakdown {
   string addon_id = 1;
