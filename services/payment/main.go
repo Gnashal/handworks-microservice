@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"handworks-services-account/db"
+	"handworks-services-payment/db"
 	"handworks-services-payment/server"
 	"handworks-services-payment/service"
 	"handworks/common/grpc/payment"
