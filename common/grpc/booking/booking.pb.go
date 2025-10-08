@@ -937,6 +937,7 @@ type BaseBookingDetails struct {
 	Photos            []string               `protobuf:"bytes,11,rep,name=photos,proto3" json:"photos,omitempty"` // file IDs or URLs
 	CreatedAt         *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt         *timestamppb.Timestamp `protobuf:"bytes,13,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	QuoteId           string                 `protobuf:"bytes,14,opt,name=quote_id,json=quoteId,proto3" json:"quote_id,omitempty"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
@@ -1062,6 +1063,13 @@ func (x *BaseBookingDetails) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+func (x *BaseBookingDetails) GetQuoteId() string {
+	if x != nil {
+		return x.QuoteId
+	}
+	return ""
+}
+
 type BaseBookingDetailsRequest struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
 	CustId            string                 `protobuf:"bytes,1,opt,name=cust_id,json=custId,proto3" json:"cust_id,omitempty"`
@@ -1076,6 +1084,7 @@ type BaseBookingDetailsRequest struct {
 	Photos            []string               `protobuf:"bytes,10,rep,name=photos,proto3" json:"photos,omitempty"` // file IDs or URLs
 	CreatedAt         *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt         *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	QuoteId           string                 `protobuf:"bytes,13,opt,name=quote_id,json=quoteId,proto3" json:"quote_id,omitempty"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
@@ -1192,6 +1201,13 @@ func (x *BaseBookingDetailsRequest) GetUpdatedAt() *timestamppb.Timestamp {
 		return x.UpdatedAt
 	}
 	return nil
+}
+
+func (x *BaseBookingDetailsRequest) GetQuoteId() string {
+	if x != nil {
+		return x.QuoteId
+	}
+	return ""
 }
 
 type CreateBookingRequest struct {
@@ -1543,6 +1559,7 @@ func (x *CouchCleaningSpecifications) GetQuantity() int32 {
 type CouchCleaningDetails struct {
 	state         protoimpl.MessageState         `protogen:"open.v1"`
 	CleaningSpecs []*CouchCleaningSpecifications `protobuf:"bytes,1,rep,name=cleaningSpecs,proto3" json:"cleaningSpecs,omitempty"`
+	BedPillows    int32                          `protobuf:"varint,2,opt,name=bed_pillows,json=bedPillows,proto3" json:"bed_pillows,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1582,6 +1599,13 @@ func (x *CouchCleaningDetails) GetCleaningSpecs() []*CouchCleaningSpecifications
 		return x.CleaningSpecs
 	}
 	return nil
+}
+
+func (x *CouchCleaningDetails) GetBedPillows() int32 {
+	if x != nil {
+		return x.BedPillows
+	}
+	return 0
 }
 
 // Mattress cleaning
@@ -2211,7 +2235,7 @@ const file_booking_proto_rawDesc = "" +
 	"\rserviceDetail\x18\x02 \x01(\v2\t.ServicesR\rserviceDetail\x12\x14\n" +
 	"\x05price\x18\x03 \x01(\x02R\x05price\"F\n" +
 	"\fAddOnRequest\x126\n" +
-	"\rserviceDetail\x18\x01 \x01(\v2\x10.ServicesRequestR\rserviceDetail\"\xae\x04\n" +
+	"\rserviceDetail\x18\x01 \x01(\v2\x10.ServicesRequestR\rserviceDetail\"\xc9\x04\n" +
 	"\x12BaseBookingDetails\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
 	"\acust_id\x18\x02 \x01(\tR\x06custId\x12.\n" +
@@ -2231,7 +2255,8 @@ const file_booking_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xa5\x04\n" +
+	"updated_at\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x19\n" +
+	"\bquote_id\x18\x0e \x01(\tR\aquoteId\"\xc0\x04\n" +
 	"\x19BaseBookingDetailsRequest\x12\x17\n" +
 	"\acust_id\x18\x01 \x01(\tR\x06custId\x12.\n" +
 	"\x13customer_first_name\x18\x02 \x01(\tR\x11customerFirstName\x12,\n" +
@@ -2250,7 +2275,8 @@ const file_booking_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xa2\x01\n" +
+	"updated_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x19\n" +
+	"\bquote_id\x18\r \x01(\tR\aquoteId\"\xa2\x01\n" +
 	"\x14CreateBookingRequest\x12.\n" +
 	"\x04base\x18\x01 \x01(\v2\x1a.BaseBookingDetailsRequestR\x04base\x123\n" +
 	"\fmain_service\x18\x02 \x01(\v2\x10.ServicesRequestR\vmainService\x12%\n" +
@@ -2274,9 +2300,11 @@ const file_booking_proto_rawDesc = "" +
 	"\bwidth_cm\x18\x02 \x01(\x05R\awidthCm\x12\x19\n" +
 	"\bdepth_cm\x18\x03 \x01(\x05R\adepthCm\x12\x1b\n" +
 	"\theight_cm\x18\x04 \x01(\x05R\bheightCm\x12\x1a\n" +
-	"\bquantity\x18\x05 \x01(\x05R\bquantity\"Z\n" +
+	"\bquantity\x18\x05 \x01(\x05R\bquantity\"{\n" +
 	"\x14CouchCleaningDetails\x12B\n" +
-	"\rcleaningSpecs\x18\x01 \x03(\v2\x1c.CouchCleaningSpecificationsR\rcleaningSpecs\"\xb4\x01\n" +
+	"\rcleaningSpecs\x18\x01 \x03(\v2\x1c.CouchCleaningSpecificationsR\rcleaningSpecs\x12\x1f\n" +
+	"\vbed_pillows\x18\x02 \x01(\x05R\n" +
+	"bedPillows\"\xb4\x01\n" +
 	"\x1eMattressCleaningSpecifications\x12#\n" +
 	"\bbed_type\x18\x01 \x01(\x0e2\b.BedTypeR\abedType\x12\x19\n" +
 	"\bwidth_cm\x18\x02 \x01(\x05R\awidthCm\x12\x19\n" +

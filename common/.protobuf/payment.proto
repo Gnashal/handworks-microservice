@@ -8,11 +8,19 @@ service PaymentService {
 }
 
 message QuoteRequest {
-  ServicesRequest service = 1;
-  repeated AddOnRequest addons = 2;
+  string cust_id = 1;
+  ServicesRequest service = 2;
+  repeated AddOnRequest addons = 3;
 }
+
 message QuoteResponse {
-  float addon_price = 1;
-  float subtotal = 2;
-  float total_price = 3;
+  repeated AddOnBreakdown addon_breakdown = 1;
+  float addon_total = 2;
+  float subtotal = 3;
+  float total_price = 4;
+}
+message AddOnBreakdown {
+  string addon_id = 1;
+  string addon_name = 2;
+  float price = 3;
 }

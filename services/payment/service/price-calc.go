@@ -5,21 +5,25 @@ import "handworks/common/grpc/booking"
 func CalculateGeneralCleaning(details *booking.GeneralCleaningDetails) float32 {
 	sqm := details.Sqm
 	homeType := details.HomeType
-	if homeType == booking.HomeType_CONDO_ROOM || sqm > 0 && sqm < 31 {
+
+	switch {
+	case homeType == booking.HomeType_CONDO_ROOM || (sqm > 0 && sqm <= 30):
 		return 2000.00
-	} else if homeType == booking.HomeType_HOUSE || sqm > 31 && sqm < 50 {
+	case homeType == booking.HomeType_HOUSE || (sqm > 30 && sqm <= 50):
 		return 2500.00
-	} else {
+	case sqm > 50 && sqm <= 100:
 		return 5000.00
+	default:
+		return float32(sqm * 50)
 	}
 }
 
 func CalculateCarCleaning(details *booking.CarCleaningDetails) float32 {
-	if details == nil || len(details.CleaningSpecs) == 0 {
+	if details == nil {
 		return 0.0
 	}
 
-	var total float32 = 0.0
+	var total float32
 
 	for _, spec := range details.CleaningSpecs {
 		var pricePerCar float32
@@ -43,14 +47,19 @@ func CalculateCarCleaning(details *booking.CarCleaningDetails) float32 {
 
 		total += pricePerCar * float32(spec.Quantity)
 	}
+	if details.ChildSeats > 0 {
+		total += float32(details.ChildSeats) * 250.00
+	}
+
 	return total
 }
 
 func CalculateCouchCleaning(details *booking.CouchCleaningDetails) float32 {
-	if details == nil || len(details.CleaningSpecs) == 0 {
+	if details == nil {
 		return 0.0
 	}
-	var total float32 = 0.0
+
+	var total float32
 
 	for _, spec := range details.CleaningSpecs {
 		var pricePerCouch float32
@@ -75,38 +84,85 @@ func CalculateCouchCleaning(details *booking.CouchCleaningDetails) float32 {
 		case booking.CouchType_SEATER_6_LTYPE:
 			pricePerCouch = 2500.00
 		case booking.CouchType_OTTOMAN:
-			pricePerCouch = 500
+			pricePerCouch = 500.00
 		case booking.CouchType_LAZBOY:
-			pricePerCouch = 900
+			pricePerCouch = 900.00
 		case booking.CouchType_CHAIR:
-			pricePerCouch = 250
+			pricePerCouch = 250.00
+		default:
+			pricePerCouch = 0.00
 		}
+
 		total += pricePerCouch * float32(spec.Quantity)
+	}
+	if details.BedPillows > 0 {
+		total += float32(details.BedPillows) * 100.00
+	}
+
+	return total
+}
+
+func CalculateMattressCleaning(details *booking.MattressCleaningDetails) float32 {
+	if details == nil || len(details.CleaningSpecs) == 0 {
+		return 0.0
+	}
+
+	var total float32
+	for _, spec := range details.CleaningSpecs {
+		var price float32
+
+		switch spec.BedType {
+		case booking.BedType_KING:
+			price = 2000.00
+		case booking.BedType_KING_HEADBAND:
+			price = 2500.00
+		case booking.BedType_QUEEN:
+			price = 1800.00
+		case booking.BedType_QUEEN_HEADBAND:
+			price = 2300.00
+		case booking.BedType_DOUBLE:
+			price = 1500.00
+		case booking.BedType_SINGLE:
+			price = 1000.00
+		default:
+			price = 0.00
+		}
+
+		total += price * float32(spec.Quantity)
 	}
 	return total
 }
 
 func CalculatePostConstructionCleaning(details *booking.PostConstructionCleaningDetails) float32 {
-	total := details.Sqm * 50
-	return float32(total)
+	if details == nil {
+		return 0.0
+	}
+	sqm := details.Sqm
+	return float32(sqm * 50.00)
 }
+
 func (b *PaymentService) CalculatePriceByServiceType(service *booking.ServicesRequest) float32 {
 	var calculatedPrice float32 = 0.00
+
 	switch service.ServiceType {
 	case booking.MainServiceType_GENERAL_CLEANING:
-		general := service.GetDetails().GetGeneral()
-		calculatedPrice = CalculateGeneralCleaning(general)
-		return calculatedPrice
+		calculatedPrice = CalculateGeneralCleaning(service.GetDetails().GetGeneral())
+
 	case booking.MainServiceType_COUCH:
+		calculatedPrice = CalculateCouchCleaning(service.GetDetails().GetCouch())
+
 	case booking.MainServiceType_MATTRESS:
+		calculatedPrice = CalculateMattressCleaning(service.GetDetails().GetMattress())
+
 	case booking.MainServiceType_CAR:
-		car := service.GetDetails().GetCar()
-		calculatedPrice = CalculateCarCleaning(car)
-		return calculatedPrice
+		calculatedPrice = CalculateCarCleaning(service.GetDetails().GetCar())
+
 	case booking.MainServiceType_POST:
+		calculatedPrice = CalculatePostConstructionCleaning(service.GetDetails().GetPost())
+
 	default:
 		b.L.Error("UNSPECIFIED SERVICE TYPE")
-		return calculatedPrice
 	}
+
 	return calculatedPrice
 }

@@ -8,7 +8,7 @@ import (
 	"handworks/common/grpc/payment"
 	"handworks/common/natsconn"
 	"handworks/common/utils"
-	"sync"
+	"time"
 
 	"github.com/joho/godotenv"
 )
@@ -29,7 +29,8 @@ func main() {
 		logger.Info("NATS connection established")
 	}
 
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	pool, err := db.InitDb(ctx)
 	if err != nil {
 		logger.Fatal("Payment DB Initialization Failed: %v", err)
@@ -37,22 +38,30 @@ func main() {
 	logger.Info("Payment DB Initialization Success")
 	defer pool.Close()
 
-	paymentService := service.PaymentService{
+	paymentService := &service.PaymentService{
 		L:                                 logger,
 		DB:                                pool,
 		NC:                                nc,
 		UnimplementedPaymentServiceServer: payment.UnimplementedPaymentServiceServer{},
 	}
-
-	var wg sync.WaitGroup
-	wg.Add(1)
-
 	go func() {
-		defer wg.Done()
-		if err := server.StartGrpcServer(&paymentService, logger); err != nil {
-			logger.Fatal("Initialization of Payment GRPC Server Failed: %v", err)
+		if err := paymentService.HandleSubscriptions(ctx); err != nil {
+			logger.Error("NATS subscription error: %v", err)
+			cancel()
 		}
 	}()
 
-	wg.Wait()
+	go func() {
+		if err := server.StartGrpcServer(ctx, paymentService, logger); err != nil {
+			logger.Error("gRPC server error: %v", err)
+			cancel()
+		}
+	}()
+
+	// Block until cancel
+	<-ctx.Done()
+	logger.Warn("Shutting down Account service...")
+
+	time.Sleep(1 * time.Second)
+	logger.Info("Shutdown complete")
 }

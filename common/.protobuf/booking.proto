@@ -82,6 +82,7 @@ message BaseBookingDetails {
     repeated string photos = 11; // file IDs or URLs
     google.protobuf.Timestamp created_at = 12;
     google.protobuf.Timestamp updated_at = 13;
+    string quote_id = 14;
 }
 message BaseBookingDetailsRequest{
     string cust_id = 1;
@@ -96,6 +97,7 @@ message BaseBookingDetailsRequest{
     repeated string photos = 10; // file IDs or URLs
     google.protobuf.Timestamp created_at = 11;
     google.protobuf.Timestamp updated_at = 12;
+    string quote_id = 13;
 }
 
 message CreateBookingRequest {
@@ -180,6 +182,7 @@ message CouchCleaningSpecifications {
 }
 message CouchCleaningDetails {
   repeated CouchCleaningSpecifications cleaningSpecs = 1;
+  int32 bed_pillows = 2;
 }
 
 // Mattress cleaning

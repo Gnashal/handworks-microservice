@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"handworks/common/grpc/payment"
 	"handworks/common/utils"
 
@@ -13,4 +14,9 @@ type PaymentService struct {
 	DB *pgxpool.Pool
 	NC *nats.Conn
 	payment.UnimplementedPaymentServiceServer
+}
+
+func (p *PaymentService) GetQuote(c context.Context, in *payment.QuoteRequest) (*payment.QuoteResponse, error) {
+
+	return &payment.QuoteResponse{}, nil
 }

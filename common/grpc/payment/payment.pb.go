@@ -75,12 +75,13 @@ func (x *QuoteRequest) GetAddons() []*booking.AddOnRequest {
 }
 
 type QuoteResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	AddonPrice    float32                `protobuf:"fixed32,1,opt,name=addon_price,json=addonPrice,proto3" json:"addon_price,omitempty"`
-	Subtotal      float32                `protobuf:"fixed32,2,opt,name=subtotal,proto3" json:"subtotal,omitempty"`
-	TotalPrice    float32                `protobuf:"fixed32,3,opt,name=total_price,json=totalPrice,proto3" json:"total_price,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	AddonBreakdown []*AddOnBreakdown      `protobuf:"bytes,1,rep,name=addon_breakdown,json=addonBreakdown,proto3" json:"addon_breakdown,omitempty"`
+	AddonTotal     float32                `protobuf:"fixed32,2,opt,name=addon_total,json=addonTotal,proto3" json:"addon_total,omitempty"`
+	Subtotal       float32                `protobuf:"fixed32,3,opt,name=subtotal,proto3" json:"subtotal,omitempty"`
+	TotalPrice     float32                `protobuf:"fixed32,4,opt,name=total_price,json=totalPrice,proto3" json:"total_price,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *QuoteResponse) Reset() {
@@ -113,9 +114,16 @@ func (*QuoteResponse) Descriptor() ([]byte, []int) {
 	return file_payment_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *QuoteResponse) GetAddonPrice() float32 {
+func (x *QuoteResponse) GetAddonBreakdown() []*AddOnBreakdown {
 	if x != nil {
-		return x.AddonPrice
+		return x.AddonBreakdown
+	}
+	return nil
+}
+
+func (x *QuoteResponse) GetAddonTotal() float32 {
+	if x != nil {
+		return x.AddonTotal
 	}
 	return 0
 }
@@ -134,6 +142,66 @@ func (x *QuoteResponse) GetTotalPrice() float32 {
 	return 0
 }
 
+type AddOnBreakdown struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	AddonId       string                 `protobuf:"bytes,1,opt,name=addon_id,json=addonId,proto3" json:"addon_id,omitempty"`
+	AddonName     string                 `protobuf:"bytes,2,opt,name=addon_name,json=addonName,proto3" json:"addon_name,omitempty"`
+	Price         float32                `protobuf:"fixed32,3,opt,name=price,proto3" json:"price,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AddOnBreakdown) Reset() {
+	*x = AddOnBreakdown{}
+	mi := &file_payment_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AddOnBreakdown) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AddOnBreakdown) ProtoMessage() {}
+
+func (x *AddOnBreakdown) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AddOnBreakdown.ProtoReflect.Descriptor instead.
+func (*AddOnBreakdown) Descriptor() ([]byte, []int) {
+	return file_payment_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *AddOnBreakdown) GetAddonId() string {
+	if x != nil {
+		return x.AddonId
+	}
+	return ""
+}
+
+func (x *AddOnBreakdown) GetAddonName() string {
+	if x != nil {
+		return x.AddonName
+	}
+	return ""
+}
+
+func (x *AddOnBreakdown) GetPrice() float32 {
+	if x != nil {
+		return x.Price
+	}
+	return 0
+}
+
 var File_payment_proto protoreflect.FileDescriptor
 
 const file_payment_proto_rawDesc = "" +
@@ -141,13 +209,19 @@ const file_payment_proto_rawDesc = "" +
 	"\rpayment.proto\x1a\rbooking.proto\"a\n" +
 	"\fQuoteRequest\x12*\n" +
 	"\aservice\x18\x01 \x01(\v2\x10.ServicesRequestR\aservice\x12%\n" +
-	"\x06addons\x18\x02 \x03(\v2\r.AddOnRequestR\x06addons\"m\n" +
-	"\rQuoteResponse\x12\x1f\n" +
-	"\vaddon_price\x18\x01 \x01(\x02R\n" +
-	"addonPrice\x12\x1a\n" +
-	"\bsubtotal\x18\x02 \x01(\x02R\bsubtotal\x12\x1f\n" +
-	"\vtotal_price\x18\x03 \x01(\x02R\n" +
-	"totalPrice2?\n" +
+	"\x06addons\x18\x02 \x03(\v2\r.AddOnRequestR\x06addons\"\xa7\x01\n" +
+	"\rQuoteResponse\x128\n" +
+	"\x0faddon_breakdown\x18\x01 \x03(\v2\x0f.AddOnBreakdownR\x0eaddonBreakdown\x12\x1f\n" +
+	"\vaddon_total\x18\x02 \x01(\x02R\n" +
+	"addonTotal\x12\x1a\n" +
+	"\bsubtotal\x18\x03 \x01(\x02R\bsubtotal\x12\x1f\n" +
+	"\vtotal_price\x18\x04 \x01(\x02R\n" +
+	"totalPrice\"`\n" +
+	"\x0eAddOnBreakdown\x12\x19\n" +
+	"\baddon_id\x18\x01 \x01(\tR\aaddonId\x12\x1d\n" +
+	"\n" +
+	"addon_name\x18\x02 \x01(\tR\taddonName\x12\x14\n" +
+	"\x05price\x18\x03 \x01(\x02R\x05price2?\n" +
 	"\x0ePaymentService\x12-\n" +
 	"\fGetQuotation\x12\r.QuoteRequest\x1a\x0e.QuoteResponseB\x1fZ\x1dhandworks/common/grpc/paymentb\x06proto3"
 
@@ -163,23 +237,25 @@ func file_payment_proto_rawDescGZIP() []byte {
 	return file_payment_proto_rawDescData
 }
 
-var file_payment_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_payment_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_payment_proto_goTypes = []any{
 	(*QuoteRequest)(nil),            // 0: QuoteRequest
 	(*QuoteResponse)(nil),           // 1: QuoteResponse
-	(*booking.ServicesRequest)(nil), // 2: ServicesRequest
-	(*booking.AddOnRequest)(nil),    // 3: AddOnRequest
+	(*AddOnBreakdown)(nil),          // 2: AddOnBreakdown
+	(*booking.ServicesRequest)(nil), // 3: ServicesRequest
+	(*booking.AddOnRequest)(nil),    // 4: AddOnRequest
 }
 var file_payment_proto_depIdxs = []int32{
-	2, // 0: QuoteRequest.service:type_name -> ServicesRequest
-	3, // 1: QuoteRequest.addons:type_name -> AddOnRequest
-	0, // 2: PaymentService.GetQuotation:input_type -> QuoteRequest
-	1, // 3: PaymentService.GetQuotation:output_type -> QuoteResponse
-	3, // [3:4] is the sub-list for method output_type
-	2, // [2:3] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	3, // 0: QuoteRequest.service:type_name -> ServicesRequest
+	4, // 1: QuoteRequest.addons:type_name -> AddOnRequest
+	2, // 2: QuoteResponse.addon_breakdown:type_name -> AddOnBreakdown
+	0, // 3: PaymentService.GetQuotation:input_type -> QuoteRequest
+	1, // 4: PaymentService.GetQuotation:output_type -> QuoteResponse
+	4, // [4:5] is the sub-list for method output_type
+	3, // [3:4] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_payment_proto_init() }
@@ -193,7 +269,7 @@ func file_payment_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_payment_proto_rawDesc), len(file_payment_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
