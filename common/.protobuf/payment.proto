@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option go_package="handworks/common/grpc/payment";
+import "booking.proto";
+
+service PaymentService {
+  rpc GetQuotation(QuoteRequest) returns (QuoteResponse);
+}
+
+message QuoteRequest {
+  ServicesRequest service = 1;
+  repeated AddOnRequest addons = 2;
+}
+message QuoteResponse {
+  float addon_price = 1;
+  float subtotal = 2;
+  float total_price = 3;
+}

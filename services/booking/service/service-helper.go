@@ -327,7 +327,7 @@ func (b *BookingService) createAddOn(
 		ServiceDetail: *addOnServiceDetails,
 	}
 
-	addOnPrice := b.CalculatePriceByServiceType(addon.ServiceDetail)
+	addOnPrice := 100.00 //Add price from nats here
 
 	err = tx.QueryRow(ctx,
 		`INSERT INTO booking.addons 

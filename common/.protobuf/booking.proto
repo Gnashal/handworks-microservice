@@ -5,7 +5,6 @@ import "google/protobuf/timestamp.proto";
 
 service BookingService {
   rpc CreateBooking(CreateBookingRequest) returns (CreateBookingResponse);
-  rpc CalculatePrice(CalculatePriceRequest) returns (CalculatePriceResponse); // Implement soon
   rpc GetBookingById(GetBookingByIdRequest) returns (GetBookingByIdResponse);
   rpc GetBookingByUId(GetBookingByUIdRequest) returns (GetBookingByUIdResponse);
   rpc UpdateBooking(Booking) returns (UpdateBookingResponse);
@@ -207,45 +206,6 @@ message CarCleaningDetails {
 // Post-construction cleaning
 message PostConstructionCleaningDetails {
   int32 sqm = 2;
-}
-
-
-message QuoteRequest {
-  oneof details {
-    GeneralCleaningDetails general = 1;
-    CouchCleaningDetails couch = 2;
-    MattressCleaningDetails mattress = 3;
-    CarCleaningDetails car = 4;
-    PostConstructionCleaningDetails post = 5;
-  }
-}
-message QuoteResponse {
-  float total_price = 1;
-}
-
-message CalculateQuotePriceRequest {
-  QuoteRequest quote = 1;
-}
-message CalculateQuotePriceResponse {
-  float total_price = 1;
-  repeated PricingBreakdown breakdown = 2;
-}
-
-message CalculatePriceRequest {
-  CreateBookingRequest booking = 1;
-}
-
-message CalculatePriceResponse {
-  float base_price = 1;
-  float adjustments = 2;
-  float addons_price = 3;
-  float total_price = 4;
-  repeated PricingBreakdown breakdown = 5;
-}
-
-message PricingBreakdown {
-  string description = 1;
-  float amount = 2;
 }
 
 message GetBookingByIdRequest {

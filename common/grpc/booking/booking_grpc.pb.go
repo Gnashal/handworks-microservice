@@ -20,7 +20,6 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	BookingService_CreateBooking_FullMethodName   = "/BookingService/CreateBooking"
-	BookingService_CalculatePrice_FullMethodName  = "/BookingService/CalculatePrice"
 	BookingService_GetBookingById_FullMethodName  = "/BookingService/GetBookingById"
 	BookingService_GetBookingByUId_FullMethodName = "/BookingService/GetBookingByUId"
 	BookingService_UpdateBooking_FullMethodName   = "/BookingService/UpdateBooking"
@@ -32,7 +31,6 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BookingServiceClient interface {
 	CreateBooking(ctx context.Context, in *CreateBookingRequest, opts ...grpc.CallOption) (*CreateBookingResponse, error)
-	CalculatePrice(ctx context.Context, in *CalculatePriceRequest, opts ...grpc.CallOption) (*CalculatePriceResponse, error)
 	GetBookingById(ctx context.Context, in *GetBookingByIdRequest, opts ...grpc.CallOption) (*GetBookingByIdResponse, error)
 	GetBookingByUId(ctx context.Context, in *GetBookingByUIdRequest, opts ...grpc.CallOption) (*GetBookingByUIdResponse, error)
 	UpdateBooking(ctx context.Context, in *Booking, opts ...grpc.CallOption) (*UpdateBookingResponse, error)
@@ -51,16 +49,6 @@ func (c *bookingServiceClient) CreateBooking(ctx context.Context, in *CreateBook
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CreateBookingResponse)
 	err := c.cc.Invoke(ctx, BookingService_CreateBooking_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *bookingServiceClient) CalculatePrice(ctx context.Context, in *CalculatePriceRequest, opts ...grpc.CallOption) (*CalculatePriceResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CalculatePriceResponse)
-	err := c.cc.Invoke(ctx, BookingService_CalculatePrice_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -112,7 +100,6 @@ func (c *bookingServiceClient) DeleteBooking(ctx context.Context, in *DeleteBook
 // for forward compatibility.
 type BookingServiceServer interface {
 	CreateBooking(context.Context, *CreateBookingRequest) (*CreateBookingResponse, error)
-	CalculatePrice(context.Context, *CalculatePriceRequest) (*CalculatePriceResponse, error)
 	GetBookingById(context.Context, *GetBookingByIdRequest) (*GetBookingByIdResponse, error)
 	GetBookingByUId(context.Context, *GetBookingByUIdRequest) (*GetBookingByUIdResponse, error)
 	UpdateBooking(context.Context, *Booking) (*UpdateBookingResponse, error)
@@ -129,9 +116,6 @@ type UnimplementedBookingServiceServer struct{}
 
 func (UnimplementedBookingServiceServer) CreateBooking(context.Context, *CreateBookingRequest) (*CreateBookingResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateBooking not implemented")
-}
-func (UnimplementedBookingServiceServer) CalculatePrice(context.Context, *CalculatePriceRequest) (*CalculatePriceResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CalculatePrice not implemented")
 }
 func (UnimplementedBookingServiceServer) GetBookingById(context.Context, *GetBookingByIdRequest) (*GetBookingByIdResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBookingById not implemented")
@@ -180,24 +164,6 @@ func _BookingService_CreateBooking_Handler(srv interface{}, ctx context.Context,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BookingServiceServer).CreateBooking(ctx, req.(*CreateBookingRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _BookingService_CalculatePrice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CalculatePriceRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BookingServiceServer).CalculatePrice(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: BookingService_CalculatePrice_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BookingServiceServer).CalculatePrice(ctx, req.(*CalculatePriceRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -284,10 +250,6 @@ var BookingService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateBooking",
 			Handler:    _BookingService_CreateBooking_Handler,
-		},
-		{
-			MethodName: "CalculatePrice",
-			Handler:    _BookingService_CalculatePrice_Handler,
 		},
 		{
 			MethodName: "GetBookingById",
