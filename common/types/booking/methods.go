@@ -278,6 +278,7 @@ func FromProtoCreateBooking(req *booking.CreateBookingRequest) *CreateBookingEve
 			Photos:        req.Base.Photos,
 			CreatedAt:     req.Base.CreatedAt.AsTime(),
 			UpdatedAt:     pointerToTime(req.Base.UpdatedAt.AsTime()),
+			QuoteId:       req.Base.QuoteId,
 		},
 		MainService: ServicesRequest{
 			ServiceType: MainServiceType(req.MainService.ServiceType.String()),
@@ -525,6 +526,7 @@ func (baseBooking BaseBookingDetails) ToProto() *booking.BaseBookingDetails {
 		Photos:            baseBooking.Photos,
 		CreatedAt:         timestamppb.New(baseBooking.CreatedAt),
 		UpdatedAt:         updatedAt,
+		QuoteId:           baseBooking.QuoteId,
 	}
 }
 
@@ -553,6 +555,7 @@ func BaseBookingDetailsFromProto(pb *booking.BaseBookingDetails) BaseBookingDeta
 		Photos:            pb.Photos,
 		CreatedAt:         pb.CreatedAt.AsTime(),
 		UpdatedAt:         updatedAt,
+		QuoteId:           pb.QuoteId,
 	}
 }
 func (addOns AddOns) ToProto() *booking.AddOn {

@@ -23,7 +23,6 @@ type BookingService struct {
 
 func (b *BookingService) CreateBooking(ctx context.Context, in *booking.CreateBookingRequest) (*booking.CreateBookingResponse, error) {
 	b.L.Info("Creating Book for User: %s...", in.Base.CustomerFirstName)
-
 	var createdBook *types.Booking
 	event := types.FromProtoCreateBooking(in)
 	payload, err := json.Marshal(event)
@@ -47,7 +46,8 @@ func (b *BookingService) CreateBooking(ctx context.Context, in *booking.CreateBo
 
 	b.L.Info("Published booking.created event; waiting for replies...")
 	responses := b.CollectResponses(sub)
-	equipments, resources, cleaners := b.MergeBookingReplies(responses)
+	equipments, resources, cleaners, prices := b.MergeBookingReplies(responses)
+	addonPrices := b.ExtractAddonPrices(prices)
 	if err := b.withTx(ctx, b.DB, func(tx pgx.Tx) error {
 		mainService, err := b.createMainServiceBooking(ctx, tx, in.MainService.Details)
 		if err != nil {
@@ -58,7 +58,7 @@ func (b *BookingService) CreateBooking(ctx context.Context, in *booking.CreateBo
 			in.Base.CustomerFirstName, in.Base.CustomerLastName,
 			types.AddressFromProto(in.Base.Address),
 			in.Base.StartSched.AsTime(), in.Base.EndSched.AsTime(), in.Base.DirtyScale,
-			in.Base.PaymentStatus, in.Base.ReviewStatus, in.Base.Photos)
+			in.Base.PaymentStatus, in.Base.ReviewStatus, in.Base.Photos, in.Base.QuoteId)
 		if err != nil {
 			return err
 		}
@@ -66,7 +66,16 @@ func (b *BookingService) CreateBooking(ctx context.Context, in *booking.CreateBo
 		var addons []types.AddOns
 		var addonIDs []string
 		for _, addon := range in.Addons {
-			addon, err := b.createAddOn(ctx, tx, addon)
+			serviceType := addon.ServiceDetail.ServiceType
+			b.L.Info("Service Type for addon:%s", serviceType)
+			var addonPrice float32
+			for _, ap := range addonPrices {
+				if ap.AddonName == serviceType.String() {
+					addonPrice = ap.AddonPrice
+					break
+				}
+			}
+			addon, err := b.createAddOn(ctx, tx, addon, addonPrice)
 			if err != nil {
 				return err
 			}
@@ -78,7 +87,7 @@ func (b *BookingService) CreateBooking(ctx context.Context, in *booking.CreateBo
 		resourceIDs := b.ExtractResourceIDs(types.CleaningResourceToProto(resources))
 		cleanerIDs := b.ExtractCleanerIDs(types.CleanerAssignedToProto(cleaners))
 
-		totalPrice := float32(100.11)
+		totalPrice := prices.MainServicePrice
 
 		bookingID, err := b.saveBooking(ctx, tx, baseBook.ID, mainService.ID,
 			addonIDs,

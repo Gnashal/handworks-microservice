@@ -48,6 +48,7 @@ func (b *BookingService) makeBaseBooking(
 	paymentStatus string,
 	reviewStatus string,
 	photos []string,
+	quoteId string,
 ) (*types.BaseBookingDetails, error) {
 
 	var createdBaseBook types.BaseBookingDetails
@@ -65,10 +66,11 @@ func (b *BookingService) makeBaseBooking(
             review_status,
             photos,
 			created_at,
-			updated_at
+			updated_at,
+			quote_id
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
-        RETURNING id, cust_id, customer_first_name, customer_last_name, address, start_sched, end_sched, dirty_scale, payment_status, review_status, photos, created_at, updated_at`,
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+        RETURNING id, cust_id, customer_first_name, customer_last_name, address, start_sched, end_sched, dirty_scale, payment_status, review_status, photos, created_at, updated_at, quote_id`,
 		custID,
 		customerFirstName,
 		customerLastName,
@@ -81,6 +83,7 @@ func (b *BookingService) makeBaseBooking(
 		photos,
 		time.Now(),
 		time.Now(),
+		quoteId,
 	).Scan(
 		&createdBaseBook.ID,
 		&createdBaseBook.CustID,
@@ -95,6 +98,7 @@ func (b *BookingService) makeBaseBooking(
 		&createdBaseBook.Photos,
 		&createdBaseBook.CreatedAt,
 		&createdBaseBook.UpdatedAt,
+		&createdBaseBook.QuoteId,
 	)
 
 	if err != nil {
@@ -318,6 +322,7 @@ func (b *BookingService) createAddOn(
 	ctx context.Context,
 	tx pgx.Tx,
 	addon *booking.AddOnRequest,
+	addOnPrice float32,
 ) (*types.AddOns, error) {
 	addOnServiceDetails, err := b.createMainServiceBooking(ctx, tx, addon.ServiceDetail.Details)
 	if err != nil {
@@ -325,9 +330,8 @@ func (b *BookingService) createAddOn(
 	}
 	createdAddon := &types.AddOns{
 		ServiceDetail: *addOnServiceDetails,
+		Price:         addOnPrice,
 	}
-
-	addOnPrice := 100.00 //Add price from nats here
 
 	err = tx.QueryRow(ctx,
 		`INSERT INTO booking.addons 

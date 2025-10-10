@@ -27,6 +27,20 @@ type DbQuoteAddon struct {
 	CreatedAt     time.Time
 }
 
+type AddonCleaningPrice struct {
+	AddonName  string
+	AddonPrice float32
+}
+type CleaningPrices struct {
+	MainServicePrice float32
+	AddonPrices      []AddonCleaningPrice
+}
 type QuoteResponse struct {
 	Addons []DbQuoteAddon
+}
+
+type BookingReply struct {
+	Source string         `json:"source"`
+	Prices CleaningPrices `json:"prices,omitempty"`
+	Error  string         `json:"error,omitempty"`
 }

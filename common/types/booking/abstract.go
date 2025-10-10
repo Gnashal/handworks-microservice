@@ -22,6 +22,14 @@ type CleanerAssigned struct {
 	CleanerLastName  string
 	PFPUrl           string
 }
+type AddonCleaningPrice struct {
+	AddonName  string
+	AddonPrice float32
+}
+type CleaningPrices struct {
+	MainServicePrice float32
+	AddonPrices      []AddonCleaningPrice
+}
 
 type ServiceDetail struct {
 	General  *GeneralCleaningDetails
@@ -95,6 +103,7 @@ type BaseBookingDetails struct {
 	Photos            []string
 	CreatedAt         time.Time
 	UpdatedAt         *time.Time
+	QuoteId           string
 }
 type Address struct {
 	AddressHuman string
@@ -106,6 +115,7 @@ type BookingReply struct {
 	Equipments []CleaningEquipment `json:"equipments,omitempty"`
 	Resources  []CleaningResources `json:"resources,omitempty"`
 	Cleaners   []CleanerAssigned   `json:"cleaners,omitempty"`
+	Prices     CleaningPrices      `json:"prices,omitempty"`
 	Error      string              `json:"error,omitempty"`
 }
 
