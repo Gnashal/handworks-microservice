@@ -42,13 +42,21 @@ func (b *BookingService) MergeBookingReplies(replies []types.BookingReply) (
 	equipments []types.CleaningEquipment,
 	resources []types.CleaningResources,
 	cleaners []types.CleanerAssigned,
+	prices types.CleaningPrices,
 ) {
 	for _, r := range replies {
 		equipments = append(equipments, r.Equipments...)
 		resources = append(resources, r.Resources...)
 		cleaners = append(cleaners, r.Cleaners...)
+		prices.MainServicePrice = r.Prices.MainServicePrice
+		prices.AddonPrices = append(prices.AddonPrices, r.Prices.AddonPrices...)
 	}
 	return
+}
+func (b *BookingService) ExtractAddonPrices(prices types.CleaningPrices) []types.AddonCleaningPrice {
+	var addons []types.AddonCleaningPrice
+	addons = append(addons, prices.AddonPrices...)
+	return addons
 }
 
 func (b *BookingService) ExtractEquipmentIDs(equipments []*booking.CleaningEquipment) []string {

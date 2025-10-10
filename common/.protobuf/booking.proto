@@ -5,7 +5,6 @@ import "google/protobuf/timestamp.proto";
 
 service BookingService {
   rpc CreateBooking(CreateBookingRequest) returns (CreateBookingResponse);
-  rpc CalculatePrice(CalculatePriceRequest) returns (CalculatePriceResponse); // Implement soon
   rpc GetBookingById(GetBookingByIdRequest) returns (GetBookingByIdResponse);
   rpc GetBookingByUId(GetBookingByUIdRequest) returns (GetBookingByUIdResponse);
   rpc UpdateBooking(Booking) returns (UpdateBookingResponse);
@@ -66,8 +65,7 @@ message AddOn {
   float price = 3;
 }
 message AddOnRequest {
-  Services serviceDetail = 1;
-  float price = 2;
+  ServicesRequest serviceDetail = 1;
 }
 
 message BaseBookingDetails {
@@ -76,26 +74,30 @@ message BaseBookingDetails {
     string customer_first_name = 3;
     string customer_last_name = 4;
     Address address = 5;
-    google.protobuf.Timestamp schedule = 6;
-    int32 dirty_scale = 7; // 1 - 5
-    string payment_status = 8;
-    string review_status = 9;
-    repeated string photos = 10; // file IDs or URLs
-    google.protobuf.Timestamp created_at = 11;
-    google.protobuf.Timestamp updated_at = 12;
+    google.protobuf.Timestamp startSched = 6;
+    google.protobuf.Timestamp endSched = 7;
+    int32 dirty_scale = 8; // 1 - 5
+    string payment_status = 9;
+    string review_status = 10;
+    repeated string photos = 11; // file IDs or URLs
+    google.protobuf.Timestamp created_at = 12;
+    google.protobuf.Timestamp updated_at = 13;
+    string quote_id = 14;
 }
 message BaseBookingDetailsRequest{
     string cust_id = 1;
     string customer_first_name = 2;
     string customer_last_name = 3;
     Address address = 4;
-    google.protobuf.Timestamp schedule = 5;
-    int32 dirty_scale = 6; // 1 - 5
-    string payment_status = 7;
-    string review_status = 8;
-    repeated string photos = 9; // file IDs or URLs
-    google.protobuf.Timestamp created_at = 10;
-    google.protobuf.Timestamp updated_at = 11;
+    google.protobuf.Timestamp startSched = 5;
+    google.protobuf.Timestamp endSched = 6;
+    int32 dirty_scale = 7; // 1 - 5
+    string payment_status = 8;
+    string review_status = 9;
+    repeated string photos = 10; // file IDs or URLs
+    google.protobuf.Timestamp created_at = 11;
+    google.protobuf.Timestamp updated_at = 12;
+    string quote_id = 13;
 }
 
 message CreateBookingRequest {
@@ -171,69 +173,42 @@ message GeneralCleaningDetails {
 }
 
 // Couch cleaning
+message CouchCleaningSpecifications {
+  CouchType couch_type = 1;
+  int32 width_cm = 2;
+  int32 depth_cm = 3;
+  int32 height_cm = 4;
+  int32 quantity = 5;
+}
 message CouchCleaningDetails {
-  CouchType couch_type = 2;
-  int32 width_cm = 3;
-  int32 depth_cm = 4;
-  int32 height_cm = 5;
+  repeated CouchCleaningSpecifications cleaningSpecs = 1;
+  int32 bed_pillows = 2;
 }
 
 // Mattress cleaning
-message MattressCleaningDetails {
-  BedType bed_type = 2;
-  int32 width_cm = 3;
-  int32 depth_cm = 4;
-  int32 height_cm = 5;
+message MattressCleaningSpecifications {
+  BedType bed_type = 1;
+  int32 width_cm = 2;
+  int32 depth_cm = 3;
+  int32 height_cm = 4;
+  int32 quantity = 5;
 }
-
+message MattressCleaningDetails {
+  repeated MattressCleaningSpecifications cleaningSpecs = 1;
+}
 // Car interior cleaning
+message CarCleaningSpecifications {
+  CarType car_type = 1;
+  int32 quantity = 2;
+}
 message CarCleaningDetails {
-  CarType car_type = 2;
-  int32 child_seats = 3;
+  repeated CarCleaningSpecifications cleaningSpecs = 1;
+  int32 child_seats = 2;
 }
 
 // Post-construction cleaning
 message PostConstructionCleaningDetails {
   int32 sqm = 2;
-}
-
-
-message QuoteRequest {
-  oneof details {
-    GeneralCleaningDetails general = 1;
-    CouchCleaningDetails couch = 2;
-    MattressCleaningDetails mattress = 3;
-    CarCleaningDetails car = 4;
-    PostConstructionCleaningDetails post = 5;
-  }
-}
-message QuoteResponse {
-  float total_price = 1;
-}
-
-message CalculateQuotePriceRequest {
-  QuoteRequest quote = 1;
-}
-message CalculateQuotePriceResponse {
-  float total_price = 1;
-  repeated PricingBreakdown breakdown = 2;
-}
-
-message CalculatePriceRequest {
-  CreateBookingRequest booking = 1;
-}
-
-message CalculatePriceResponse {
-  float base_price = 1;
-  float adjustments = 2;
-  float addons_price = 3;
-  float total_price = 4;
-  repeated PricingBreakdown breakdown = 5;
-}
-
-message PricingBreakdown {
-  string description = 1;
-  float amount = 2;
 }
 
 message GetBookingByIdRequest {
