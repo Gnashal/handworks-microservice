@@ -159,6 +159,15 @@ type CreateBookingInput struct {
 	Addons      []*AddOnInput            `json:"addons"`
 }
 
+type CreateItemInput struct {
+	Name     string  `json:"name"`
+	Type     string  `json:"type"`
+	Category string  `json:"category"`
+	Quantity int32   `json:"quantity"`
+	Unit     string  `json:"unit"`
+	ImageURL *string `json:"image_url,omitempty"`
+}
+
 type Customer struct {
 	ID      string   `json:"id"`
 	Account *Account `json:"account"`
@@ -182,6 +191,21 @@ type GeneralCleaningDetails struct {
 type GeneralCleaningDetailsInput struct {
 	HomeType string `json:"homeType"`
 	Sqm      int32  `json:"sqm"`
+}
+
+type InventoryItem struct {
+	ID          string    `json:"id"`
+	Name        string    `json:"name"`
+	Type        string    `json:"type"`
+	Status      string    `json:"status"`
+	Category    string    `json:"category"`
+	Quantity    int32     `json:"quantity"`
+	MaxQuantity *int32    `json:"max_quantity,omitempty"`
+	Unit        *string   `json:"unit,omitempty"`
+	IsAvailable bool      `json:"is_available"`
+	ImageURL    *string   `json:"image_url,omitempty"`
+	CreatedAt   time.Time `json:"createdAt"`
+	UpdatedAt   time.Time `json:"updatedAt"`
 }
 
 type MattressCleaningDetails struct {
@@ -256,4 +280,14 @@ type Services struct {
 type ServicesInput struct {
 	ServiceType string              `json:"serviceType"`
 	Details     *ServiceDetailInput `json:"details"`
+}
+
+type UpdateItemInput struct {
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Type        string `json:"type"`
+	Status      string `json:"status"`
+	Category    string `json:"category"`
+	Quantity    int32  `json:"quantity"`
+	MaxQuantity int32  `json:"max_quantity"`
 }

@@ -1,4 +1,3 @@
-# --- Output Types ---
 type AddOnBreakdown {
   addonId: ID!
   addonName: String!

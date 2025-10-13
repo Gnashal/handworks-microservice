@@ -4,12 +4,14 @@ import (
 	model "handworks-gateway/graph/generated/models"
 	"handworks/common/grpc/account"
 	"handworks/common/grpc/booking"
+	"handworks/common/grpc/inventory"
 	"handworks/common/grpc/payment"
 	"time"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
+// Account helpers
 func MapAccount(a *account.Account) *model.Account {
 	if a == nil {
 		return nil
@@ -182,7 +184,6 @@ func MapMainServiceType(s string) booking.MainServiceType {
 	}
 }
 
-// HomeType
 func MapHomeType(s string) booking.HomeType {
 	switch s {
 	case "CONDO_ROOM":
@@ -196,7 +197,6 @@ func MapHomeType(s string) booking.HomeType {
 	}
 }
 
-// CouchType
 func MapCouchType(s string) booking.CouchType {
 	switch s {
 	case "SEATER_1":
@@ -228,7 +228,6 @@ func MapCouchType(s string) booking.CouchType {
 	}
 }
 
-// BedType
 func MapBedType(s string) booking.BedType {
 	switch s {
 	case "KING":
@@ -250,7 +249,6 @@ func MapBedType(s string) booking.BedType {
 	}
 }
 
-// CarType
 func MapCarType(s string) booking.CarType {
 	switch s {
 	case "SEDAN":
@@ -268,4 +266,35 @@ func MapCarType(s string) booking.CarType {
 	default:
 		return booking.CarType(0)
 	}
+}
+
+// Inventory helpers
+
+func MapInventoryItem(in *inventory.InventoryItem) *model.InventoryItem {
+	if in == nil {
+		return nil
+	}
+	return &model.InventoryItem{
+		ID:          in.Id,
+		Name:        in.Name,
+		Type:        in.Type.String(),
+		Status:      in.Status.String(),
+		Category:    in.Status.String(),
+		Quantity:    in.Quantity,
+		MaxQuantity: &in.MaxQuantity,
+		Unit:        &in.Unit,
+		IsAvailable: in.IsAvailable,
+		ImageURL:    &in.ImageUrl,
+		CreatedAt:   timestampToTime(in.CreatedAt),
+		UpdatedAt:   timestampToTime(in.UpdatedAt),
+	}
+}
+
+func MapInventoryItems(itemsIn []*inventory.InventoryItem) []*model.InventoryItem {
+
+	items := make([]*model.InventoryItem, 0, len(itemsIn))
+	for _, item := range itemsIn {
+		items = append(items, MapInventoryItem(item))
+	}
+	return items
 }

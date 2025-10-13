@@ -1,7 +1,4 @@
 
-
-# --- Input Types ---
-
 input AddressInput {
   addressHuman: String!
   addressLat: Float!
