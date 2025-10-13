@@ -11,7 +11,7 @@ exec:
 # Where should any generated models go?
 model:
   filename: graph/generated/models/models_gen.go
-  package: generated
+  package: models
 
 # Where should the resolver implementations go?
 resolver:
@@ -20,7 +20,7 @@ resolver:
   dir: graph/resolvers
   filename_template: "{name}.resolvers.go"
 
-# TEAM, below is default gqlgen stuff. Above is custom stuff
+# TEAM, below is default gqlgen stuff. Above is custom stuff - Yousif
 
 # # Where are all the schema files located? globs are supported eg  src/**/*.graphqls
 # schema:

@@ -32,7 +32,6 @@ func main() {
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 
 	<-quit
-	logger.Info("Shutting down account service...")
 
 	close(stopChan)
 
