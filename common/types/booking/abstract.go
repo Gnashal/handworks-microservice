@@ -40,11 +40,33 @@ type ServiceDetail struct {
 }
 
 // because of course this is fucking different
+// totally refactoring our detail logic because gubot jud kaayu siya
 type ServiceDetails struct {
 	ID          string
 	ServiceType string
 	Details     any
 }
+
+// detail factory types
+type DetailType string
+
+const (
+	ServiceGeneral  DetailType = "GENERAL_CLEANING"
+	ServiceCouch    DetailType = "COUCH"
+	ServiceMattress DetailType = "MATTRESS"
+	ServiceCar      DetailType = "CAR"
+	ServicePost     DetailType = "POST"
+)
+
+// Used for unmarshaling dynamically
+var DetailFactories = map[DetailType]func() any{
+	ServiceGeneral:  func() any { return &GeneralCleaningDetails{} },
+	ServiceCouch:    func() any { return &CouchCleaningDetails{} },
+	ServiceMattress: func() any { return &MattressCleaningDetails{} },
+	ServiceCar:      func() any { return &CarCleaningDetails{} },
+	ServicePost:     func() any { return &PostConstructionDetails{} },
+}
+
 type GeneralCleaningDetails struct {
 	HomeType string `json:"home_type"`
 	SQM      int32  `json:"sqm"`
@@ -61,6 +83,7 @@ type CouchCleaningSpecifications struct {
 
 type CouchCleaningDetails struct {
 	CleaningSpecs []CouchCleaningSpecifications `json:"cleaning_specs"`
+	BedPillows    int32                         `json:"bed_pillows"`
 }
 
 // Mattress cleaning

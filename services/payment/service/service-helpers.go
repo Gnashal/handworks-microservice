@@ -123,3 +123,51 @@ func (p *PaymentService) CreateQuote(c context.Context, tx pgx.Tx, in *payment.Q
 	dbQuote.Addons = dbAddons
 	return &dbQuote, nil
 }
+
+func (p *PaymentService) CalculateQuotePreview(c context.Context, in *payment.QuoteRequest) (*types.DbQuote, error) {
+	var dbQuote types.DbQuote
+	var dbAddons []*types.DbQuoteAddon
+
+	mainService := &booking.ServicesRequest{
+		ServiceType: in.Service.ServiceType,
+		Details:     in.Service.Details,
+	}
+
+	subtotal := p.CalculatePriceByServiceType(mainService)
+	var addonTotal float32 = 0
+
+	for _, addon := range in.Addons {
+		addonService := &booking.ServicesRequest{
+			ServiceType: addon.ServiceDetail.ServiceType,
+			Details:     addon.ServiceDetail.Details,
+		}
+		addonPrice := p.CalculatePriceByServiceType(addonService)
+
+		serviceDetail, err := json.Marshal(addon.ServiceDetail)
+		if err != nil {
+			return nil, fmt.Errorf("failed to marshal addon service: %v", err)
+		}
+
+		addonTotal += addonPrice
+		dbAddon := &types.DbQuoteAddon{
+			ServiceType:   addon.GetServiceDetail().ServiceType.String(),
+			ServiceDetail: serviceDetail,
+			AddonPrice:    addonPrice,
+			CreatedAt:     time.Now(),
+		}
+		dbAddons = append(dbAddons, dbAddon)
+	}
+
+	dbQuote = types.DbQuote{
+		CustomerID:  in.CustId, // will be empty
+		MainService: in.Service.ServiceType.String(),
+		Subtotal:    subtotal,
+		AddonTotal:  addonTotal,
+		TotalPrice:  subtotal + addonTotal,
+		IsValid:     false, // marked as preview only so di siya valid
+		CreatedAt:   time.Now(),
+		Addons:      dbAddons,
+	}
+
+	return &dbQuote, nil
+}

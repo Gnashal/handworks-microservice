@@ -53,7 +53,7 @@ func (c CouchCleaningDetails) ToProto() *booking.CouchCleaningDetails {
 			Quantity:  s.Quantity,
 		}
 	}
-	return &booking.CouchCleaningDetails{CleaningSpecs: specs}
+	return &booking.CouchCleaningDetails{CleaningSpecs: specs, BedPillows: c.BedPillows}
 }
 
 func CouchCleaningDetailsFromProto(pb *booking.CouchCleaningDetails) *CouchCleaningDetails {

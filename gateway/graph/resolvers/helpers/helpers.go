@@ -1,59 +1,15 @@
 package helpers
 
 import (
-	model "handworks-gateway/graph/generated/models"
-	"handworks/common/grpc/account"
 	"time"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func MapAccount(a *account.Account) *model.Account {
-	if a == nil {
-		return nil
-	}
-
-	return &model.Account{
-		ID:        a.Id,
-		FirstName: a.FirstName,
-		LastName:  a.LastName,
-		Email:     a.Email,
-		Provider:  &a.Provider,
-		Role:      a.Role,
-		ClerkID:   a.ClerkId,
-		CreatedAt: timestampToTime(a.CreatedAt),
-		UpdatedAt: timestampToTime(a.UpdatedAt),
-	}
+// very niche helper
+func ptrInt(v int32) *int32 {
+	return &v
 }
-
-func MapCustomer(c *account.Customer) *model.Customer {
-	if c == nil {
-		return nil
-	}
-
-	return &model.Customer{
-		ID:      c.Id,
-		Account: MapAccount(c.Account),
-	}
-}
-
-func MapEmployee(e *account.Employee) *model.Employee {
-	if e == nil {
-		return nil
-	}
-
-	return &model.Employee{
-		ID:               e.Id,
-		Account:          MapAccount(e.Account),
-		Position:         e.Position,
-		Status:           e.Status.String(),
-		PerformanceScore: float64(e.PerformanceScore),
-		HireDate:         timestampToTime(e.HireDate),
-		NumRatings:       int32(e.NumRatings),
-	}
-}
-
-// func MapSignUpCustomer(e* acc)
 
 // Convert protobuf Timestamp to Go time.Time
 func timestampToTime(ts *timestamppb.Timestamp) time.Time {

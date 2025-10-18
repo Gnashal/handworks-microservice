@@ -1,0 +1,22 @@
+type AddOnBreakdown {
+  addonId: ID!
+  addonName: String!
+  price: Float!
+}
+
+type Quote {
+  quoteId: ID!
+  mainServiceName: String!
+  mainServiceTotal: Float!
+  addonBreakdown: [AddOnBreakdown!]!
+  addonTotal: Float!
+  totalPrice: Float!
+}
+
+extend type Query {
+  getQuotation(
+    custId: ID!
+    service: ServicesInput!
+    addons: [AddOnInput!]!
+  ): Quote! @isPublic
+}

@@ -39,6 +39,7 @@ func StartGQlServer(l *utils.Logger, wg *sync.WaitGroup, stop <-chan struct{}) {
 		},
 	}
 
+	// For public mutations, append the @isPublic for mutations that dont need auth
 	config.Directives.IsPublic = func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error) {
 		l.Info("Accessing public route")
 		return next(ctx)
