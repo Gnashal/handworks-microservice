@@ -134,7 +134,7 @@ type CouchCleaningDetails struct {
 
 type CouchCleaningDetailsInput struct {
 	CleaningSpecs []*CouchCleaningSpecificationsInput `json:"cleaningSpecs"`
-	BedPillows    *int32                              `json:"bedPillows,omitempty"`
+	BedPillows    int32                               `json:"bedPillows"`
 }
 
 type CouchCleaningSpecifications struct {

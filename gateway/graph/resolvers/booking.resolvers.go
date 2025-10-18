@@ -8,13 +8,26 @@ import (
 	"context"
 	"fmt"
 	"handworks-gateway/graph/generated/models"
+	"handworks-gateway/graph/resolvers/helpers"
+	"handworks/common/grpc/booking"
 )
 
 // CreateBooking is the resolver for the createBooking field.
 func (r *mutationResolver) CreateBooking(ctx context.Context, input models.CreateBookingInput) (*models.Booking, error) {
-	panic(fmt.Errorf("not implemented: CreateBooking - createBooking"))
+	baseReq := helpers.MapBaseDetailsInputToProto(input.Base)
+	req := &booking.CreateBookingRequest{
+		Base:        baseReq,
+		MainService: helpers.MapServicesInput(input.MainService),
+		Addons:      helpers.MapAddOnInputs(input.Addons),
+	}
+	res, err := r.GrpcClients.BookingClient.CreateBooking(ctx, req)
+	if err != nil {
+		r.Log.Error("Failed to dial booking rpc: %s", err)
+	}
+	return helpers.MapBooking(res.Book), nil
 }
 
+// unimplemented pa ni sila cuz idk pa sa kang clarence if final na ba to iyaha
 // UpdateBooking is the resolver for the updateBooking field.
 func (r *mutationResolver) UpdateBooking(ctx context.Context, input models.CreateBookingInput) (*models.Booking, error) {
 	panic(fmt.Errorf("not implemented: UpdateBooking - updateBooking"))

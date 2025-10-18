@@ -20,7 +20,7 @@ input CouchCleaningSpecificationsInput {
 
 input CouchCleaningDetailsInput {
   cleaningSpecs: [CouchCleaningSpecificationsInput!]!
-  bedPillows: Int
+  bedPillows: Int!
 }
 
 input MattressCleaningSpecificationsInput {

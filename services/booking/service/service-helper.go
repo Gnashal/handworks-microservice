@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"handworks/common/grpc/booking"
 	types "handworks/common/types/booking"
+	"handworks/common/utils"
 	"time"
 
 	"github.com/jackc/pgx/v5"
@@ -108,213 +109,110 @@ func (b *BookingService) makeBaseBooking(
 	return &createdBaseBook, nil
 }
 
-func (b *BookingService) makeGeneralBooking(ctx context.Context, tx pgx.Tx, general *booking.GeneralCleaningDetails) (*types.ServiceDetails, error) {
-	generalDetails := types.GeneralCleaningDetails{
-		HomeType: general.HomeType.String(),
-		SQM:      general.Sqm,
-	}
-
-	detailsJSON, err := generalDetails.MarshalGeneralDetails()
+// Generic function to insert service details
+func insertServiceDetails[T any](ctx context.Context, tx pgx.Tx, serviceType types.DetailType, details T, log utils.Logger) (*types.ServiceDetails, error) {
+	detailsJSON, err := json.Marshal(details)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("marshal details: %w", err)
 	}
 
-	service := types.ServiceDetails{}
-	var rawDetails []byte
-
-	err = tx.QueryRow(ctx, `
-		INSERT INTO booking.services 
-		(service_type, details)
-		VALUES ($1, $2)
-		RETURNING id, service_type, details`,
-		"GENERAL", detailsJSON,
-	).Scan(&service.ID, &service.ServiceType, &rawDetails)
-	if err != nil {
-		return nil, err
-	}
-
-	generalOut, err := types.UnmarshalGeneralDetails(rawDetails)
-	if err != nil {
-		return nil, err
-	}
-	service.Details = generalOut
-
-	return &service, nil
-}
-
-func (b *BookingService) makeCouchBooking(ctx context.Context, tx pgx.Tx, couch *booking.CouchCleaningDetails) (*types.ServiceDetails, error) {
-	specs := make([]types.CouchCleaningSpecifications, 0, len(couch.CleaningSpecs))
-	for _, s := range couch.CleaningSpecs {
-		specs = append(specs, types.CouchCleaningSpecifications{
-			CouchType: s.CouchType.String(),
-			WidthCM:   s.WidthCm,
-			DepthCM:   s.DepthCm,
-			HeightCM:  s.HeightCm,
-			Quantity:  s.Quantity,
-		})
-	}
-
-	couchDetails := types.CouchCleaningDetails{CleaningSpecs: specs}
-
-	detailsJSON, err := json.Marshal(couchDetails)
-	if err != nil {
-		return nil, err
-	}
-
-	service := types.ServiceDetails{}
-	var rawDetails []byte
+	var svc types.ServiceDetails
+	var raw []byte
 
 	err = tx.QueryRow(ctx, `
 		INSERT INTO booking.services (service_type, details)
 		VALUES ($1, $2)
-		RETURNING id, service_type, details`,
-		"COUCH", detailsJSON,
-	).Scan(&service.ID, &service.ServiceType, &rawDetails)
+		RETURNING id, service_type, details
+	`, serviceType, detailsJSON).Scan(&svc.ID, &svc.ServiceType, &raw)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("insert service: %w", err)
+	}
+	log.Debug("Raw JSON: %s", string(raw))
+	// Unmarshal dynamically
+	factory, ok := types.DetailFactories[serviceType]
+	if !ok {
+		return nil, fmt.Errorf("no factory registered for service type %s", serviceType)
 	}
 
-	var couchOut types.CouchCleaningDetails
-	if err := json.Unmarshal(rawDetails, &couchOut); err != nil {
-		return nil, err
+	out := factory()
+	if err := json.Unmarshal(raw, out); err != nil {
+		log.Error("Unarshal error:%v", err)
+		return nil, fmt.Errorf("unmarshal details: %w", err)
 	}
-	service.Details = couchOut
-
-	return &service, nil
-}
-func (b *BookingService) makeMattressBooking(ctx context.Context, tx pgx.Tx, mattress *booking.MattressCleaningDetails) (*types.ServiceDetails, error) {
-	specs := make([]types.MattressCleaningSpecifications, 0, len(mattress.CleaningSpecs))
-	for _, s := range mattress.CleaningSpecs {
-		specs = append(specs, types.MattressCleaningSpecifications{
-			BedType:  s.BedType.String(),
-			WidthCM:  s.WidthCm,
-			DepthCM:  s.DepthCm,
-			HeightCM: s.HeightCm,
-			Quantity: s.Quantity,
-		})
-	}
-
-	mattressDetails := types.MattressCleaningDetails{CleaningSpecs: specs}
-
-	detailsJSON, err := json.Marshal(mattressDetails)
-	if err != nil {
-		return nil, err
-	}
-
-	service := types.ServiceDetails{}
-	var rawDetails []byte
-
-	err = tx.QueryRow(ctx, `
-		INSERT INTO booking.services (service_type, details)
-		VALUES ($1, $2)
-		RETURNING id, service_type, details`,
-		"MATTRESS", detailsJSON,
-	).Scan(&service.ID, &service.ServiceType, &rawDetails)
-	if err != nil {
-		return nil, err
-	}
-
-	var mattressOut types.MattressCleaningDetails
-	if err := json.Unmarshal(rawDetails, &mattressOut); err != nil {
-		return nil, err
-	}
-	service.Details = mattressOut
-
-	return &service, nil
+	svc.Details = out
+	b, _ := json.MarshalIndent(svc.Details, "", "  ")
+	log.Debug("Post-Unmarshal JSON: %s", string(b))
+	return &svc, nil
 }
 
-func (b *BookingService) makeCarBooking(ctx context.Context, tx pgx.Tx, car *booking.CarCleaningDetails) (*types.ServiceDetails, error) {
-	specs := make([]types.CarCleaningSpecifications, 0, len(car.CleaningSpecs))
-	for _, s := range car.CleaningSpecs {
-		specs = append(specs, types.CarCleaningSpecifications{
-			CarType:  s.CarType.String(),
-			Quantity: s.Quantity,
-		})
-	}
-
-	carDetails := types.CarCleaningDetails{
-		CleaningSpecs: specs,
-		ChildSeats:    car.ChildSeats,
-	}
-
-	detailsJSON, err := json.Marshal(carDetails)
-	if err != nil {
-		return nil, err
-	}
-
-	service := types.ServiceDetails{}
-	var rawDetails []byte
-
-	err = tx.QueryRow(ctx, `
-		INSERT INTO booking.services (service_type, details)
-		VALUES ($1, $2)
-		RETURNING id, service_type, details`,
-		"CAR", detailsJSON,
-	).Scan(&service.ID, &service.ServiceType, &rawDetails)
-	if err != nil {
-		return nil, err
-	}
-
-	var carOut types.CarCleaningDetails
-	if err := json.Unmarshal(rawDetails, &carOut); err != nil {
-		return nil, err
-	}
-	service.Details = carOut
-
-	return &service, nil
-}
-
-func (b *BookingService) makePostConstructionBooking(ctx context.Context, tx pgx.Tx, postConstruction *booking.PostConstructionCleaningDetails) (*types.ServiceDetails, error) {
-	postDetails := types.PostConstructionDetails{
-		SQM: postConstruction.Sqm,
-	}
-
-	detailsJSON, err := postDetails.MarshalPostConstructionDetails()
-	if err != nil {
-		return nil, err
-	}
-
-	service := types.ServiceDetails{}
-	var rawDetails []byte
-
-	err = tx.QueryRow(ctx, `
-		INSERT INTO booking.services 
-		(service_type, details)
-		VALUES ($1, $2)
-		RETURNING id, service_type, details`,
-		"POST", detailsJSON,
-	).Scan(&service.ID, &service.ServiceType, &rawDetails)
-	if err != nil {
-		return nil, err
-	}
-
-	postOut, err := types.UnmarshalPostConstructionDetails(rawDetails)
-	if err != nil {
-		return nil, err
-	}
-	service.Details = postOut
-
-	return &service, nil
-}
-
+// instead of having separate functions for each service type, we can use a single function with generics
+// and a factory map to handle the different types
+// honestly idk why gipa lusot to nako ang previous na version ani
 func (b *BookingService) createMainServiceBooking(
 	ctx context.Context,
 	tx pgx.Tx,
 	mainService *booking.ServiceDetail,
 ) (*types.ServiceDetails, error) {
+
 	switch details := mainService.Type.(type) {
 	case *booking.ServiceDetail_General:
-		return b.makeGeneralBooking(ctx, tx, details.General)
+		d := types.GeneralCleaningDetails{
+			HomeType: details.General.HomeType.String(),
+			SQM:      details.General.Sqm,
+		}
+		return insertServiceDetails(ctx, tx, types.ServiceGeneral, d, *b.L)
+
 	case *booking.ServiceDetail_Couch:
-		return b.makeCouchBooking(ctx, tx, details.Couch)
+		specs := make([]types.CouchCleaningSpecifications, len(details.Couch.CleaningSpecs))
+		for i, s := range details.Couch.CleaningSpecs {
+			specs[i] = types.CouchCleaningSpecifications{
+				CouchType: s.CouchType.String(),
+				WidthCM:   s.WidthCm,
+				DepthCM:   s.DepthCm,
+				HeightCM:  s.HeightCm,
+				Quantity:  s.Quantity,
+			}
+		}
+		d := types.CouchCleaningDetails{
+			BedPillows:    details.Couch.BedPillows,
+			CleaningSpecs: specs,
+		}
+		return insertServiceDetails(ctx, tx, types.ServiceCouch, d, *b.L)
+
 	case *booking.ServiceDetail_Mattress:
-		return b.makeMattressBooking(ctx, tx, details.Mattress)
+		specs := make([]types.MattressCleaningSpecifications, len(details.Mattress.CleaningSpecs))
+		for i, s := range details.Mattress.CleaningSpecs {
+			specs[i] = types.MattressCleaningSpecifications{
+				BedType:  s.BedType.String(),
+				WidthCM:  s.WidthCm,
+				DepthCM:  s.DepthCm,
+				HeightCM: s.HeightCm,
+				Quantity: s.Quantity,
+			}
+		}
+		return insertServiceDetails(ctx, tx, types.ServiceMattress, types.MattressCleaningDetails{CleaningSpecs: specs}, *b.L)
+
 	case *booking.ServiceDetail_Car:
-		return b.makeCarBooking(ctx, tx, details.Car)
+		specs := make([]types.CarCleaningSpecifications, len(details.Car.CleaningSpecs))
+		for i, s := range details.Car.CleaningSpecs {
+			specs[i] = types.CarCleaningSpecifications{
+				CarType:  s.CarType.String(),
+				Quantity: s.Quantity,
+			}
+		}
+		d := types.CarCleaningDetails{
+			CleaningSpecs: specs,
+			ChildSeats:    details.Car.ChildSeats,
+		}
+		return insertServiceDetails(ctx, tx, types.ServiceCar, d, *b.L)
+
 	case *booking.ServiceDetail_Post:
-		return b.makePostConstructionBooking(ctx, tx, details.Post)
+		return insertServiceDetails(ctx, tx, types.ServicePost,
+			types.PostConstructionDetails{SQM: details.Post.Sqm}, *b.L,
+		)
+
 	default:
-		return nil, fmt.Errorf("unsupported main service type")
+		return nil, fmt.Errorf("unsupported main service type: %T", details)
 	}
 }
 
@@ -328,6 +226,10 @@ func (b *BookingService) createAddOn(
 	if err != nil {
 		return nil, fmt.Errorf("failed to create service details: %w", err)
 	}
+	// this helped a lot in debugging deserialization issues, so imma keep it
+	out, _ := json.MarshalIndent(addOnServiceDetails.ToProto().GetDetails(), "", "  ")
+	b.L.Debug("Create Addon Service Details: %s", string(out))
+
 	createdAddon := &types.AddOns{
 		ServiceDetail: *addOnServiceDetails,
 		Price:         addOnPrice,

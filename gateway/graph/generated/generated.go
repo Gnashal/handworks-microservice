@@ -1547,7 +1547,7 @@ input CouchCleaningSpecificationsInput {
 
 input CouchCleaningDetailsInput {
   cleaningSpecs: [CouchCleaningSpecificationsInput!]!
-  bedPillows: Int
+  bedPillows: Int!
 }
 
 input MattressCleaningSpecificationsInput {
@@ -11156,7 +11156,7 @@ func (ec *executionContext) unmarshalInputCouchCleaningDetailsInput(ctx context.
 			it.CleaningSpecs = data
 		case "bedPillows":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("bedPillows"))
-			data, err := ec.unmarshalOInt2ᚖint32(ctx, v)
+			data, err := ec.unmarshalNInt2int32(ctx, v)
 			if err != nil {
 				return it, err
 			}
