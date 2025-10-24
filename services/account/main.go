@@ -8,8 +8,10 @@ import (
 	"handworks/common/grpc/account"
 	"handworks/common/natsconn"
 	"handworks/common/utils"
+	"os"
 	"time"
 
+	"github.com/clerk/clerk-sdk-go/v2"
 	"github.com/joho/godotenv"
 )
 
@@ -36,6 +38,10 @@ func main() {
 	logger.Info("Account DB Initialization Success")
 	defer pool.Close()
 
+	// Initialize the full Clerk client
+	clerkKey := os.Getenv("CLERK_SECRET_KEY")
+	clerk.SetKey(clerkKey)
+	logger.Info("Clerked initialized")
 	accService := &service.AccountService{
 		L:                                 logger,
 		DB:                                pool,

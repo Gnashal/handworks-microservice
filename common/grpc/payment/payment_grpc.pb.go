@@ -19,14 +19,16 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	PaymentService_GetQuotation_FullMethodName = "/PaymentService/GetQuotation"
+	PaymentService_MakeQuotation_FullMethodName            = "/PaymentService/MakeQuotation"
+	PaymentService_GetAllQuotesFromCustomer_FullMethodName = "/PaymentService/GetAllQuotesFromCustomer"
 )
 
 // PaymentServiceClient is the client API for PaymentService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PaymentServiceClient interface {
-	GetQuotation(ctx context.Context, in *QuoteRequest, opts ...grpc.CallOption) (*QuoteResponse, error)
+	MakeQuotation(ctx context.Context, in *QuoteRequest, opts ...grpc.CallOption) (*QuoteResponse, error)
+	GetAllQuotesFromCustomer(ctx context.Context, in *CustomerRequest, opts ...grpc.CallOption) (*QuotesResponse, error)
 }
 
 type paymentServiceClient struct {
@@ -37,10 +39,20 @@ func NewPaymentServiceClient(cc grpc.ClientConnInterface) PaymentServiceClient {
 	return &paymentServiceClient{cc}
 }
 
-func (c *paymentServiceClient) GetQuotation(ctx context.Context, in *QuoteRequest, opts ...grpc.CallOption) (*QuoteResponse, error) {
+func (c *paymentServiceClient) MakeQuotation(ctx context.Context, in *QuoteRequest, opts ...grpc.CallOption) (*QuoteResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(QuoteResponse)
-	err := c.cc.Invoke(ctx, PaymentService_GetQuotation_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, PaymentService_MakeQuotation_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentServiceClient) GetAllQuotesFromCustomer(ctx context.Context, in *CustomerRequest, opts ...grpc.CallOption) (*QuotesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(QuotesResponse)
+	err := c.cc.Invoke(ctx, PaymentService_GetAllQuotesFromCustomer_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +63,8 @@ func (c *paymentServiceClient) GetQuotation(ctx context.Context, in *QuoteReques
 // All implementations must embed UnimplementedPaymentServiceServer
 // for forward compatibility.
 type PaymentServiceServer interface {
-	GetQuotation(context.Context, *QuoteRequest) (*QuoteResponse, error)
+	MakeQuotation(context.Context, *QuoteRequest) (*QuoteResponse, error)
+	GetAllQuotesFromCustomer(context.Context, *CustomerRequest) (*QuotesResponse, error)
 	mustEmbedUnimplementedPaymentServiceServer()
 }
 
@@ -62,8 +75,11 @@ type PaymentServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedPaymentServiceServer struct{}
 
-func (UnimplementedPaymentServiceServer) GetQuotation(context.Context, *QuoteRequest) (*QuoteResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetQuotation not implemented")
+func (UnimplementedPaymentServiceServer) MakeQuotation(context.Context, *QuoteRequest) (*QuoteResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MakeQuotation not implemented")
+}
+func (UnimplementedPaymentServiceServer) GetAllQuotesFromCustomer(context.Context, *CustomerRequest) (*QuotesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllQuotesFromCustomer not implemented")
 }
 func (UnimplementedPaymentServiceServer) mustEmbedUnimplementedPaymentServiceServer() {}
 func (UnimplementedPaymentServiceServer) testEmbeddedByValue()                        {}
@@ -86,20 +102,38 @@ func RegisterPaymentServiceServer(s grpc.ServiceRegistrar, srv PaymentServiceSer
 	s.RegisterService(&PaymentService_ServiceDesc, srv)
 }
 
-func _PaymentService_GetQuotation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _PaymentService_MakeQuotation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(QuoteRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentServiceServer).GetQuotation(ctx, in)
+		return srv.(PaymentServiceServer).MakeQuotation(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentService_GetQuotation_FullMethodName,
+		FullMethod: PaymentService_MakeQuotation_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentServiceServer).GetQuotation(ctx, req.(*QuoteRequest))
+		return srv.(PaymentServiceServer).MakeQuotation(ctx, req.(*QuoteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PaymentService_GetAllQuotesFromCustomer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CustomerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentServiceServer).GetAllQuotesFromCustomer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PaymentService_GetAllQuotesFromCustomer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentServiceServer).GetAllQuotesFromCustomer(ctx, req.(*CustomerRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -112,8 +146,12 @@ var PaymentService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*PaymentServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetQuotation",
-			Handler:    _PaymentService_GetQuotation_Handler,
+			MethodName: "MakeQuotation",
+			Handler:    _PaymentService_MakeQuotation_Handler,
+		},
+		{
+			MethodName: "GetAllQuotesFromCustomer",
+			Handler:    _PaymentService_GetAllQuotesFromCustomer_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

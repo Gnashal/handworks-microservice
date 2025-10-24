@@ -2,11 +2,13 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"handworks/common/grpc/account"
 	types "handworks/common/types/account"
 	"handworks/common/utils"
 
+	"github.com/clerk/clerk-sdk-go/v2/user"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/nats-io/nats.go"
@@ -39,7 +41,22 @@ func (a *AccountService) SignUpCustomer(ctx context.Context, in *account.SignUpC
 	}); err != nil {
 		return nil, err
 	}
+	// metadata to store in clerk
+	metadata := map[string]string{"custId": customerID}
+	jsonData, err := json.Marshal(metadata)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal metadata: %w", err)
+	}
+	raw := json.RawMessage(jsonData)
 
+	_, err = user.UpdateMetadata(ctx, in.ClerkId, &user.UpdateMetadataParams{
+		PublicMetadata: &raw,
+	})
+	if err != nil {
+		a.L.Error("Failed to update Clerk Metadata: %v", err)
+		return nil, fmt.Errorf("failed to update clerk metadata: %w", err)
+	}
+	a.L.Info("Updated Clerk Metadata")
 	return &account.SignUpCustomerResponse{
 		Customer: &account.Customer{
 			Id:      customerID,

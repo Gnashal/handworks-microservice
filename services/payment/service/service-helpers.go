@@ -171,3 +171,58 @@ func (p *PaymentService) CalculateQuotePreview(c context.Context, in *payment.Qu
 
 	return &dbQuote, nil
 }
+
+// func (p *PaymentService) GetQuotesByCustomerId(
+// 	c context.Context,
+// 	tx pgx.Tx,
+// 	custID string,
+// ) ([]*types.DbQuote, error) {
+// 	// Fetch base quotes
+// 	rows, err := tx.Query(c, `
+// 		SELECT id, main_service_name, main_service_total, addon_total, total_price
+// 		FROM payment.quotes
+// 		WHERE cust_id = $1
+// 	`, custID)
+// 	if err != nil {
+// 		return nil, fmt.Errorf("fetch quotes: %w", err)
+// 	}
+// 	defer rows.Close()
+
+// 	var quotes []*types.DbQuote
+// 	for rows.Next() {
+// 		var q types.DbQuote
+// 		if err := rows.Scan(
+// 			&q.ID,
+// 			&q.MainService,
+// 			&q.TotalPrice,
+// 			&q.AddonTotal,
+// 			&q.TotalPrice,
+// 		); err != nil {
+// 			return nil, fmt.Errorf("scan quote: %w", err)
+// 		}
+
+// 		// Fetch addon breakdown for each quote
+// 		addonRows, err := tx.Query(c, `
+// 			SELECT id, quote_id, service_type, service_detail, addon_price, created_at
+// 			FROM payment.quote_addons
+// 			WHERE quote_id = $1
+// 		`, q.ID)
+// 		if err != nil {
+// 			return nil, fmt.Errorf("fetch addons: %w", err)
+// 		}
+
+// 		for addonRows.Next() {
+// 			var a types.DbQuoteAddon
+// 			if err := addonRows.Scan(&a.ID, &a.Name, &a.Price); err != nil {
+// 				addonRows.Close()
+// 				return nil, fmt.Errorf("scan addon: %w", err)
+// 			}
+// 			q.Addons = append(q.Addons, a)
+// 		}
+// 		addonRows.Close()
+
+// 		quotes = append(quotes, &q)
+// 	}
+
+// 	return quotes, nil
+// }

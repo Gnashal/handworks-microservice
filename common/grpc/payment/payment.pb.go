@@ -226,6 +226,94 @@ func (x *AddOnBreakdown) GetPrice() float32 {
 	return 0
 }
 
+type CustomerRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	CustId        string                 `protobuf:"bytes,1,opt,name=cust_id,json=custId,proto3" json:"cust_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CustomerRequest) Reset() {
+	*x = CustomerRequest{}
+	mi := &file_payment_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CustomerRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CustomerRequest) ProtoMessage() {}
+
+func (x *CustomerRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CustomerRequest.ProtoReflect.Descriptor instead.
+func (*CustomerRequest) Descriptor() ([]byte, []int) {
+	return file_payment_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *CustomerRequest) GetCustId() string {
+	if x != nil {
+		return x.CustId
+	}
+	return ""
+}
+
+type QuotesResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Quotes        []*QuoteResponse       `protobuf:"bytes,1,rep,name=quotes,proto3" json:"quotes,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *QuotesResponse) Reset() {
+	*x = QuotesResponse{}
+	mi := &file_payment_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *QuotesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*QuotesResponse) ProtoMessage() {}
+
+func (x *QuotesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use QuotesResponse.ProtoReflect.Descriptor instead.
+func (*QuotesResponse) Descriptor() ([]byte, []int) {
+	return file_payment_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *QuotesResponse) GetQuotes() []*QuoteResponse {
+	if x != nil {
+		return x.Quotes
+	}
+	return nil
+}
+
 var File_payment_proto protoreflect.FileDescriptor
 
 const file_payment_proto_rawDesc = "" +
@@ -248,9 +336,14 @@ const file_payment_proto_rawDesc = "" +
 	"\baddon_id\x18\x01 \x01(\tR\aaddonId\x12\x1d\n" +
 	"\n" +
 	"addon_name\x18\x02 \x01(\tR\taddonName\x12\x14\n" +
-	"\x05price\x18\x03 \x01(\x02R\x05price2?\n" +
-	"\x0ePaymentService\x12-\n" +
-	"\fGetQuotation\x12\r.QuoteRequest\x1a\x0e.QuoteResponseB\x1fZ\x1dhandworks/common/grpc/paymentb\x06proto3"
+	"\x05price\x18\x03 \x01(\x02R\x05price\"*\n" +
+	"\x0fCustomerRequest\x12\x17\n" +
+	"\acust_id\x18\x01 \x01(\tR\x06custId\"8\n" +
+	"\x0eQuotesResponse\x12&\n" +
+	"\x06quotes\x18\x01 \x03(\v2\x0e.QuoteResponseR\x06quotes2\x7f\n" +
+	"\x0ePaymentService\x12.\n" +
+	"\rMakeQuotation\x12\r.QuoteRequest\x1a\x0e.QuoteResponse\x12=\n" +
+	"\x18GetAllQuotesFromCustomer\x12\x10.CustomerRequest\x1a\x0f.QuotesResponseB\x1fZ\x1dhandworks/common/grpc/paymentb\x06proto3"
 
 var (
 	file_payment_proto_rawDescOnce sync.Once
@@ -264,25 +357,30 @@ func file_payment_proto_rawDescGZIP() []byte {
 	return file_payment_proto_rawDescData
 }
 
-var file_payment_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_payment_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_payment_proto_goTypes = []any{
 	(*QuoteRequest)(nil),            // 0: QuoteRequest
 	(*QuoteResponse)(nil),           // 1: QuoteResponse
 	(*AddOnBreakdown)(nil),          // 2: AddOnBreakdown
-	(*booking.ServicesRequest)(nil), // 3: ServicesRequest
-	(*booking.AddOnRequest)(nil),    // 4: AddOnRequest
+	(*CustomerRequest)(nil),         // 3: CustomerRequest
+	(*QuotesResponse)(nil),          // 4: QuotesResponse
+	(*booking.ServicesRequest)(nil), // 5: ServicesRequest
+	(*booking.AddOnRequest)(nil),    // 6: AddOnRequest
 }
 var file_payment_proto_depIdxs = []int32{
-	3, // 0: QuoteRequest.service:type_name -> ServicesRequest
-	4, // 1: QuoteRequest.addons:type_name -> AddOnRequest
+	5, // 0: QuoteRequest.service:type_name -> ServicesRequest
+	6, // 1: QuoteRequest.addons:type_name -> AddOnRequest
 	2, // 2: QuoteResponse.addon_breakdown:type_name -> AddOnBreakdown
-	0, // 3: PaymentService.GetQuotation:input_type -> QuoteRequest
-	1, // 4: PaymentService.GetQuotation:output_type -> QuoteResponse
-	4, // [4:5] is the sub-list for method output_type
-	3, // [3:4] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	1, // 3: QuotesResponse.quotes:type_name -> QuoteResponse
+	0, // 4: PaymentService.MakeQuotation:input_type -> QuoteRequest
+	3, // 5: PaymentService.GetAllQuotesFromCustomer:input_type -> CustomerRequest
+	1, // 6: PaymentService.MakeQuotation:output_type -> QuoteResponse
+	4, // 7: PaymentService.GetAllQuotesFromCustomer:output_type -> QuotesResponse
+	6, // [6:8] is the sub-list for method output_type
+	4, // [4:6] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_payment_proto_init() }
@@ -296,7 +394,7 @@ func file_payment_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_payment_proto_rawDesc), len(file_payment_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   3,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
