@@ -13,10 +13,14 @@ type Quote {
   totalPrice: Float!
 }
 
-extend type Query {
-  getQuotation(
-    custId: ID!
+extend type Mutation {
+  makeQuotation(
     service: ServicesInput!
     addons: [AddOnInput!]!
   ): Quote! @isPublic
+  makeAuthenticatedQuotation(
+    custId: ID!
+    service: ServicesInput!
+    addons: [AddOnInput!]!
+  ): Quote! 
 }

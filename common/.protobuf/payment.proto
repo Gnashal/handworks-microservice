@@ -4,7 +4,8 @@ option go_package="handworks/common/grpc/payment";
 import "booking.proto";
 
 service PaymentService {
-  rpc GetQuotation(QuoteRequest) returns (QuoteResponse);
+  rpc MakeQuotation(QuoteRequest) returns (QuoteResponse);
+  rpc GetAllQuotesFromCustomer(CustomerRequest) returns (QuotesResponse);
 }
 
 message QuoteRequest {
@@ -25,4 +26,11 @@ message AddOnBreakdown {
   string addon_id = 1;
   string addon_name = 2;
   float price = 3;
+}
+
+message CustomerRequest {
+  string cust_id = 1;
+}
+message QuotesResponse {
+  repeated QuoteResponse quotes = 1;
 }

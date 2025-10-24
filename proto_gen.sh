@@ -1,13 +1,13 @@
 #!/bin/bash
 set -e
 
-# path to the booking proto file
-PROTO=./common/.protobuf/booking.proto
-OUT_DIR=./common/grpc/booking
+# path to the payment proto file
+PROTO=./common/.protobuf/payment.proto
+OUT_DIR=./common/grpc/payment
 
 mkdir -p $OUT_DIR
 
-# generating go code only for booking.proto
+# generating go code only for payment.proto
 protoc \
   --proto_path=./common/.protobuf \
   --go_out=$OUT_DIR \
@@ -16,4 +16,4 @@ protoc \
   --go-grpc_opt=paths=source_relative \
   $PROTO
 
-echo "booking protobuf generation complete!"
+echo "payment protobuf generation complete!"

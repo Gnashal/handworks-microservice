@@ -19,7 +19,7 @@ type PaymentService struct {
 	payment.UnimplementedPaymentServiceServer
 }
 
-func (p *PaymentService) GetQuotation(c context.Context, in *payment.QuoteRequest) (*payment.QuoteResponse, error) {
+func (p *PaymentService) MakeQuotation(c context.Context, in *payment.QuoteRequest) (*payment.QuoteResponse, error) {
 	var dbQuote types.DbQuote
 
 	if in.CustId == "" {
@@ -45,4 +45,9 @@ func (p *PaymentService) GetQuotation(c context.Context, in *payment.QuoteReques
 	}
 	QuoteResponse := dbQuote.ToProto()
 	return QuoteResponse, nil
+}
+
+// TODO: implement this later - Yousif
+func (p *PaymentService) GetAllQuotesFromCustomer(c context.Context, in *payment.CustomerRequest) (*payment.QuotesResponse, error) {
+	return nil, nil
 }

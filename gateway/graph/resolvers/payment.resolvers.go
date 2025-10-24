@@ -13,7 +13,36 @@ import (
 )
 
 // GetQuotation is the resolver for the getQuotation field.
-func (r *queryResolver) GetQuotation(ctx context.Context, custID string, service models.ServicesInput, addons []*models.AddOnInput) (*models.Quote, error) {
+func (r *mutationResolver) MakeQuotation(ctx context.Context, service models.ServicesInput, addons []*models.AddOnInput) (*models.Quote, error) {
+	serviceProto := &booking.ServicesRequest{
+		ServiceType: helpers.MapMainServiceType(service.ServiceType),
+		Details:     helpers.MapServiceDetailInput(&service),
+	}
+	addonsProto := make([]*booking.AddOnRequest, len(addons))
+	for i, a := range addons {
+		addonService := &booking.ServicesRequest{
+			ServiceType: helpers.MapMainServiceType(a.Service.ServiceType),
+			Details:     helpers.MapServiceDetailInput(a.Service),
+		}
+		addonsProto[i] = &booking.AddOnRequest{
+			ServiceDetail: addonService,
+		}
+	}
+	quoteReq := &payment.QuoteRequest{
+		CustId:  "",
+		Service: serviceProto,
+		Addons:  addonsProto,
+	}
+	res, err := r.GrpcClients.PaymentClient.MakeQuotation(ctx, quoteReq)
+	if err != nil {
+		r.Log.Error("Failed to dial payment rpc: %s", err)
+	}
+	r.Log.Info("Contacted Payment Service Succesfully")
+	return helpers.MapQuote(res), nil
+}
+
+// MakeAuthenticatedQuotation is the resolver for the makeAuthenticatedQuotation field.
+func (r *mutationResolver) MakeAuthenticatedQuotation(ctx context.Context, custID string, service models.ServicesInput, addons []*models.AddOnInput) (*models.Quote, error) {
 	serviceProto := &booking.ServicesRequest{
 		ServiceType: helpers.MapMainServiceType(service.ServiceType),
 		Details:     helpers.MapServiceDetailInput(&service),
@@ -33,7 +62,7 @@ func (r *queryResolver) GetQuotation(ctx context.Context, custID string, service
 		Service: serviceProto,
 		Addons:  addonsProto,
 	}
-	res, err := r.GrpcClients.PaymentClient.GetQuotation(ctx, quoteReq)
+	res, err := r.GrpcClients.PaymentClient.MakeQuotation(ctx, quoteReq)
 	if err != nil {
 		r.Log.Error("Failed to dial payment rpc: %s", err)
 	}
