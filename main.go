@@ -9,11 +9,20 @@ import (
 	"handworks-api/services"
 	"handworks-api/utils"
 
+	_ "handworks-api/docs" // Import generated docs
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
+// @title Handworks API
+// @version 1.0
+// @description This is the official API documentation for the Handworks platform.
+// @host localhost:8080
+// @BasePath /api/
 func main() {
 	_ = godotenv.Load()
 	c := context.Background()
@@ -23,6 +32,7 @@ func main() {
 	}
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.New()
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router.SetTrustedProxies(nil)
 
 	router.Use(cors.New(config.NewCors()))
@@ -56,6 +66,7 @@ func main() {
 
 	port := "8080"
 	logger.Info("Starting server on port %s", port)
+	logger.Info("Swagger on localhost:8080/swagger")
 	if err := router.Run(":" + port); err != nil {
 		logger.Fatal("Server failed: %v", err)
 	}

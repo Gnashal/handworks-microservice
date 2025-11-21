@@ -1,0 +1,620 @@
+basePath: /api/v1
+host: localhost:8080
+info:
+  contact: {}
+  description: This is a sample API.
+  title: Your API Title
+  version: "1.0"
+paths:
+  /account/customer/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove a customer by ID
+      parameters:
+      - description: Customer ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete a customer
+      tags:
+      - Account
+    get:
+      consumes:
+      - application/json
+      description: Retrieve customer info
+      parameters:
+      - description: Customer ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get a customer by ID
+      tags:
+      - Account
+    put:
+      consumes:
+      - application/json
+      description: Update customer information
+      parameters:
+      - description: Customer ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated customer info
+        in: body
+        name: input
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update a customer
+      tags:
+      - Account
+  /account/employee/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove an employee by ID
+      parameters:
+      - description: Employee ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete an employee
+      tags:
+      - Account
+    get:
+      consumes:
+      - application/json
+      description: Retrieve employee info
+      parameters:
+      - description: Employee ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get an employee by ID
+      tags:
+      - Account
+    put:
+      consumes:
+      - application/json
+      description: Update employee info
+      parameters:
+      - description: Employee ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated employee info
+        in: body
+        name: input
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update an employee
+      tags:
+      - Account
+  /account/employee/{id}/performance:
+    patch:
+      consumes:
+      - application/json
+      description: Change performance score for employee
+      parameters:
+      - description: Employee ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: New performance score
+        in: query
+        name: score
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update employee performance score
+      tags:
+      - Account
+  /account/employee/{id}/status:
+    patch:
+      consumes:
+      - application/json
+      description: Change status (active/inactive) for employee
+      parameters:
+      - description: Employee ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: New status
+        in: query
+        name: status
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update employee status
+      tags:
+      - Account
+  /account/employee/signup:
+    post:
+      consumes:
+      - application/json
+      description: Create a new employee account
+      parameters:
+      - description: Employee info
+        in: body
+        name: input
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Sign up a new employee
+      tags:
+      - Account
+  /account/signup:
+    post:
+      consumes:
+      - application/json
+      description: Create a new customer account
+      parameters:
+      - description: Customer info
+        in: body
+        name: input
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Sign up a new customer
+      tags:
+      - Account
+  /booking:
+    post:
+      consumes:
+      - application/json
+      description: Creates a booking record
+      parameters:
+      - description: Booking info
+        in: body
+        name: input
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new booking
+      tags:
+      - Booking
+  /booking/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove booking by ID
+      parameters:
+      - description: Booking ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete a booking
+      tags:
+      - Booking
+    get:
+      consumes:
+      - application/json
+      description: Retrieve booking information by its database ID
+      parameters:
+      - description: Booking ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get booking by ID
+      tags:
+      - Booking
+    put:
+      consumes:
+      - application/json
+      description: Update booking information
+      parameters:
+      - description: Booking ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated booking info
+        in: body
+        name: input
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update a booking
+      tags:
+      - Booking
+  /booking/user/{uid}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all bookings for a specific user
+      parameters:
+      - description: User ID
+        in: path
+        name: uid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              additionalProperties: true
+              type: object
+            type: array
+      summary: Get booking by user ID
+      tags:
+      - Booking
+  /inventory/item:
+    post:
+      consumes:
+      - application/json
+      description: Adds a new item to inventory
+      parameters:
+      - description: Item info
+        in: body
+        name: input
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new inventory item
+      tags:
+      - Inventory
+  /inventory/item/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Removes an item from inventory
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete an inventory item
+      tags:
+      - Inventory
+    get:
+      consumes:
+      - application/json
+      description: Retrieve an item by its ID
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get an inventory item
+      tags:
+      - Inventory
+    put:
+      consumes:
+      - application/json
+      description: Update item information
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated item info
+        in: body
+        name: input
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update an inventory item
+      tags:
+      - Inventory
+  /inventory/items:
+    get:
+      consumes:
+      - application/json
+      description: Returns all items in inventory
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              additionalProperties: true
+              type: object
+            type: array
+      summary: List all inventory items
+      tags:
+      - Inventory
+  /inventory/items/category/{category}:
+    get:
+      consumes:
+      - application/json
+      description: Returns items filtered by category
+      parameters:
+      - description: Item category
+        in: path
+        name: category
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              additionalProperties: true
+              type: object
+            type: array
+      summary: List inventory items by category
+      tags:
+      - Inventory
+  /inventory/items/status/{status}:
+    get:
+      consumes:
+      - application/json
+      description: Returns items filtered by status
+      parameters:
+      - description: Item status
+        in: path
+        name: status
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              additionalProperties: true
+              type: object
+            type: array
+      summary: List inventory items by status
+      tags:
+      - Inventory
+  /inventory/items/type/{type}:
+    get:
+      consumes:
+      - application/json
+      description: Returns items filtered by type
+      parameters:
+      - description: Item type
+        in: path
+        name: type
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              additionalProperties: true
+              type: object
+            type: array
+      summary: List inventory items by type
+      tags:
+      - Inventory
+  /payment/quotation:
+    post:
+      consumes:
+      - application/json
+      description: Generate a new quotation for a customer
+      parameters:
+      - description: Quotation details
+        in: body
+        name: input
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a quotation
+      tags:
+      - Payment
+  /payment/quotations/customer/{customer_id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all quotations associated with a specific customer
+      parameters:
+      - description: Customer ID
+        in: path
+        name: customer_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              additionalProperties: true
+              type: object
+            type: array
+      summary: Get all quotations for a customer
+      tags:
+      - Payment
+swagger: "2.0"
