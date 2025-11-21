@@ -1,192 +1,88 @@
-# Handworks Cleaning Services System
+# Handworks API
 
-A centralized, scalable service platform designed to optimize booking, scheduling, operations, and administration for Handworks Cleaning Services. Built on distributed microservices, the system supports cross-platform access and automates key workflows across clients, cleaners, and admin roles.
+A Go-based REST API for Handworks Cleaning Services, built with Gin, PostgreSQL, and Swagger/Redoc documentation.
+
+## Features
+
+- **Account Management**
+
+  - Customer & Employee signup, update, and deletion
+  - Employee performance and status updates
+
+- **Booking Management**
+
+  - Create, update, fetch, and delete bookings
+
+- **Inventory Management**
+
+  - CRUD operations for items
+  - Filter items by type, status, or category
+
+- **Payments & Quotes**
+
+  - Generate quotations
+  - Fetch customer quotes
+
+- **API Documentation**
+
+  - Swagger annotations in Go handlers
+  - Documentation available via Redoc
 
 ---
-# How to Run
-First run the gateway
+
+## Requirements
+
+- Go 1.25+
+- PostgreSQL
+- Gin framework
+- Clerk (OAuth/JWT) for authentication
+
+---
+
+## Installation
+
+1. Clone the repository:
+
+```bash
+git clone <repo-url>
+cd handworks-api
 ```
-cd ./gateway
+
+2. Install dependencies:
+
+```bash
+go mod download
+```
+
+3. Generate Swagger docs:
+
+```bash
+swag init
+```
+
+4. Run the API:
+
+```bash
 go run main.go
 ```
-Then run each service (ones that are applicable when you test)
+
+The API runs on `http://localhost:8080` by default.
+
+---
+
+## API Documentation
+
+- Open your browser and visit:
+  `http://localhost:8080/swagger/index.html` (served via Swagger/swaggo)
+
+### Authorization (Bearer Token)
+
+1. Get your JWT token from Clerk.
+2. In Swagger UI, click **Authorize**.
+3. Enter:
+
 ```
-cd .services/{service name (eg..account)}
-go run main.go
+Bearer <YOUR_JWT_TOKEN>
 ```
 
-## System Diagram
-
-![Handworks Cleaning System Diagram](https://github.com/Gnashal/handworks-microservice/blob/D14N6C0/.github/diagrams/handwords_system_backend_diagram_V2.png)
-
----
-
-## Overview
-
-The system, **“Optimizing Service Delivery through a Centralized Booking and Operations Management System for Handworks Cleaning Services”**, is built using a **distributed microservices architecture**, breaking down business domains (e.g., bookings, workforce, payments, inventory) into independently developed modules. This ensures scalability, maintainability, and fault tolerance.
-
-It supports three main user roles:
-
-* **Clients** (web portal)
-* **Cleaners/Employees** (dedicated Android app)
-* **Administrators/Managers** (desktop app)
-
----
-
-## System Architecture
-
-### 🔹 Client Web Application
-
-* **React + Vite (deployed on Netlify)**
-* Fully responsive design (desktop + mobile)
-* Features:
-
-  * Service browsing & booking
-  * Online payment (30% down payment required)
-  * Upload job-related images
-  * Post-job feedback
-* **Guest bookings are not permitted**; login with verified account is required.
-
-### 🔹 Cleaner (Employee) Mobile Application
-
-* **Android SDK (Java + XML)**
-* Proprietary, internally distributed app (not Play Store)
-* Features:
-
-  * Real-time job notifications
-  * Task viewing and progress updates
-  * Upload before/after photos
-  * Sync with backend for coordination
-
-### 🔹 Admin Desktop Application
-
-* **Electron + React**
-* Features:
-
-  * Management dashboards
-  * Scheduling & resource allocation
-  * Reports & analytics
-  * Works offline with auto-sync when reconnected
-
----
-
-## Backend Microservices
-
-Each domain (bookings, employees, payments, inventory) is an independent **Go (Golang)** microservice with its own **PostgreSQL (Neon)** database. Key features:
-
-* Modular and scalable design
-* REST, GraphQL, and gRPC APIs
-* Role-based access control
-* Cloud-hosted per service database
-
----
-
-## Communication & Data Flow
-
-### API Gateway (GraphQL)
-
-* **Go (gqlgen)**
-* Functions:
-
-  * Request validation
-  * OAuth 2.0 authentication (via **Clerk**)
-  * JWT-based access control
-  * Rate limiting
-  * Routing requests to services
-
-### Services
-
-* **grpc (Go)** per domain
-* Precise data queries
-* Strong typing and flexible dashboards
-
-### gRPC Inter-Service Communication
-
-* High-performance service-to-service calls
-* Used for:
-
-  * Cleaner assignments
-  * Inventory checks
-  * Real-time booking workflows
-
-### Event-Driven Messaging
-
-* **NATS + JetStream**
-* Publish-subscribe messaging backbone
-* Handles:
-
-  * Booking creation events
-  * Assignment & notification delivery
-  * Payment confirmations
-  * Inventory updates
-* JetStream adds durability & message persistence
-
-### Integrated TLS Security
-
-* TLS for **REST, GraphQL, gRPC, and NATS**
-* Clerk-managed JWT tokens
-* Role-based enforcement at API gateway & service level
-
----
-
-## Technology Stack Summary
-
-| Tool/Framework               | Purpose                                          |
-| ---------------------------- | ------------------------------------------------ |
-| **Android SDK (Java + XML)** | Mobile app for cleaners (internal distribution)  |
-| **Vite + React**             | Client web portal (bookings, payments, feedback) |
-| **Electron + React**         | Desktop app for admins (offline sync, analytics) |
-| **Go (Golang)**              | Backend microservices and business logic         |
-| **PostgreSQL (Neon)**        | Cloud-hosted DB per microservice                 |
-| **Gin**                      | REST API gateway                                 |
-| **GraphQL + gqlgen**         | Flexible queries & reporting                     |
-| **gRPC**                     | Inter-service communication                      |
-| **NATS + JetStream**         | Event-driven messaging                           |
-| **Clerk**                    | Authentication & role-based security             |
-| **Cloudinary**               | Image storage & delivery                         |
-| **Render / Netlify**         | Backend + frontend hosting                       |
-| **GitHub + Actions**         | CI/CD automation & testing                       |
-
----
-
-## Security Model
-
-* **TLS encryption** across all communication channels
-* **Clerk OAuth2 + JWT** for authentication & authorization
-* Role-based permissions enforced at API Gateway & microservice endpoints
-* Offline support for admin app with secure re-sync
-* Durable messaging via **NATS JetStream**
-
----
-
-## Quality Assurance
-
-* **Unit tests** for each microservice
-* **Integration tests** for workflows (e.g., booking + assignment)
-* **End-to-end tests** via API Gateway
-* Automated testing pipelines via **GitHub Actions**
-
----
-
-## Technical Highlights
-
-* **Scalability**: modular microservices with independent databases
-* **Cross-platform**: Web (React), Mobile (Android SDK), Desktop (Electron)
-* **Flexible APIs**: REST, GraphQL, gRPC
-* **High performance**: Go backend + NATS JetStream for async events
-* **Offline resilience**: Admin app syncs when reconnected
-* **Developer-friendly**: GitHub CI/CD, ESLint, Prettier, code-first GraphQL
-
----
-
-## Development Tools & Practices
-
-* **Version control**: Git + GitHub
-* **CI/CD**: GitHub Actions
-* **Formatting/linting**: ESLint, Prettier
-* **Media handling**: Cloudinary SDK
-* **Frontend builds**: Vite
-* **Deployment**: Render (backend), Netlify (frontend)
-* **Monitoring & tracing**: planned
-
----
+4. Click **Authorize** to test secured endpoints.
