@@ -692,7 +692,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/inventory/item": {
+        "/inventory": {
             "post": {
                 "description": "Adds a new item to inventory",
                 "consumes": [
@@ -712,8 +712,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/types.CreateItemRequest"
                         }
                     }
                 ],
@@ -721,28 +720,34 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/types.InventoryItem"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
                         }
                     }
                 }
             }
         },
-        "/inventory/item/{id}": {
+        "/inventory/": {
             "get": {
-                "description": "Retrieve an item by its ID",
-                "consumes": [
-                    "application/json"
-                ],
+                "description": "Retrieve all inventory items",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Inventory"
                 ],
-                "summary": "Get an inventory item",
+                "summary": "Get all items",
                 "parameters": [
                     {
                         "type": "string",
@@ -756,14 +761,22 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/types.InventoryItem"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
                         }
                     }
                 }
             },
             "put": {
-                "description": "Update item information",
+                "description": "Modify fields of an existing inventory item",
                 "consumes": [
                     "application/json"
                 ],
@@ -776,20 +789,12 @@ const docTemplate = `{
                 "summary": "Update an inventory item",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "Item ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "Updated item info",
                         "name": "input",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/types.UpdateItemRequest"
                         }
                     }
                 ],
@@ -797,92 +802,38 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/types.InventoryItem"
                         }
-                    }
-                }
-            },
-            "delete": {
-                "description": "Removes an item from inventory",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Inventory"
-                ],
-                "summary": "Delete an inventory item",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Item ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
                         }
                     }
                 }
             }
         },
-        "/inventory/items": {
+        "/inventory/category/{category}": {
             "get": {
-                "description": "Returns all items in inventory",
-                "consumes": [
-                    "application/json"
-                ],
+                "description": "Retrieve all inventory items in a category",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Inventory"
                 ],
-                "summary": "List all inventory items",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "additionalProperties": true
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/inventory/items/category/{category}": {
-            "get": {
-                "description": "Returns items filtered by category",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Inventory"
-                ],
-                "summary": "List inventory items by category",
+                "summary": "List items filtered by category",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Item category",
+                        "description": "Category (general, electronics, furniture, etc)",
                         "name": "category",
                         "in": "path",
                         "required": true
@@ -894,31 +845,33 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "type": "object",
-                                "additionalProperties": true
+                                "$ref": "#/definitions/types.InventoryItem"
                             }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
                         }
                     }
                 }
             }
         },
-        "/inventory/items/status/{status}": {
+        "/inventory/status/{status}": {
             "get": {
-                "description": "Returns items filtered by status",
-                "consumes": [
-                    "application/json"
-                ],
+                "description": "Get all inventory items with the given stock status",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Inventory"
                 ],
-                "summary": "List inventory items by status",
+                "summary": "List items filtered by status",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Item status",
+                        "description": "Status (high, low, danger, out_of_stock)",
                         "name": "status",
                         "in": "path",
                         "required": true
@@ -930,31 +883,33 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "type": "object",
-                                "additionalProperties": true
+                                "$ref": "#/definitions/types.InventoryItem"
                             }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
                         }
                     }
                 }
             }
         },
-        "/inventory/items/type/{type}": {
+        "/inventory/type/{type}": {
             "get": {
-                "description": "Returns items filtered by type",
-                "consumes": [
-                    "application/json"
-                ],
+                "description": "Get all inventory items matching the given type",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Inventory"
                 ],
-                "summary": "List inventory items by type",
+                "summary": "List items filtered by type",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Item type",
+                        "description": "Item type (resource, equipment)",
                         "name": "type",
                         "in": "path",
                         "required": true
@@ -966,9 +921,85 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "type": "object",
-                                "additionalProperties": true
+                                "$ref": "#/definitions/types.InventoryItem"
                             }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/inventory/{id}": {
+            "get": {
+                "description": "Retrieve a single inventory item",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "summary": "Get an item by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Item ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.InventoryItem"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Remove inventory item by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "summary": "Delete an item",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Item ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/types.InventoryItem"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
                         }
                     }
                 }
@@ -1082,6 +1113,38 @@ const docTemplate = `{
                 }
             }
         },
+        "types.CreateItemRequest": {
+            "type": "object",
+            "required": [
+                "category",
+                "name",
+                "quantity",
+                "type",
+                "unit"
+            ],
+            "properties": {
+                "category": {
+                    "description": "GENERAL / ELECTRONICS / ...",
+                    "type": "string"
+                },
+                "image_url": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer"
+                },
+                "type": {
+                    "description": "RESOURCE / EQUIPMENT",
+                    "type": "string"
+                },
+                "unit": {
+                    "type": "string"
+                }
+            }
+        },
         "types.Customer": {
             "type": "object",
             "properties": {
@@ -1171,6 +1234,92 @@ const docTemplate = `{
                     "$ref": "#/definitions/types.Employee"
                 }
             }
+        },
+        "types.InventoryItem": {
+            "type": "object",
+            "properties": {
+                "category": {
+                    "$ref": "#/definitions/types.ItemCategory"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "image_url": {
+                    "type": "string"
+                },
+                "is_available": {
+                    "type": "boolean"
+                },
+                "max_quantity": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer"
+                },
+                "status": {
+                    "$ref": "#/definitions/types.ItemStatus"
+                },
+                "type": {
+                    "$ref": "#/definitions/types.ItemType"
+                },
+                "unit": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.ItemCategory": {
+            "type": "string",
+            "enum": [
+                "GENERAL",
+                "ELECTRONICS",
+                "FURNITURE",
+                "APPLIANCES",
+                "VEHICLES",
+                "OTHER"
+            ],
+            "x-enum-varnames": [
+                "CategoryGeneral",
+                "CategoryElectronics",
+                "CategoryFurniture",
+                "CategoryAppliances",
+                "CategoryVehicles",
+                "CategoryOther"
+            ]
+        },
+        "types.ItemStatus": {
+            "type": "string",
+            "enum": [
+                "HIGH",
+                "LOW",
+                "DANGER",
+                "OUT_OF_STOCK"
+            ],
+            "x-enum-varnames": [
+                "ItemStatusHigh",
+                "ItemStatusLow",
+                "ItemStatusDanger",
+                "ItemStatusOutOfStock"
+            ]
+        },
+        "types.ItemType": {
+            "type": "string",
+            "enum": [
+                "RESOURCE",
+                "EQUIPMENT"
+            ],
+            "x-enum-varnames": [
+                "ItemTypeResource",
+                "ItemTypeEquipment"
+            ]
         },
         "types.SignUpCustomerRequest": {
             "type": "object",
@@ -1340,6 +1489,44 @@ const docTemplate = `{
             "properties": {
                 "ok": {
                     "type": "boolean"
+                }
+            }
+        },
+        "types.UpdateItemRequest": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "category": {
+                    "description": "optional",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "image_url": {
+                    "type": "string"
+                },
+                "max_quantity": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "HIGH / LOW / DANGER / OUT_OF_STOCK",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "optional",
+                    "type": "string"
+                },
+                "unit": {
+                    "type": "string"
                 }
             }
         },

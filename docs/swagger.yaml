@@ -21,6 +21,29 @@ definitions:
       updated_at:
         type: string
     type: object
+  types.CreateItemRequest:
+    properties:
+      category:
+        description: GENERAL / ELECTRONICS / ...
+        type: string
+      image_url:
+        type: string
+      name:
+        type: string
+      quantity:
+        type: integer
+      type:
+        description: RESOURCE / EQUIPMENT
+        type: string
+      unit:
+        type: string
+    required:
+    - category
+    - name
+    - quantity
+    - type
+    - unit
+    type: object
   types.Customer:
     properties:
       account:
@@ -79,6 +102,69 @@ definitions:
       employee:
         $ref: '#/definitions/types.Employee'
     type: object
+  types.InventoryItem:
+    properties:
+      category:
+        $ref: '#/definitions/types.ItemCategory'
+      created_at:
+        type: string
+      id:
+        type: string
+      image_url:
+        type: string
+      is_available:
+        type: boolean
+      max_quantity:
+        type: integer
+      name:
+        type: string
+      quantity:
+        type: integer
+      status:
+        $ref: '#/definitions/types.ItemStatus'
+      type:
+        $ref: '#/definitions/types.ItemType'
+      unit:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  types.ItemCategory:
+    enum:
+    - GENERAL
+    - ELECTRONICS
+    - FURNITURE
+    - APPLIANCES
+    - VEHICLES
+    - OTHER
+    type: string
+    x-enum-varnames:
+    - CategoryGeneral
+    - CategoryElectronics
+    - CategoryFurniture
+    - CategoryAppliances
+    - CategoryVehicles
+    - CategoryOther
+  types.ItemStatus:
+    enum:
+    - HIGH
+    - LOW
+    - DANGER
+    - OUT_OF_STOCK
+    type: string
+    x-enum-varnames:
+    - ItemStatusHigh
+    - ItemStatusLow
+    - ItemStatusDanger
+    - ItemStatusOutOfStock
+  types.ItemType:
+    enum:
+    - RESOURCE
+    - EQUIPMENT
+    type: string
+    x-enum-varnames:
+    - ItemTypeResource
+    - ItemTypeEquipment
   types.SignUpCustomerRequest:
     properties:
       clerk_id:
@@ -193,6 +279,32 @@ definitions:
     properties:
       ok:
         type: boolean
+    type: object
+  types.UpdateItemRequest:
+    properties:
+      category:
+        description: optional
+        type: string
+      id:
+        type: string
+      image_url:
+        type: string
+      max_quantity:
+        type: integer
+      name:
+        type: string
+      quantity:
+        type: integer
+      status:
+        description: HIGH / LOW / DANGER / OUT_OF_STOCK
+        type: string
+      type:
+        description: optional
+        type: string
+      unit:
+        type: string
+    required:
+    - id
     type: object
   types.UpdatePerformanceScoreRequest:
     properties:
@@ -654,7 +766,7 @@ paths:
       summary: Get booking by user ID
       tags:
       - Booking
-  /inventory/item:
+  /inventory:
     post:
       consumes:
       - application/json
@@ -665,98 +777,34 @@ paths:
         name: input
         required: true
         schema:
-          additionalProperties: true
-          type: object
+          $ref: '#/definitions/types.CreateItemRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/types.InventoryItem'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
       summary: Create a new inventory item
       tags:
       - Inventory
-  /inventory/item/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Removes an item from inventory
-      parameters:
-      - description: Item ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Delete an inventory item
-      tags:
-      - Inventory
+  /inventory/:
     get:
-      consumes:
-      - application/json
-      description: Retrieve an item by its ID
+      description: Retrieve all inventory items
       parameters:
       - description: Item ID
         in: path
         name: id
         required: true
         type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Get an inventory item
-      tags:
-      - Inventory
-    put:
-      consumes:
-      - application/json
-      description: Update item information
-      parameters:
-      - description: Item ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Updated item info
-        in: body
-        name: input
-        required: true
-        schema:
-          additionalProperties: true
-          type: object
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Update an inventory item
-      tags:
-      - Inventory
-  /inventory/items:
-    get:
-      consumes:
-      - application/json
-      description: Returns all items in inventory
       produces:
       - application/json
       responses:
@@ -764,19 +812,96 @@ paths:
           description: OK
           schema:
             items:
-              additionalProperties: true
-              type: object
+              $ref: '#/definitions/types.InventoryItem'
             type: array
-      summary: List all inventory items
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Get all items
       tags:
       - Inventory
-  /inventory/items/category/{category}:
-    get:
+    put:
       consumes:
       - application/json
-      description: Returns items filtered by category
+      description: Modify fields of an existing inventory item
       parameters:
-      - description: Item category
+      - description: Updated item info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/types.UpdateItemRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.InventoryItem'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Update an inventory item
+      tags:
+      - Inventory
+  /inventory/{id}:
+    delete:
+      description: Remove inventory item by ID
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/types.InventoryItem'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Delete an item
+      tags:
+      - Inventory
+    get:
+      description: Retrieve a single inventory item
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.InventoryItem'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Get an item by ID
+      tags:
+      - Inventory
+  /inventory/category/{category}:
+    get:
+      description: Retrieve all inventory items in a category
+      parameters:
+      - description: Category (general, electronics, furniture, etc)
         in: path
         name: category
         required: true
@@ -788,19 +913,20 @@ paths:
           description: OK
           schema:
             items:
-              additionalProperties: true
-              type: object
+              $ref: '#/definitions/types.InventoryItem'
             type: array
-      summary: List inventory items by category
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: List items filtered by category
       tags:
       - Inventory
-  /inventory/items/status/{status}:
+  /inventory/status/{status}:
     get:
-      consumes:
-      - application/json
-      description: Returns items filtered by status
+      description: Get all inventory items with the given stock status
       parameters:
-      - description: Item status
+      - description: Status (high, low, danger, out_of_stock)
         in: path
         name: status
         required: true
@@ -812,19 +938,20 @@ paths:
           description: OK
           schema:
             items:
-              additionalProperties: true
-              type: object
+              $ref: '#/definitions/types.InventoryItem'
             type: array
-      summary: List inventory items by status
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: List items filtered by status
       tags:
       - Inventory
-  /inventory/items/type/{type}:
+  /inventory/type/{type}:
     get:
-      consumes:
-      - application/json
-      description: Returns items filtered by type
+      description: Get all inventory items matching the given type
       parameters:
-      - description: Item type
+      - description: Item type (resource, equipment)
         in: path
         name: type
         required: true
@@ -836,10 +963,13 @@ paths:
           description: OK
           schema:
             items:
-              additionalProperties: true
-              type: object
+              $ref: '#/definitions/types.InventoryItem'
             type: array
-      summary: List inventory items by type
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: List items filtered by type
       tags:
       - Inventory
   /payment/quotation:
