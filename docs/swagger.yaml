@@ -1,37 +1,223 @@
-basePath: /api/v1
+basePath: /api/
+definitions:
+  types.Account:
+    properties:
+      clerk_id:
+        type: string
+      created_at:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      last_name:
+        type: string
+      provider:
+        type: string
+      role:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  types.Customer:
+    properties:
+      account:
+        $ref: '#/definitions/types.Account'
+      id:
+        type: string
+    type: object
+  types.DeleteCustomerResponse:
+    properties:
+      customer:
+        $ref: '#/definitions/types.Customer'
+      message:
+        type: string
+      ok:
+        type: boolean
+    type: object
+  types.DeleteEmployeeResponse:
+    properties:
+      employee:
+        $ref: '#/definitions/types.Employee'
+      message:
+        type: string
+      ok:
+        type: boolean
+    type: object
+  types.Employee:
+    properties:
+      account:
+        $ref: '#/definitions/types.Account'
+      hire_date:
+        type: string
+      id:
+        type: string
+      num_ratings:
+        type: integer
+      performance_score:
+        type: number
+      position:
+        type: string
+      status:
+        description: ACTIVE / ONDUTY / INACTIVE
+        type: string
+    type: object
+  types.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  types.GetCustomerResponse:
+    properties:
+      customer:
+        $ref: '#/definitions/types.Customer'
+    type: object
+  types.GetEmployeeResponse:
+    properties:
+      employee:
+        $ref: '#/definitions/types.Employee'
+    type: object
+  types.SignUpCustomerRequest:
+    properties:
+      clerk_id:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      provider:
+        type: string
+      role:
+        type: string
+    required:
+    - clerk_id
+    - email
+    - first_name
+    - last_name
+    - provider
+    - role
+    type: object
+  types.SignUpCustomerResponse:
+    properties:
+      customer:
+        $ref: '#/definitions/types.Customer'
+    type: object
+  types.SignUpEmployeeRequest:
+    properties:
+      clerk_id:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      hire_date:
+        type: string
+      last_name:
+        type: string
+      position:
+        type: string
+      provider:
+        type: string
+      role:
+        type: string
+    required:
+    - clerk_id
+    - email
+    - first_name
+    - hire_date
+    - last_name
+    - position
+    - provider
+    - role
+    type: object
+  types.SignUpEmployeeResponse:
+    properties:
+      employee:
+        $ref: '#/definitions/types.Employee'
+    type: object
+  types.UpdateCustomerRequest:
+    properties:
+      customer_id:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      last_name:
+        type: string
+    required:
+    - id
+    type: object
+  types.UpdateCustomerResponse:
+    properties:
+      customer:
+        $ref: '#/definitions/types.Customer'
+    type: object
+  types.UpdateEmployeeRequest:
+    properties:
+      email:
+        type: string
+      employee_id:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      last_name:
+        type: string
+    required:
+    - id
+    type: object
+  types.UpdateEmployeeResponse:
+    properties:
+      employee:
+        $ref: '#/definitions/types.Employee'
+    type: object
+  types.UpdateEmployeeStatusRequest:
+    properties:
+      id:
+        type: string
+      status:
+        type: string
+    required:
+    - id
+    - status
+    type: object
+  types.UpdateEmployeeStatusResponse:
+    properties:
+      ok:
+        type: boolean
+    type: object
+  types.UpdatePerformanceScoreRequest:
+    properties:
+      id:
+        type: string
+      score:
+        type: number
+    required:
+    - id
+    - score
+    type: object
+  types.UpdatePerformanceScoreResponse:
+    properties:
+      ok:
+        type: boolean
+    type: object
 host: localhost:8080
 info:
   contact: {}
-  description: This is a sample API.
-  title: Your API Title
+  description: This is the official API documentation for the Handworks Api.
+  title: Handworks API
   version: "1.0"
 paths:
   /account/customer/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Remove a customer by ID
-      parameters:
-      - description: Customer ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Delete a customer
-      tags:
-      - Account
     get:
-      consumes:
-      - application/json
       description: Retrieve customer info
       parameters:
       - description: Customer ID
@@ -45,8 +231,13 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/types.GetCustomerResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Get a customer by ID
       tags:
       - Account
@@ -65,29 +256,39 @@ paths:
         name: input
         required: true
         schema:
-          additionalProperties: true
-          type: object
+          $ref: '#/definitions/types.UpdateCustomerRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/types.UpdateCustomerResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Update a customer
       tags:
       - Account
-  /account/employee/{id}:
+  /account/customer/{id}/{accId}:
     delete:
-      consumes:
-      - application/json
-      description: Remove an employee by ID
+      description: Remove a customer by ID
       parameters:
-      - description: Employee ID
+      - description: Customer ID
         in: path
         name: id
+        required: true
+        type: string
+      - description: Account ID
+        in: path
+        name: accId
         required: true
         type: string
       produces:
@@ -96,15 +297,48 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Delete an employee
+            $ref: '#/definitions/types.DeleteCustomerResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete a customer
       tags:
       - Account
-    get:
+  /account/customer/signup:
+    post:
       consumes:
       - application/json
+      description: Create a new customer account
+      parameters:
+      - description: Customer signup data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/types.SignUpCustomerRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.SignUpCustomerResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Sign up a new customer
+      tags:
+      - Account
+  /account/employee/{id}:
+    get:
       description: Retrieve employee info
       parameters:
       - description: Employee ID
@@ -118,65 +352,116 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/types.GetEmployeeResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Get an employee by ID
       tags:
       - Account
     put:
       consumes:
       - application/json
-      description: Update employee info
+      description: Update employee information
       parameters:
       - description: Employee ID
         in: path
         name: id
         required: true
         type: string
-      - description: Updated employee info
+      - description: Updated employee data
         in: body
         name: input
         required: true
         schema:
-          additionalProperties: true
-          type: object
+          $ref: '#/definitions/types.UpdateEmployeeRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/types.UpdateEmployeeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Update an employee
+      tags:
+      - Account
+  /account/employee/{id}/{empId}:
+    delete:
+      description: Remove employee by ID
+      parameters:
+      - description: Employee ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Account ID
+        in: path
+        name: accId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.DeleteEmployeeResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete an employee
       tags:
       - Account
   /account/employee/{id}/performance:
     patch:
       consumes:
       - application/json
-      description: Change performance score for employee
+      description: Adjust performance score
       parameters:
       - description: Employee ID
         in: path
         name: id
         required: true
         type: string
-      - description: New performance score
-        in: query
+      - description: New score
+        in: body
         name: score
         required: true
-        type: integer
+        schema:
+          $ref: '#/definitions/types.UpdatePerformanceScoreRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/types.UpdatePerformanceScoreResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Update employee performance score
       tags:
       - Account
@@ -184,7 +469,7 @@ paths:
     patch:
       consumes:
       - application/json
-      description: Change status (active/inactive) for employee
+      description: Set employee ACTIVE/ONDUTY/INACTIVE
       parameters:
       - description: Employee ID
         in: path
@@ -192,19 +477,28 @@ paths:
         required: true
         type: string
       - description: New status
-        in: query
-        name: status
+        in: body
+        name: input
         required: true
-        type: string
+        schema:
+          $ref: '#/definitions/types.UpdateEmployeeStatusRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/types.UpdateEmployeeStatusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Update employee status
       tags:
       - Account
@@ -214,48 +508,28 @@ paths:
       - application/json
       description: Create a new employee account
       parameters:
-      - description: Employee info
+      - description: Employee signup data
         in: body
         name: input
         required: true
         schema:
-          additionalProperties: true
-          type: object
+          $ref: '#/definitions/types.SignUpEmployeeRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/types.SignUpEmployeeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
       summary: Sign up a new employee
-      tags:
-      - Account
-  /account/signup:
-    post:
-      consumes:
-      - application/json
-      description: Create a new customer account
-      parameters:
-      - description: Customer info
-        in: body
-        name: input
-        required: true
-        schema:
-          additionalProperties: true
-          type: object
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Sign up a new customer
       tags:
       - Account
   /booking:
@@ -617,4 +891,10 @@ paths:
       summary: Get all quotations for a customer
       tags:
       - Payment
+securityDefinitions:
+  BearerAuth:
+    description: Enter "Bearer <your_token>"
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

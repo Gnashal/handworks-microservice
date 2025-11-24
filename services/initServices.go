@@ -1,6 +1,7 @@
 package services
 
 import (
+	"handworks-api/tasks"
 	"handworks-api/utils"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -10,10 +11,11 @@ import (
 type AccountService struct {
 	DB     *pgxpool.Pool
 	Logger *utils.Logger
+	Tasks * tasks.AccountTasks
 }
 
 func NewAccountService(db *pgxpool.Pool, logger *utils.Logger) *AccountService {
-	return &AccountService{DB: db, Logger: logger}
+	return &AccountService{DB: db, Logger: logger, Tasks: &tasks.AccountTasks{}}
 }
 
 // --- Inventory Service ---

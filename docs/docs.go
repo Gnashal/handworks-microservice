@@ -15,12 +15,60 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/account/customer/{id}": {
-            "get": {
-                "description": "Retrieve customer info",
+        "/account/customer/signup": {
+            "post": {
+                "description": "Create a new customer account",
                 "consumes": [
                     "application/json"
                 ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Account"
+                ],
+                "summary": "Sign up a new customer",
+                "parameters": [
+                    {
+                        "description": "Customer signup data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.SignUpCustomerRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.SignUpCustomerResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/account/customer/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieve customer info",
                 "produces": [
                     "application/json"
                 ],
@@ -41,13 +89,23 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/types.GetCustomerResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
                         }
                     }
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Update customer information",
                 "consumes": [
                     "application/json"
@@ -73,8 +131,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/types.UpdateCustomerRequest"
                         }
                     }
                 ],
@@ -82,19 +139,32 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/types.UpdateCustomerResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
                         }
                     }
                 }
-            },
+            }
+        },
+        "/account/customer/{id}/{accId}": {
             "delete": {
-                "description": "Remove a customer by ID",
-                "consumes": [
-                    "application/json"
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
                 ],
+                "description": "Remove a customer by ID",
                 "produces": [
                     "application/json"
                 ],
@@ -109,16 +179,26 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Account ID",
+                        "name": "accId",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/types.DeleteCustomerResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
                         }
                     }
                 }
@@ -139,13 +219,12 @@ const docTemplate = `{
                 "summary": "Sign up a new employee",
                 "parameters": [
                     {
-                        "description": "Employee info",
+                        "description": "Employee signup data",
                         "name": "input",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/types.SignUpEmployeeRequest"
                         }
                     }
                 ],
@@ -153,10 +232,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/types.SignUpEmployeeResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
                         }
                     }
                 }
@@ -164,10 +252,12 @@ const docTemplate = `{
         },
         "/account/employee/{id}": {
             "get": {
-                "description": "Retrieve employee info",
-                "consumes": [
-                    "application/json"
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
                 ],
+                "description": "Retrieve employee info",
                 "produces": [
                     "application/json"
                 ],
@@ -188,14 +278,24 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/types.GetEmployeeResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
                         }
                     }
                 }
             },
             "put": {
-                "description": "Update employee info",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update employee information",
                 "consumes": [
                     "application/json"
                 ],
@@ -215,13 +315,12 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Updated employee info",
+                        "description": "Updated employee data",
                         "name": "input",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/types.UpdateEmployeeRequest"
                         }
                     }
                 ],
@@ -229,43 +328,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/types.UpdateEmployeeResponse"
                         }
-                    }
-                }
-            },
-            "delete": {
-                "description": "Remove an employee by ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Account"
-                ],
-                "summary": "Delete an employee",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Employee ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
                         }
                     }
                 }
@@ -273,7 +348,12 @@ const docTemplate = `{
         },
         "/account/employee/{id}/performance": {
             "patch": {
-                "description": "Change performance score for employee",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Adjust performance score",
                 "consumes": [
                     "application/json"
                 ],
@@ -293,21 +373,32 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "integer",
-                        "description": "New performance score",
+                        "description": "New score",
                         "name": "score",
-                        "in": "query",
-                        "required": true
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.UpdatePerformanceScoreRequest"
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/types.UpdatePerformanceScoreResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
                         }
                     }
                 }
@@ -315,7 +406,12 @@ const docTemplate = `{
         },
         "/account/employee/{id}/status": {
             "patch": {
-                "description": "Change status (active/inactive) for employee",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Set employee ACTIVE/ONDUTY/INACTIVE",
                 "consumes": [
                     "application/json"
                 ],
@@ -335,10 +431,65 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "string",
                         "description": "New status",
-                        "name": "status",
-                        "in": "query",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.UpdateEmployeeStatusRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.UpdateEmployeeStatusResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/account/employee/{id}/{empId}": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Remove employee by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Account"
+                ],
+                "summary": "Delete an employee",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Employee ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Account ID",
+                        "name": "accId",
+                        "in": "path",
                         "required": true
                     }
                 ],
@@ -346,48 +497,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/types.DeleteEmployeeResponse"
                         }
-                    }
-                }
-            }
-        },
-        "/account/signup": {
-            "post": {
-                "description": "Create a new customer account",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Account"
-                ],
-                "summary": "Sign up a new customer",
-                "parameters": [
-                    {
-                        "description": "Customer info",
-                        "name": "input",
-                        "in": "body",
-                        "required": true,
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/types.ErrorResponse"
                         }
                     }
                 }
@@ -932,6 +1048,332 @@ const docTemplate = `{
                 }
             }
         }
+    },
+    "definitions": {
+        "types.Account": {
+            "type": "object",
+            "properties": {
+                "clerk_id": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.Customer": {
+            "type": "object",
+            "properties": {
+                "account": {
+                    "$ref": "#/definitions/types.Account"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.DeleteCustomerResponse": {
+            "type": "object",
+            "properties": {
+                "customer": {
+                    "$ref": "#/definitions/types.Customer"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "ok": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "types.DeleteEmployeeResponse": {
+            "type": "object",
+            "properties": {
+                "employee": {
+                    "$ref": "#/definitions/types.Employee"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "ok": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "types.Employee": {
+            "type": "object",
+            "properties": {
+                "account": {
+                    "$ref": "#/definitions/types.Account"
+                },
+                "hire_date": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "num_ratings": {
+                    "type": "integer"
+                },
+                "performance_score": {
+                    "type": "number"
+                },
+                "position": {
+                    "type": "string"
+                },
+                "status": {
+                    "description": "ACTIVE / ONDUTY / INACTIVE",
+                    "type": "string"
+                }
+            }
+        },
+        "types.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.GetCustomerResponse": {
+            "type": "object",
+            "properties": {
+                "customer": {
+                    "$ref": "#/definitions/types.Customer"
+                }
+            }
+        },
+        "types.GetEmployeeResponse": {
+            "type": "object",
+            "properties": {
+                "employee": {
+                    "$ref": "#/definitions/types.Employee"
+                }
+            }
+        },
+        "types.SignUpCustomerRequest": {
+            "type": "object",
+            "required": [
+                "clerk_id",
+                "email",
+                "first_name",
+                "last_name",
+                "provider",
+                "role"
+            ],
+            "properties": {
+                "clerk_id": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.SignUpCustomerResponse": {
+            "type": "object",
+            "properties": {
+                "customer": {
+                    "$ref": "#/definitions/types.Customer"
+                }
+            }
+        },
+        "types.SignUpEmployeeRequest": {
+            "type": "object",
+            "required": [
+                "clerk_id",
+                "email",
+                "first_name",
+                "hire_date",
+                "last_name",
+                "position",
+                "provider",
+                "role"
+            ],
+            "properties": {
+                "clerk_id": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "hire_date": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "position": {
+                    "type": "string"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.SignUpEmployeeResponse": {
+            "type": "object",
+            "properties": {
+                "employee": {
+                    "$ref": "#/definitions/types.Employee"
+                }
+            }
+        },
+        "types.UpdateCustomerRequest": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "customer_id": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.UpdateCustomerResponse": {
+            "type": "object",
+            "properties": {
+                "customer": {
+                    "$ref": "#/definitions/types.Customer"
+                }
+            }
+        },
+        "types.UpdateEmployeeRequest": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "employee_id": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.UpdateEmployeeResponse": {
+            "type": "object",
+            "properties": {
+                "employee": {
+                    "$ref": "#/definitions/types.Employee"
+                }
+            }
+        },
+        "types.UpdateEmployeeStatusRequest": {
+            "type": "object",
+            "required": [
+                "id",
+                "status"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.UpdateEmployeeStatusResponse": {
+            "type": "object",
+            "properties": {
+                "ok": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "types.UpdatePerformanceScoreRequest": {
+            "type": "object",
+            "required": [
+                "id",
+                "score"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "score": {
+                    "type": "number"
+                }
+            }
+        },
+        "types.UpdatePerformanceScoreResponse": {
+            "type": "object",
+            "properties": {
+                "ok": {
+                    "type": "boolean"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "description": "Enter \"Bearer \u003cyour_token\u003e\"",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
     }
 }`
 
@@ -939,10 +1381,10 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "localhost:8080",
-	BasePath:         "/api/v1",
+	BasePath:         "/api/",
 	Schemes:          []string{},
-	Title:            "Your API Title",
-	Description:      "This is a sample API.",
+	Title:            "Handworks API",
+	Description:      "This is the official API documentation for the Handworks Api.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

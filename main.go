@@ -20,9 +20,14 @@ import (
 
 // @title Handworks API
 // @version 1.0
-// @description This is the official API documentation for the Handworks platform.
+// @description This is the official API documentation for the Handworks Api.
 // @host localhost:8080
 // @BasePath /api/
+
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Enter "Bearer <your_token>"
 func main() {
 	_ = godotenv.Load()
 	c := context.Background()
@@ -33,7 +38,9 @@ func main() {
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.New()
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	router.SetTrustedProxies(nil)
+	if err := router.SetTrustedProxies(nil); err != nil {
+		logger.Fatal("Failed to set trusted proxies: %v", err)
+	}
 
 	router.Use(cors.New(config.NewCors()))
 	conn, err := config.InitDB(logger, c)
@@ -43,7 +50,9 @@ func main() {
 	logger.Info("Connected to Db")
 	defer conn.Close()
 	// public paths for Clerk middleware
-	publicPaths := []string{"/signup", "/health"}
+	publicPaths := []string{"/api/account/customer/signup", 
+	"/api/account/employee/signup", 
+	"api/payment/quote", "/health"}
 	router.Use(middleware.ClerkAuthMiddleware(publicPaths))
 
 	accountService := services.NewAccountService(conn, logger)
@@ -66,7 +75,7 @@ func main() {
 
 	port := "8080"
 	logger.Info("Starting server on port %s", port)
-	logger.Info("Swagger on localhost:8080/swagger")
+	logger.Info("Swagger on localhost:8080/swagger/index.html")
 	if err := router.Run(":" + port); err != nil {
 		logger.Fatal("Server failed: %v", err)
 	}

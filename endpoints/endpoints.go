@@ -11,7 +11,9 @@ func AccountEndpoint(r* gin.RouterGroup, h * handlers.AccountHandler){
 		customer.POST("/signup", h.SignUpCustomer)
 		customer.GET("/:id", h.GetCustomer)
 		customer.PUT("/:id", h.UpdateCustomer)
-		customer.DELETE("/:id", h.DeleteCustomer)
+		// Route should be like this in your router:
+		customer.DELETE("/:id/:accId", h.DeleteCustomer)
+
 	}
 
 	employee := r.Group("/employee")
@@ -21,7 +23,7 @@ func AccountEndpoint(r* gin.RouterGroup, h * handlers.AccountHandler){
 		employee.PUT("/:id", h.UpdateEmployee)
 		employee.PUT("/:id/performance", h.UpdateEmployeePerformanceScore)
 		employee.PUT("/:id/status", h.UpdateEmployeeStatus)
-		employee.DELETE("/:id", h.DeleteEmployee)
+		employee.DELETE("/:id/:empId", h.DeleteEmployee)
 	}
 }
 func InventoryEndpoint(r* gin.RouterGroup, h * handlers.InventoryHandler){

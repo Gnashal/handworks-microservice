@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"handworks-api/types"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -12,58 +13,102 @@ import (
 // @Tags Account
 // @Accept json
 // @Produce json
-// @Param input body map[string]interface{} true "Customer info"
-// @Success 200 {object} map[string]string
-// @Router /account/signup [post]
+// @Param input body types.SignUpCustomerRequest true "Customer signup data"
+// @Success 200 {object} types.SignUpCustomerResponse
+// @Failure 400 {object} types.ErrorResponse
+// @Failure 500 {object} types.ErrorResponse
+// @Router /account/customer/signup [post]
 func (h *AccountHandler) SignUpCustomer(c *gin.Context) {
-	_ = h.Service.SignUpCustomer(c.Request.Context())
-	c.JSON(http.StatusOK, gin.H{"status": "success"})
+	var req types.SignUpCustomerRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, types.NewErrorResponse(err))
+		return
+	}
+
+	resp, err := h.Service.SignUpCustomer(c.Request.Context(), req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, types.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
 }
 
 // GetCustomer godoc
 // @Summary Get a customer by ID
 // @Description Retrieve customer info
+// @Security BearerAuth
 // @Tags Account
-// @Accept json
 // @Produce json
 // @Param id path string true "Customer ID"
-// @Success 200 {object} map[string]interface{}
+// @Success 200 {object} types.GetCustomerResponse
+// @Failure 404 {object} types.ErrorResponse
 // @Router /account/customer/{id} [get]
 func (h *AccountHandler) GetCustomer(c *gin.Context) {
-	_ = h.Service.GetCustomer(c.Request.Context())
-	c.JSON(http.StatusOK, gin.H{"status": "success"})
+	id := c.Param("id")
+
+	resp, err := h.Service.GetCustomer(c.Request.Context(), id)
+	if err != nil {
+		c.JSON(http.StatusNotFound, types.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
 }
 
 // UpdateCustomer godoc
 // @Summary Update a customer
 // @Description Update customer information
+// @Security BearerAuth
 // @Tags Account
 // @Accept json
 // @Produce json
 // @Param id path string true "Customer ID"
-// @Param input body map[string]interface{} true "Updated customer info"
-// @Success 200 {object} map[string]string
+// @Param input body types.UpdateCustomerRequest true "Updated customer info"
+// @Success 200 {object} types.UpdateCustomerResponse
+// @Failure 400 {object} types.ErrorResponse
+// @Failure 500 {object} types.ErrorResponse
 // @Router /account/customer/{id} [put]
 func (h *AccountHandler) UpdateCustomer(c *gin.Context) {
-	_ = h.Service.UpdateCustomer(c.Request.Context())
-	c.JSON(http.StatusOK, gin.H{"status": "success"})
+	var req types.UpdateCustomerRequest
+	req.ID = c.Param("id")
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, types.NewErrorResponse(err))
+		return
+	}
+
+	resp, err := h.Service.UpdateCustomer(c.Request.Context(), req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, types.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
 }
 
 // DeleteCustomer godoc
 // @Summary Delete a customer
 // @Description Remove a customer by ID
+// @Security BearerAuth
 // @Tags Account
-// @Accept json
 // @Produce json
 // @Param id path string true "Customer ID"
-// @Success 200 {object} map[string]string
-// @Router /account/customer/{id} [delete]
+// @Param accId path string true "Account ID"
+// @Success 200 {object} types.DeleteCustomerResponse
+// @Failure 500 {object} types.ErrorResponse
+// @Router /account/customer/{id}/{accId} [delete]
 func (h *AccountHandler) DeleteCustomer(c *gin.Context) {
-	_ = h.Service.DeleteCustomer(c.Request.Context())
-	c.JSON(http.StatusOK, gin.H{"status": "success"})
-}
+	id := c.Param("id")
+	accId := c.Param("accId")
+	resp, err := h.Service.DeleteCustomer(c.Request.Context(), id, accId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, types.NewErrorResponse(err))
+		return
+	}
 
-// ------------------- Employee Endpoints -------------------
+	c.JSON(http.StatusOK, resp)
+}
 
 // SignUpEmployee godoc
 // @Summary Sign up a new employee
@@ -71,83 +116,161 @@ func (h *AccountHandler) DeleteCustomer(c *gin.Context) {
 // @Tags Account
 // @Accept json
 // @Produce json
-// @Param input body map[string]interface{} true "Employee info"
-// @Success 200 {object} map[string]string
+// @Param input body types.SignUpEmployeeRequest true "Employee signup data"
+// @Success 200 {object} types.SignUpEmployeeResponse
+// @Failure 400 {object} types.ErrorResponse
+// @Failure 500 {object} types.ErrorResponse
 // @Router /account/employee/signup [post]
 func (h *AccountHandler) SignUpEmployee(c *gin.Context) {
-	_ = h.Service.SignUpEmployee(c.Request.Context())
-	c.JSON(http.StatusOK, gin.H{"status": "success"})
+	var req types.SignUpEmployeeRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, types.NewErrorResponse(err))
+		return
+	}
+
+	resp, err := h.Service.SignUpEmployee(c.Request.Context(), req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, types.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
 }
 
 // GetEmployee godoc
 // @Summary Get an employee by ID
 // @Description Retrieve employee info
+// @Security BearerAuth
 // @Tags Account
-// @Accept json
 // @Produce json
 // @Param id path string true "Employee ID"
-// @Success 200 {object} map[string]interface{}
+// @Success 200 {object} types.GetEmployeeResponse
+// @Failure 404 {object} types.ErrorResponse
 // @Router /account/employee/{id} [get]
 func (h *AccountHandler) GetEmployee(c *gin.Context) {
-	_ = h.Service.GetEmployee(c.Request.Context())
-	c.JSON(http.StatusOK, gin.H{"status": "success"})
+	id := c.Param("id")
+
+	resp, err := h.Service.GetEmployee(c.Request.Context(), id)
+	if err != nil {
+		c.JSON(http.StatusNotFound, types.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
 }
 
 // UpdateEmployee godoc
 // @Summary Update an employee
-// @Description Update employee info
+// @Description Update employee information
+// @Security BearerAuth
 // @Tags Account
 // @Accept json
 // @Produce json
 // @Param id path string true "Employee ID"
-// @Param input body map[string]interface{} true "Updated employee info"
-// @Success 200 {object} map[string]string
+// @Param input body types.UpdateEmployeeRequest true "Updated employee data"
+// @Success 200 {object} types.UpdateEmployeeResponse
+// @Failure 400 {object} types.ErrorResponse
+// @Failure 500 {object} types.ErrorResponse
 // @Router /account/employee/{id} [put]
 func (h *AccountHandler) UpdateEmployee(c *gin.Context) {
-	_ = h.Service.UpdateEmployee(c.Request.Context())
-	c.JSON(http.StatusOK, gin.H{"status": "success"})
+	var req types.UpdateEmployeeRequest
+	req.ID = c.Param("id")
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, types.NewErrorResponse(err))
+		return
+	}
+
+	resp, err := h.Service.UpdateEmployee(c.Request.Context(), req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, types.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
 }
 
 // UpdateEmployeePerformanceScore godoc
 // @Summary Update employee performance score
-// @Description Change performance score for employee
+// @Description Adjust performance score
+// @Security BearerAuth
 // @Tags Account
 // @Accept json
 // @Produce json
 // @Param id path string true "Employee ID"
-// @Param score query int true "New performance score"
-// @Success 200 {object} map[string]string
+// @Param score body types.UpdatePerformanceScoreRequest true "New score"
+// @Success 200 {object} types.UpdatePerformanceScoreResponse
+// @Failure 400 {object} types.ErrorResponse
+// @Failure 500 {object} types.ErrorResponse
 // @Router /account/employee/{id}/performance [patch]
 func (h *AccountHandler) UpdateEmployeePerformanceScore(c *gin.Context) {
-	_ = h.Service.UpdateEmployeePerformanceScore(c.Request.Context())
-	c.JSON(http.StatusOK, gin.H{"status": "success"})
+	var req types.UpdatePerformanceScoreRequest
+	req.ID = c.Param("id")
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, types.NewErrorResponse(err))
+		return
+	}
+
+	resp, err := h.Service.UpdateEmployeePerformanceScore(c.Request.Context(), req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, types.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
 }
 
 // UpdateEmployeeStatus godoc
 // @Summary Update employee status
-// @Description Change status (active/inactive) for employee
+// @Description Set employee ACTIVE/ONDUTY/INACTIVE
+// @Security BearerAuth
 // @Tags Account
 // @Accept json
 // @Produce json
 // @Param id path string true "Employee ID"
-// @Param status query string true "New status"
-// @Success 200 {object} map[string]string
+// @Param input body types.UpdateEmployeeStatusRequest true "New status"
+// @Success 200 {object} types.UpdateEmployeeStatusResponse
+// @Failure 400 {object} types.ErrorResponse
+// @Failure 500 {object} types.ErrorResponse
 // @Router /account/employee/{id}/status [patch]
 func (h *AccountHandler) UpdateEmployeeStatus(c *gin.Context) {
-	_ = h.Service.UpdateEmployeeStatus(c.Request.Context())
-	c.JSON(http.StatusOK, gin.H{"status": "success"})
+	var req types.UpdateEmployeeStatusRequest
+	req.ID = c.Param("id")
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, types.NewErrorResponse(err))
+		return
+	}
+
+	resp, err := h.Service.UpdateEmployeeStatus(c.Request.Context(), req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, types.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
 }
 
 // DeleteEmployee godoc
 // @Summary Delete an employee
-// @Description Remove an employee by ID
+// @Description Remove employee by ID
+// @Security BearerAuth
 // @Tags Account
-// @Accept json
 // @Produce json
 // @Param id path string true "Employee ID"
-// @Success 200 {object} map[string]string
-// @Router /account/employee/{id} [delete]
+// @Param accId path string true "Account ID"
+// @Success 200 {object} types.DeleteEmployeeResponse
+// @Failure 500 {object} types.ErrorResponse
+// @Router /account/employee/{id}/{empId} [delete]
 func (h *AccountHandler) DeleteEmployee(c *gin.Context) {
-	_ = h.Service.DeleteEmployee(c.Request.Context())
-	c.JSON(http.StatusOK, gin.H{"status": "success"})
+	id := c.Param("id")
+	empId := c.Param("empId")
+	resp, err := h.Service.DeleteEmployee(c.Request.Context(), id, empId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, types.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
 }
