@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"handworks-api/types"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -12,108 +13,173 @@ import (
 // @Tags Inventory
 // @Accept json
 // @Produce json
-// @Param input body map[string]interface{} true "Item info"
-// @Success 200 {object} map[string]string
-// @Router /inventory/item [post]
+// @Param input body types.CreateItemRequest true "Item info"
+// @Success 200 {object} types.CreateItemResponse
+// @Failure 400 {object} types.ErrorResponse
+// @Failure 500 {object} types.ErrorResponse
+// @Router /inventory [post]
 func (h *InventoryHandler) CreateItem(c *gin.Context) {
-	_ = h.Service.CreateItem(c.Request.Context())
-	c.JSON(http.StatusOK, gin.H{"status": "success"})
+	var req types.CreateItemRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, types.NewErrorResponse(err))
+		return
+	}
+
+	resp, err := h.Service.CreateItem(c.Request.Context(), req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, types.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
 }
 
 // GetItem godoc
-// @Summary Get an inventory item
-// @Description Retrieve an item by its ID
+// @Summary Get an item by ID
+// @Description Retrieve a single inventory item
 // @Tags Inventory
-// @Accept json
 // @Produce json
 // @Param id path string true "Item ID"
-// @Success 200 {object} map[string]interface{}
-// @Router /inventory/item/{id} [get]
+// @Success 200 {object} types.GetItemResponse
+// @Failure 404 {object} types.ErrorResponse
+// @Router /inventory/{id} [get]
 func (h *InventoryHandler) GetItem(c *gin.Context) {
-	_ = h.Service.GetItem(c.Request.Context())
-	c.JSON(http.StatusOK, gin.H{"status": "success"})
-}
+	id := c.Param("id")
 
-// ListAllItems godoc
-// @Summary List all inventory items
-// @Description Returns all items in inventory
+	resp, err := h.Service.GetItem(c.Request.Context(), id)
+	if err != nil {
+		c.JSON(http.StatusNotFound, types.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
+}
+// GetItem godoc
+// @Summary Get all items
+// @Description Retrieve all inventory items
 // @Tags Inventory
-// @Accept json
 // @Produce json
-// @Success 200 {array} map[string]interface{}
-// @Router /inventory/items [get]
-func (h *InventoryHandler) ListAllItems(c *gin.Context) {
-	_ = h.Service.ListAllItems(c.Request.Context())
-	c.JSON(http.StatusOK, gin.H{"status": "success"})
-}
+// @Param id path string true "Item ID"
+// @Success 200 {object} types.GetItemResponse
+// @Failure 404 {object} types.ErrorResponse
+// @Router /inventory/ [get]
+func (h *InventoryHandler) GetItems(c *gin.Context) {
+	resp, err := h.Service.GetItems(c.Request.Context())
+	if err != nil {
+		c.JSON(http.StatusNotFound, types.NewErrorResponse(err))
+		return
+	}
 
+	c.JSON(http.StatusOK, resp)
+}
 // ListItemsByType godoc
-// @Summary List inventory items by type
-// @Description Returns items filtered by type
+// @Summary List items filtered by type
+// @Description Get all inventory items matching the given type
 // @Tags Inventory
-// @Accept json
 // @Produce json
-// @Param type path string true "Item type"
-// @Success 200 {array} map[string]interface{}
-// @Router /inventory/items/type/{type} [get]
+// @Param type path string true "Item type (resource, equipment)"
+// @Success 200 {object} types.ListItemsResponse
+// @Failure 400 {object} types.ErrorResponse
+// @Router /inventory/type/{type} [get]
 func (h *InventoryHandler) ListItemsByType(c *gin.Context) {
-	_ = h.Service.ListItemsByType(c.Request.Context())
-	c.JSON(http.StatusOK, gin.H{"status": "success"})
+	itemType := c.Param("type")
+
+	resp, err := h.Service.ListItemsByType(c.Request.Context(), itemType)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, types.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
 }
 
 // ListItemsByStatus godoc
-// @Summary List inventory items by status
-// @Description Returns items filtered by status
+// @Summary List items filtered by status
+// @Description Get all inventory items with the given stock status
 // @Tags Inventory
-// @Accept json
 // @Produce json
-// @Param status path string true "Item status"
-// @Success 200 {array} map[string]interface{}
-// @Router /inventory/items/status/{status} [get]
+// @Param status path string true "Status (high, low, danger, out_of_stock)"
+// @Success 200 {object} types.ListItemsResponse
+// @Failure 400 {object} types.ErrorResponse
+// @Router /inventory/status/{status} [get]
 func (h *InventoryHandler) ListItemsByStatus(c *gin.Context) {
-	_ = h.Service.ListItemsByStatus(c.Request.Context())
-	c.JSON(http.StatusOK, gin.H{"status": "success"})
+	status := c.Param("status")
+
+	resp, err := h.Service.ListItemsByStatus(c.Request.Context(), status)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, types.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
 }
 
 // ListItemsByCategory godoc
-// @Summary List inventory items by category
-// @Description Returns items filtered by category
+// @Summary List items filtered by category
+// @Description Retrieve all inventory items in a category
 // @Tags Inventory
-// @Accept json
 // @Produce json
-// @Param category path string true "Item category"
-// @Success 200 {array} map[string]interface{}
-// @Router /inventory/items/category/{category} [get]
+// @Param category path string true "Category (general, electronics, furniture, etc)"
+// @Success 200 {object} types.ListItemsResponse
+// @Failure 400 {object} types.ErrorResponse
+// @Router /inventory/category/{category} [get]
 func (h *InventoryHandler) ListItemsByCategory(c *gin.Context) {
-	_ = h.Service.ListItemsByCategory(c.Request.Context())
-	c.JSON(http.StatusOK, gin.H{"status": "success"})
+	category := c.Param("category")
+
+	resp, err := h.Service.ListItemsByCategory(c.Request.Context(), category)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, types.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
 }
 
 // UpdateItem godoc
 // @Summary Update an inventory item
-// @Description Update item information
+// @Description Modify fields of an existing inventory item
 // @Tags Inventory
 // @Accept json
 // @Produce json
-// @Param id path string true "Item ID"
-// @Param input body map[string]interface{} true "Updated item info"
-// @Success 200 {object} map[string]string
-// @Router /inventory/item/{id} [put]
+// @Param input body types.UpdateItemRequest true "Updated item info"
+// @Success 200 {object} types.UpdateItemResponse
+// @Failure 400 {object} types.ErrorResponse
+// @Failure 500 {object} types.ErrorResponse
+// @Router /inventory/ [put]
 func (h *InventoryHandler) UpdateItem(c *gin.Context) {
-	_ = h.Service.UpdateItem(c.Request.Context())
-	c.JSON(http.StatusOK, gin.H{"status": "success"})
+	var req types.UpdateItemRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, types.NewErrorResponse(err))
+		return
+	}
+
+	resp, err := h.Service.UpdateItem(c.Request.Context(), req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, types.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
 }
 
 // DeleteItem godoc
-// @Summary Delete an inventory item
-// @Description Removes an item from inventory
+// @Summary Delete an item
+// @Description Remove inventory item by ID
 // @Tags Inventory
-// @Accept json
 // @Produce json
 // @Param id path string true "Item ID"
-// @Success 200 {object} map[string]string
-// @Router /inventory/item/{id} [delete]
+// @Success 200 {object} types.DeleteItemResponse
+// @Failure 500 {object} types.ErrorResponse
+// @Router /inventory/{id} [delete]
 func (h *InventoryHandler) DeleteItem(c *gin.Context) {
-	_ = h.Service.DeleteItem(c.Request.Context())
-	c.JSON(http.StatusOK, gin.H{"status": "success"})
+	id := c.Param("id")
+
+	resp, err := h.Service.DeleteItem(c.Request.Context(), id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, types.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
 }

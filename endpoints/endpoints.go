@@ -29,11 +29,11 @@ func AccountEndpoint(r* gin.RouterGroup, h * handlers.AccountHandler){
 func InventoryEndpoint(r* gin.RouterGroup, h * handlers.InventoryHandler){
 	r.POST("/", h.CreateItem)
 	r.GET("/:id", h.GetItem)
-	r.GET("/", h.ListAllItems)
+	r.GET("/", h.GetItems)
 	r.GET("/type/:type", h.ListItemsByType)
 	r.GET("/status/:status", h.ListItemsByStatus)
 	r.GET("/category/:category", h.ListItemsByCategory)
-	r.PUT("/:id", h.UpdateItem)
+	r.PUT("/", h.UpdateItem)
 	r.DELETE("/:id", h.DeleteItem)
 }
 func BookingEndpoint(r* gin.RouterGroup, h * handlers.BookingHandler){
