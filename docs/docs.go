@@ -694,6 +694,11 @@ const docTemplate = `{
         },
         "/inventory": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Adds a new item to inventory",
                 "consumes": [
                     "application/json"
@@ -740,6 +745,11 @@ const docTemplate = `{
         },
         "/inventory/": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Retrieve all inventory items",
                 "produces": [
                     "application/json"
@@ -748,15 +758,6 @@ const docTemplate = `{
                     "Inventory"
                 ],
                 "summary": "Get all items",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Item ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -776,6 +777,11 @@ const docTemplate = `{
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Modify fields of an existing inventory item",
                 "consumes": [
                     "application/json"
@@ -822,6 +828,11 @@ const docTemplate = `{
         },
         "/inventory/category/{category}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Retrieve all inventory items in a category",
                 "produces": [
                     "application/json"
@@ -860,6 +871,11 @@ const docTemplate = `{
         },
         "/inventory/status/{status}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Get all inventory items with the given stock status",
                 "produces": [
                     "application/json"
@@ -898,6 +914,11 @@ const docTemplate = `{
         },
         "/inventory/type/{type}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Get all inventory items matching the given type",
                 "produces": [
                     "application/json"
@@ -936,6 +957,11 @@ const docTemplate = `{
         },
         "/inventory/{id}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Retrieve a single inventory item",
                 "produces": [
                     "application/json"
@@ -969,6 +995,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Remove inventory item by ID",
                 "produces": [
                     "application/json"

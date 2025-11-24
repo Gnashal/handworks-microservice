@@ -10,6 +10,7 @@ import (
 // CreateItem godoc
 // @Summary Create a new inventory item
 // @Description Adds a new item to inventory
+// @Security BearerAuth
 // @Tags Inventory
 // @Accept json
 // @Produce json
@@ -37,6 +38,7 @@ func (h *InventoryHandler) CreateItem(c *gin.Context) {
 // GetItem godoc
 // @Summary Get an item by ID
 // @Description Retrieve a single inventory item
+// @Security BearerAuth
 // @Tags Inventory
 // @Produce json
 // @Param id path string true "Item ID"
@@ -57,9 +59,9 @@ func (h *InventoryHandler) GetItem(c *gin.Context) {
 // GetItem godoc
 // @Summary Get all items
 // @Description Retrieve all inventory items
+// @Security BearerAuth
 // @Tags Inventory
 // @Produce json
-// @Param id path string true "Item ID"
 // @Success 200 {object} []types.InventoryItem
 // @Failure 404 {object} types.ErrorResponse
 // @Router /inventory/ [get]
@@ -75,6 +77,7 @@ func (h *InventoryHandler) GetItems(c *gin.Context) {
 // ListItemsByType godoc
 // @Summary List items filtered by type
 // @Description Get all inventory items matching the given type
+// @Security BearerAuth
 // @Tags Inventory
 // @Produce json
 // @Param type path string true "Item type (resource, equipment)"
@@ -96,6 +99,7 @@ func (h *InventoryHandler) ListItemsByType(c *gin.Context) {
 // ListItemsByStatus godoc
 // @Summary List items filtered by status
 // @Description Get all inventory items with the given stock status
+// @Security BearerAuth
 // @Tags Inventory
 // @Produce json
 // @Param status path string true "Status (high, low, danger, out_of_stock)"
@@ -117,6 +121,7 @@ func (h *InventoryHandler) ListItemsByStatus(c *gin.Context) {
 // ListItemsByCategory godoc
 // @Summary List items filtered by category
 // @Description Retrieve all inventory items in a category
+// @Security BearerAuth
 // @Tags Inventory
 // @Produce json
 // @Param category path string true "Category (general, electronics, furniture, etc)"
@@ -138,6 +143,7 @@ func (h *InventoryHandler) ListItemsByCategory(c *gin.Context) {
 // UpdateItem godoc
 // @Summary Update an inventory item
 // @Description Modify fields of an existing inventory item
+// @Security BearerAuth
 // @Tags Inventory
 // @Accept json
 // @Produce json
@@ -166,6 +172,7 @@ func (h *InventoryHandler) UpdateItem(c *gin.Context) {
 // DeleteItem godoc
 // @Summary Delete an item
 // @Description Remove inventory item by ID
+// @Security BearerAuth
 // @Tags Inventory
 // @Produce json
 // @Param id path string true "Item ID"

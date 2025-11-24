@@ -22,10 +22,11 @@ func NewAccountService(db *pgxpool.Pool, logger *utils.Logger) *AccountService {
 type InventoryService struct {
 	DB     *pgxpool.Pool
 	Logger *utils.Logger
+	Tasks * tasks.InventoryTasks
 }
 
 func NewInventoryService(db *pgxpool.Pool, logger *utils.Logger) *InventoryService {
-	return &InventoryService{DB: db, Logger: logger}
+	return &InventoryService{DB: db, Logger: logger, Tasks: &tasks.InventoryTasks{}}
 }
 
 // --- Booking Service ---

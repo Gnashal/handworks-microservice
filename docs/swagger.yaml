@@ -793,18 +793,14 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Create a new inventory item
       tags:
       - Inventory
   /inventory/:
     get:
       description: Retrieve all inventory items
-      parameters:
-      - description: Item ID
-        in: path
-        name: id
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -818,6 +814,8 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Get all items
       tags:
       - Inventory
@@ -847,6 +845,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Update an inventory item
       tags:
       - Inventory
@@ -872,6 +872,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Delete an item
       tags:
       - Inventory
@@ -894,6 +896,8 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Get an item by ID
       tags:
       - Inventory
@@ -919,6 +923,8 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: List items filtered by category
       tags:
       - Inventory
@@ -944,6 +950,8 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: List items filtered by status
       tags:
       - Inventory
@@ -969,6 +977,8 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: List items filtered by type
       tags:
       - Inventory
