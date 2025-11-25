@@ -8,7 +8,14 @@ import (
 
 func NewCors() cors.Config {
 	CorsConf := cors.Config{
-		AllowOrigins:     []string{"*"},
+		AllowOrigins:     []string{
+			"https://handworks-cleaning.com",
+            "http://localhost:3000",
+			// electron renderer process
+            "app://handworks",
+            "http://localhost:5173", // Electron dev server
+
+		},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
