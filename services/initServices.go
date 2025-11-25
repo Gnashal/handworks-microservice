@@ -33,10 +33,11 @@ func NewInventoryService(db *pgxpool.Pool, logger *utils.Logger) *InventoryServi
 type BookingService struct {
 	DB     *pgxpool.Pool
 	Logger *utils.Logger
+	Tasks * tasks.BookingTasks
 }
 
 func NewBookingService(db *pgxpool.Pool, logger *utils.Logger) *BookingService {
-	return &BookingService{DB: db, Logger: logger}
+	return &BookingService{DB: db, Logger: logger, Tasks: &tasks.BookingTasks{}}
 }
 
 
@@ -44,8 +45,9 @@ func NewBookingService(db *pgxpool.Pool, logger *utils.Logger) *BookingService {
 type PaymentService struct {
 	DB     *pgxpool.Pool
 	Logger *utils.Logger
+	Tasks * tasks.PaymentTasks
 }
 
 func NewPaymentService(db *pgxpool.Pool, logger *utils.Logger) *PaymentService {
-	return &PaymentService{DB: db, Logger: logger}
+	return &PaymentService{DB: db, Logger: logger, Tasks: &tasks.PaymentTasks{}}
 }

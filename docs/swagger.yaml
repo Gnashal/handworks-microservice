@@ -21,6 +21,58 @@ definitions:
       updated_at:
         type: string
     type: object
+  types.AddOnBreakdown:
+    properties:
+      addonId:
+        type: string
+      addonName:
+        type: string
+      price:
+        type: number
+    type: object
+  types.AddOnRequest:
+    properties:
+      serviceDetail:
+        $ref: '#/definitions/types.ServicesRequest'
+    type: object
+  types.CarCleaningDetails:
+    properties:
+      childSeats:
+        type: integer
+      cleaningSpecs:
+        items:
+          $ref: '#/definitions/types.CarCleaningSpecifications'
+        type: array
+    type: object
+  types.CarCleaningSpecifications:
+    properties:
+      carType:
+        type: string
+      quantity:
+        type: integer
+    type: object
+  types.CouchCleaningDetails:
+    properties:
+      bedPillows:
+        type: integer
+      cleaningSpecs:
+        items:
+          $ref: '#/definitions/types.CouchCleaningSpecifications'
+        type: array
+    type: object
+  types.CouchCleaningSpecifications:
+    properties:
+      couchType:
+        type: string
+      depthCm:
+        type: integer
+      heightCm:
+        type: integer
+      quantity:
+        type: integer
+      widthCm:
+        type: integer
+    type: object
   types.CreateItemRequest:
     properties:
       category:
@@ -91,6 +143,13 @@ definitions:
     properties:
       error:
         type: string
+    type: object
+  types.GeneralCleaningDetails:
+    properties:
+      homeType:
+        type: string
+      sqm:
+        type: integer
     type: object
   types.GetCustomerResponse:
     properties:
@@ -165,6 +224,105 @@ definitions:
     x-enum-varnames:
     - ItemTypeResource
     - ItemTypeEquipment
+  types.MainServiceType:
+    enum:
+    - SERVICE_TYPE_UNSPECIFIED
+    - GENERAL_CLEANING
+    - COUCH
+    - MATTRESS
+    - CAR
+    - POST
+    type: string
+    x-enum-varnames:
+    - ServiceTypeUnspecified
+    - GeneralCleaning
+    - CouchCleaning
+    - MattressCleaning
+    - CarCleaning
+    - PostCleaning
+  types.MattressCleaningDetails:
+    properties:
+      cleaningSpecs:
+        items:
+          $ref: '#/definitions/types.MattressCleaningSpecifications'
+        type: array
+    type: object
+  types.MattressCleaningSpecifications:
+    properties:
+      bedType:
+        type: string
+      depthCm:
+        type: integer
+      heightCm:
+        type: integer
+      quantity:
+        type: integer
+      widthCm:
+        type: integer
+    type: object
+  types.PostConstructionDetails:
+    properties:
+      sqm:
+        type: integer
+    type: object
+  types.QuoteRequest:
+    properties:
+      addons:
+        description: same here
+        items:
+          $ref: '#/definitions/types.AddOnRequest'
+        type: array
+      customerId:
+        type: string
+      service:
+        allOf:
+        - $ref: '#/definitions/types.ServicesRequest'
+        description: nested structs usually don't need db tags
+    type: object
+  types.QuoteResponse:
+    properties:
+      addonTotal:
+        type: number
+      addons:
+        items:
+          $ref: '#/definitions/types.AddOnBreakdown'
+        type: array
+      mainServiceName:
+        type: string
+      mainServiceTotal:
+        type: number
+      quote_id:
+        type: string
+      totalPrice:
+        type: number
+    type: object
+  types.QuotesResponse:
+    properties:
+      quotes:
+        items:
+          $ref: '#/definitions/types.QuoteResponse'
+        type: array
+    type: object
+  types.ServiceDetail:
+    properties:
+      car:
+        $ref: '#/definitions/types.CarCleaningDetails'
+      couch:
+        $ref: '#/definitions/types.CouchCleaningDetails'
+      general:
+        $ref: '#/definitions/types.GeneralCleaningDetails'
+      mattress:
+        $ref: '#/definitions/types.MattressCleaningDetails'
+      post:
+        $ref: '#/definitions/types.PostConstructionDetails'
+    type: object
+  types.ServicesRequest:
+    properties:
+      details:
+        $ref: '#/definitions/types.ServiceDetail'
+      serviceType:
+        $ref: '#/definitions/types.MainServiceType'
+    type: object
   types.SignUpCustomerRequest:
     properties:
       clerk_id:
@@ -982,32 +1140,37 @@ paths:
       summary: List items filtered by type
       tags:
       - Inventory
-  /payment/quotation:
+  /payment/quote:
     post:
       consumes:
       - application/json
       description: Generate a new quotation for a customer
       parameters:
-      - description: Quotation details
+      - description: Quote details
         in: body
         name: input
         required: true
         schema:
-          additionalProperties: true
-          type: object
+          $ref: '#/definitions/types.QuoteRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/types.QuoteResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
       summary: Create a quotation
       tags:
       - Payment
-  /payment/quotations/customer/{customer_id}:
+  /payment/quote/{customerId}:
     get:
       consumes:
       - application/json
@@ -1025,9 +1188,18 @@ paths:
           description: OK
           schema:
             items:
-              additionalProperties: true
-              type: object
+              $ref: '#/definitions/types.QuotesResponse'
             type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Get all quotations for a customer
       tags:
       - Payment

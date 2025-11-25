@@ -1036,7 +1036,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/payment/quotation": {
+        "/payment/quote": {
             "post": {
                 "description": "Generate a new quotation for a customer",
                 "consumes": [
@@ -1051,13 +1051,12 @@ const docTemplate = `{
                 "summary": "Create a quotation",
                 "parameters": [
                     {
-                        "description": "Quotation details",
+                        "description": "Quote details",
                         "name": "input",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/types.QuoteRequest"
                         }
                     }
                 ],
@@ -1065,17 +1064,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/types.QuoteResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
                         }
                     }
                 }
             }
         },
-        "/payment/quotations/customer/{customer_id}": {
+        "/payment/quote/{customerId}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Retrieve all quotations associated with a specific customer",
                 "consumes": [
                     "application/json"
@@ -1102,9 +1115,20 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "type": "object",
-                                "additionalProperties": true
+                                "$ref": "#/definitions/types.QuotesResponse"
                             }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
                         }
                     }
                 }
@@ -1141,6 +1165,87 @@ const docTemplate = `{
                 },
                 "updated_at": {
                     "type": "string"
+                }
+            }
+        },
+        "types.AddOnBreakdown": {
+            "type": "object",
+            "properties": {
+                "addonId": {
+                    "type": "string"
+                },
+                "addonName": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                }
+            }
+        },
+        "types.AddOnRequest": {
+            "type": "object",
+            "properties": {
+                "serviceDetail": {
+                    "$ref": "#/definitions/types.ServicesRequest"
+                }
+            }
+        },
+        "types.CarCleaningDetails": {
+            "type": "object",
+            "properties": {
+                "childSeats": {
+                    "type": "integer"
+                },
+                "cleaningSpecs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.CarCleaningSpecifications"
+                    }
+                }
+            }
+        },
+        "types.CarCleaningSpecifications": {
+            "type": "object",
+            "properties": {
+                "carType": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer"
+                }
+            }
+        },
+        "types.CouchCleaningDetails": {
+            "type": "object",
+            "properties": {
+                "bedPillows": {
+                    "type": "integer"
+                },
+                "cleaningSpecs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.CouchCleaningSpecifications"
+                    }
+                }
+            }
+        },
+        "types.CouchCleaningSpecifications": {
+            "type": "object",
+            "properties": {
+                "couchType": {
+                    "type": "string"
+                },
+                "depthCm": {
+                    "type": "integer"
+                },
+                "heightCm": {
+                    "type": "integer"
+                },
+                "quantity": {
+                    "type": "integer"
+                },
+                "widthCm": {
+                    "type": "integer"
                 }
             }
         },
@@ -1250,6 +1355,17 @@ const docTemplate = `{
                 }
             }
         },
+        "types.GeneralCleaningDetails": {
+            "type": "object",
+            "properties": {
+                "homeType": {
+                    "type": "string"
+                },
+                "sqm": {
+                    "type": "integer"
+                }
+            }
+        },
         "types.GetCustomerResponse": {
             "type": "object",
             "properties": {
@@ -1351,6 +1467,155 @@ const docTemplate = `{
                 "ItemTypeResource",
                 "ItemTypeEquipment"
             ]
+        },
+        "types.MainServiceType": {
+            "type": "string",
+            "enum": [
+                "SERVICE_TYPE_UNSPECIFIED",
+                "GENERAL_CLEANING",
+                "COUCH",
+                "MATTRESS",
+                "CAR",
+                "POST"
+            ],
+            "x-enum-varnames": [
+                "ServiceTypeUnspecified",
+                "GeneralCleaning",
+                "CouchCleaning",
+                "MattressCleaning",
+                "CarCleaning",
+                "PostCleaning"
+            ]
+        },
+        "types.MattressCleaningDetails": {
+            "type": "object",
+            "properties": {
+                "cleaningSpecs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.MattressCleaningSpecifications"
+                    }
+                }
+            }
+        },
+        "types.MattressCleaningSpecifications": {
+            "type": "object",
+            "properties": {
+                "bedType": {
+                    "type": "string"
+                },
+                "depthCm": {
+                    "type": "integer"
+                },
+                "heightCm": {
+                    "type": "integer"
+                },
+                "quantity": {
+                    "type": "integer"
+                },
+                "widthCm": {
+                    "type": "integer"
+                }
+            }
+        },
+        "types.PostConstructionDetails": {
+            "type": "object",
+            "properties": {
+                "sqm": {
+                    "type": "integer"
+                }
+            }
+        },
+        "types.QuoteRequest": {
+            "type": "object",
+            "properties": {
+                "addons": {
+                    "description": "same here",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.AddOnRequest"
+                    }
+                },
+                "customerId": {
+                    "type": "string"
+                },
+                "service": {
+                    "description": "nested structs usually don't need db tags",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/types.ServicesRequest"
+                        }
+                    ]
+                }
+            }
+        },
+        "types.QuoteResponse": {
+            "type": "object",
+            "properties": {
+                "addonTotal": {
+                    "type": "number"
+                },
+                "addons": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.AddOnBreakdown"
+                    }
+                },
+                "mainServiceName": {
+                    "type": "string"
+                },
+                "mainServiceTotal": {
+                    "type": "number"
+                },
+                "quote_id": {
+                    "type": "string"
+                },
+                "totalPrice": {
+                    "type": "number"
+                }
+            }
+        },
+        "types.QuotesResponse": {
+            "type": "object",
+            "properties": {
+                "quotes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.QuoteResponse"
+                    }
+                }
+            }
+        },
+        "types.ServiceDetail": {
+            "type": "object",
+            "properties": {
+                "car": {
+                    "$ref": "#/definitions/types.CarCleaningDetails"
+                },
+                "couch": {
+                    "$ref": "#/definitions/types.CouchCleaningDetails"
+                },
+                "general": {
+                    "$ref": "#/definitions/types.GeneralCleaningDetails"
+                },
+                "mattress": {
+                    "$ref": "#/definitions/types.MattressCleaningDetails"
+                },
+                "post": {
+                    "$ref": "#/definitions/types.PostConstructionDetails"
+                }
+            }
+        },
+        "types.ServicesRequest": {
+            "type": "object",
+            "properties": {
+                "details": {
+                    "$ref": "#/definitions/types.ServiceDetail"
+                },
+                "serviceType": {
+                    "$ref": "#/definitions/types.MainServiceType"
+                }
+            }
         },
         "types.SignUpCustomerRequest": {
             "type": "object",

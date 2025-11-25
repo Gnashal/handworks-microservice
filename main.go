@@ -52,7 +52,7 @@ func main() {
 	// public paths for Clerk middleware
 	publicPaths := []string{"/api/account/customer/signup", 
 	"/api/account/employee/signup", 
-	"api/payment/quote", "/health"}
+	"/api/payment/quote", "/health"}
 	router.Use(middleware.ClerkAuthMiddleware(publicPaths))
 
 	accountService := services.NewAccountService(conn, logger)
