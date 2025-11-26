@@ -3,6 +3,8 @@ package handlers
 import (
 	"net/http"
 
+	"handworks-api/types"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,7 +18,16 @@ import (
 // @Success 200 {object} map[string]string
 // @Router /booking [post]
 func (h *BookingHandler) CreateBooking(c *gin.Context) {
-	_ = h.Service.CreateBooking(c.Request.Context())
+	var input types.CreateBookingEvent
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"status": "error", "error": err.Error()})
+		return
+	}
+	_, err := h.Service.CreateBooking(c.Request.Context(), input)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "error": err.Error()})
+		return
+	}
 	c.JSON(http.StatusOK, gin.H{"status": "success"})
 }
 
