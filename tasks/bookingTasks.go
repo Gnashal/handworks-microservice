@@ -1,19 +1,21 @@
-// ...existing code...
 package tasks
 
 import (
 	"context"
 	"fmt"
 
-	"handworks-api/services"
 	"handworks-api/types"
 )
 
-type BookingTasks struct {
-	Svc *services.BookingService
+type BookingService interface {
+	CreateBooking(ctx context.Context, evt types.CreateBookingEvent) (*types.Booking, error)
 }
 
-func NewBookingTasks(svc *services.BookingService) *BookingTasks {
+type BookingTasks struct {
+	Svc BookingService
+}
+
+func NewBookingTasks(svc BookingService) *BookingTasks {
 	return &BookingTasks{Svc: svc}
 }
 
