@@ -16,6 +16,18 @@ type CleaningResources struct {
 	PhotoURL string `json:"photoUrl"`
 }
 
+type BookingSchedule struct {
+	ID           string    `json:"id"`
+	StartTime    time.Time `json:"startTime"`
+	EndTime      time.Time `json:"endTime"`
+	ExtendedTime time.Time `json:"extendedTime,omitempty"`
+}
+
+type BookingSchedules struct {
+	ID        string            `json:"id"`
+	Schedules []BookingSchedule `json:"schedules"`
+}
+
 type CleanerAssigned struct {
 	ID               string `json:"id"`
 	CleanerFirstName string `json:"cleanerFirstName"`
@@ -27,16 +39,16 @@ type AddonCleaningPrice struct {
 	AddonPrice float32 `json:"addonPrice"`
 }
 type CleaningPrices struct {
-	MainServicePrice float32               `json:"mainServicePrice"`
-	AddonPrices      []AddonCleaningPrice  `json:"addonPrices"`
+	MainServicePrice float32              `json:"mainServicePrice"`
+	AddonPrices      []AddonCleaningPrice `json:"addonPrices"`
 }
 
 type ServiceDetail struct {
-	General  *GeneralCleaningDetails      `json:"general,omitempty"`
-	Couch    *CouchCleaningDetails        `json:"couch,omitempty"`
-	Mattress *MattressCleaningDetails     `json:"mattress,omitempty"`
-	Car      *CarCleaningDetails         `json:"car,omitempty"`
-	Post     *PostConstructionDetails    `json:"post,omitempty"`
+	General  *GeneralCleaningDetails  `json:"general,omitempty"`
+	Couch    *CouchCleaningDetails    `json:"couch,omitempty"`
+	Mattress *MattressCleaningDetails `json:"mattress,omitempty"`
+	Car      *CarCleaningDetails      `json:"car,omitempty"`
+	Post     *PostConstructionDetails `json:"post,omitempty"`
 }
 
 // because of course this is fucking different
@@ -173,8 +185,9 @@ type AddOns struct {
 }
 type Booking struct {
 	ID          string              `json:"id"`
-	Base        BaseBookingDetails   `json:"base"`
+	Base        BaseBookingDetails  `json:"base"`
 	MainService ServiceDetails      `json:"mainService"`
+	Schedule    BookingSchedule     `json:"schedule"`
 	Addons      []AddOns            `json:"addons"`
 	Equipments  []CleaningEquipment `json:"equipments"`
 	Resources   []CleaningResources `json:"resources"`
