@@ -23,7 +23,7 @@ type BookingSchedule struct {
 	ExtendedTime time.Time `json:"extendedTime,omitempty"`
 }
 
-type BookingSchedules struct {
+type ScheduleList struct {
 	ID        string            `json:"id"`
 	Schedules []BookingSchedule `json:"schedules"`
 }
@@ -124,21 +124,23 @@ type CarCleaningDetails struct {
 type PostConstructionDetails struct {
 	SQM int32 `json:"sqm"`
 }
+
 type BaseBookingDetails struct {
-	ID                string     `json:"id"`
-	CustID            string     `json:"custId"`
-	CustomerFirstName string     `json:"customerFirstName"`
-	CustomerLastName  string     `json:"customerLastName"`
-	Address           Address    `json:"address"`
-	StartSched        time.Time  `json:"startSched"`
-	EndSched          time.Time  `json:"endSched"`
-	DirtyScale        int32      `json:"dirtyScale"`
-	PaymentStatus     string     `json:"paymentStatus"`
-	ReviewStatus      string     `json:"reviewStatus"`
-	Photos            []string   `json:"photos"`
-	CreatedAt         time.Time  `json:"createdAt"`
-	UpdatedAt         *time.Time `json:"updatedAt,omitempty"`
-	QuoteId           string     `json:"quoteId"`
+	ID                string          `json:"id"`
+	CustID            string          `json:"custId"`
+	CustomerFirstName string          `json:"customerFirstName"`
+	CustomerLastName  string          `json:"customerLastName"`
+	Address           Address         `json:"address"`
+	Schedule          BookingSchedule `json:"schedule"`
+	Notes             string          `json:"notes"`
+	AdditionalNotes   string          `json:"additionalNotes"`
+	DirtyScale        int32           `json:"dirtyScale"`
+	PaymentStatus     string          `json:"paymentStatus"`
+	ReviewStatus      string          `json:"reviewStatus"`
+	Photos            []string        `json:"photos"`
+	CreatedAt         time.Time       `json:"createdAt"`
+	UpdatedAt         *time.Time      `json:"updatedAt,omitempty"`
+	QuoteId           string          `json:"quoteId"`
 }
 type Address struct {
 	AddressHuman string  `json:"addressHuman"`

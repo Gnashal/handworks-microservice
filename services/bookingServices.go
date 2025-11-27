@@ -38,9 +38,14 @@ func (s *BookingService) CreateBooking(ctx context.Context, evt types.CreateBook
 	}
 
 	now := time.Now()
-	evt.Base.CreatedAt = now
 	if evt.Base.ID == "" {
 		evt.Base.ID = uuid.NewString()
+	}
+	evt.Base.CreatedAt = now
+	evt.Base.UpdatedAt = nil
+
+	if evt.Base.Schedule.ID == "" {
+		evt.Base.Schedule.ID = uuid.NewString()
 	}
 
 	materialize := func(req types.ServicesRequest) (types.ServiceDetails, error) {
@@ -193,7 +198,7 @@ func (s *BookingService) CreateBooking(ctx context.Context, evt types.CreateBook
 		ID:          uuid.NewString(),
 		Base:        evt.Base,
 		MainService: mainSvc,
-		Schedule:    types.BookingSchedule{}, //TODO: SCHEDULE LOGIC
+		Schedule:    evt.Base.Schedule,
 		Addons:      addons,
 		Equipments:  equipments,
 		Resources:   resources,
