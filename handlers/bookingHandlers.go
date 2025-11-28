@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"strings"
 
 	"handworks-api/types"
 
@@ -41,8 +42,23 @@ func (h *BookingHandler) CreateBooking(c *gin.Context) {
 // @Success 200 {object} map[string]interface{}
 // @Router /booking/{id} [get]
 func (h *BookingHandler) GetBookingById(c *gin.Context) {
-	_ = h.Service.GetBookingById(c.Request.Context())
-	c.JSON(http.StatusOK, gin.H{"status": "success"})
+	id := c.Param("id")
+
+	if id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"status": "error", "error": "booking ID is required"})
+		return
+
+	}
+	booking, err := h.Service.GetBookingById(c.Request.Context(), id)
+	if err != nil {
+		if strings.Contains(strings.ToLower(err.Error()), "not found") {
+			c.JSON(http.StatusNotFound, gin.H{"status": "error", "error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"status": "success", "data": booking})
 }
 
 // GetBookingByUId godoc
@@ -69,8 +85,23 @@ func (h *BookingHandler) GetBookingByUId(c *gin.Context) {
 // @Param input body map[string]interface{} true "Updated booking info"
 // @Success 200 {object} map[string]string
 // @Router /booking/{id} [put]
+
 func (h *BookingHandler) UpdateBooking(c *gin.Context) {
-	_ = h.Service.UpdateBooking(c.Request.Context())
+	id := c.Param("id")
+	if id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"status": "error", "error": "booking id is required"})
+		return
+	}
+
+	if err := h.Service.UpdateBooking(c.Request.Context(), id); err != nil {
+		if strings.Contains(strings.ToLower(err.Error()), "not found") {
+			c.JSON(http.StatusNotFound, gin.H{"status": "error", "error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "error": err.Error()})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{"status": "success"})
 }
 
