@@ -1,142 +1,33 @@
-# name: Lint PR
-# on: [workflow_dispatch]
-
-# # name: Pre Commit Checks
-
-# # on:
-# #   push:
-# #     branches:
-# #       - main
-# #   pull_request:
-# #     branches:
-# #       - main
-
-# jobs:
-#   golangci-lint:
-#     name: Lint Go code in ${{ matrix.module }}
-#     runs-on: ubuntu-latest
-
-#     strategy:
-#       matrix:
-#         module:
-#           - api-gateway
-#           - services/account
-#           - services/admin
-#           - services/booking
-#           - services/employee
-#           - services/inventory
-#           - services/notification
-#           - services/payment
-
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v4
-
-#       - name: Set up Go
-#         uses: actions/setup-go@v5
-#         with:
-#           go-version: '1.23.11'
-
-#       - name: Cache Go modules
-#         uses: actions/cache@v3
-#         with:
-#           path: |
-#             ~/.cache/go-build
-#             ~/go/pkg/mod
-#           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-#           restore-keys: |
-#             ${{ runner.os }}-go-
-
-#       - name: Run golangci-lint in ${{ matrix.module }}
-#         uses: golangci/golangci-lint-action@v3
-#         with:
-#           version: latest
-#           args: --timeout=5m --out-format=colored-line-number
-#           working-directory: ${{ matrix.module }}
 name: Lint
 
 on:
-  pull_request:
   push:
-    branches: [ "main" ]
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
-  golangci-lint:
-    name: Run golangci-lint
+  link:
+    name: Lint & Validate
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        service:
-          - common
-          - services/account
-          - services/admin
-          - services/employee
-          - services/inventory
-          - services/notification
-          - services/payment
-          - gateway
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v4
         with:
-          go-version: "1.23.11"
-          cache: true
+          go-version: "1.25"
 
-      - name: Run golangci-lint in ${{ matrix.service }}
-        uses: golangci/golangci-lint-action@v6
-        with:
-          version: latest
-          working-directory: ${{ matrix.service }}
-          args: --timeout=5m ./...
-# name: Lint
+      - name: Install dependencies
+        run: |
+          go mod download
+          go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+          go install github.com/swaggo/swag/cmd/swag@latest
 
-# on:
-#   pull_request:
-#     branches: [ "*" ]
-#   push:
-#     branches: [ "main", "develop" ]
+      - name: Run linter
+        run: golangci-lint run ./...
 
-# jobs:
-#   lint:
-#     runs-on: ubuntu-latest
-
-#     steps:
-#       - uses: actions/checkout@v4
-
-#       - name: Set up Go
-#         uses: actions/setup-go@v5
-#         with:
-#           go-version: "1.23"
-
-#       - name: Install golangci-lint
-#         run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
-
-#       - name: Determine services to lint
-#         id: services
-#         run: |
-#           if [[ "${{ github.event_name }}" == "push" ]]; then
-#             # On push to main/develop → lint all services
-#             echo "services=$(ls -d services/* | xargs)" >> $GITHUB_OUTPUT
-#           else
-#             # On PR → lint only changed services
-#             CHANGED=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep "^services/" | cut -d/ -f1-2 | sort -u || true)
-#             if [ -z "$CHANGED" ]; then
-#               echo "services=" >> $GITHUB_OUTPUT
-#             else
-#               echo "services=$CHANGED" >> $GITHUB_OUTPUT
-#             fi
-#           fi
-
-#       - name: Run linter
-#         if: steps.services.outputs.services != ''
-#         run: |
-#           for dir in ${{ steps.services.outputs.services }}; do
-#             echo "🔍 Linting $dir"
-#             (cd $dir && golangci-lint run ./...)
-#           done
-
-
+      - name: Generate Swagger docs
+        run: swag init --parseDependency --parseInternal

@@ -1,0 +1,82 @@
+package main
+
+import (
+	"context"
+	"handworks-api/config"
+	"handworks-api/endpoints"
+	"handworks-api/handlers"
+	"handworks-api/middleware"
+	"handworks-api/services"
+	"handworks-api/utils"
+
+	_ "handworks-api/docs" // Import generated docs
+
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+)
+
+// @title Handworks API
+// @version 1.0
+// @description This is the official API documentation for the Handworks Api.
+// @host localhost:8080
+// @BasePath /api/
+
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Enter "Bearer <your_token>"
+func main() {
+	_ = godotenv.Load()
+	c := context.Background()
+	logger, err := utils.NewLogger()
+	if err != nil {
+		panic(err)
+	}
+	gin.SetMode(gin.ReleaseMode)
+	router := gin.New()
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	if err := router.SetTrustedProxies(nil); err != nil {
+		logger.Fatal("Failed to set trusted proxies: %v", err)
+	}
+
+	router.Use(cors.New(config.NewCors()))
+	conn, err := config.InitDB(logger, c)
+	if err != nil {
+		logger.Fatal("DB init failed: %v", err)
+	}
+	logger.Info("Connected to Db")
+	defer conn.Close()
+	// public paths for Clerk middleware
+	publicPaths := []string{"/api/account/customer/signup", 
+	"/api/account/employee/signup", 
+	"/api/payment/quote/preview", "/health"}
+	router.Use(middleware.ClerkAuthMiddleware(publicPaths))
+
+	accountService := services.NewAccountService(conn, logger)
+	inventoryService := services.NewInventoryService(conn, logger)
+	paymentService := services.NewPaymentService(conn, logger)
+	bookingService := services.NewBookingService(conn, logger, paymentService)
+
+	accountHandler := handlers.NewAccountHandler(accountService, logger)
+	inventoryHandler := handlers.NewInventoryHandler(inventoryService, logger)
+	bookingHandler := handlers.NewBookingHandler(bookingService, logger)
+	paymentHandler := handlers.NewPaymentHandler(paymentService, logger)
+
+	api := router.Group("/api")
+	{
+		endpoints.AccountEndpoint(api.Group("/account"), accountHandler)
+		endpoints.InventoryEndpoint(api.Group("/inventory"), inventoryHandler)
+		endpoints.BookingEndpoint(api.Group("/booking"), bookingHandler)
+		endpoints.PaymentEndpoint(api.Group("/payment"), paymentHandler)
+	}
+
+	port := "8080"
+	logger.Info("Starting server on port %s", port)
+	logger.Info("Swagger on localhost:8080/swagger/index.html")
+	if err := router.Run(":" + port); err != nil {
+		logger.Fatal("Server failed: %v", err)
+	}
+}
