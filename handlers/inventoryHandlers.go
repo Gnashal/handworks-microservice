@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"context"
 	"handworks-api/types"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -25,8 +27,9 @@ func (h *InventoryHandler) CreateItem(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, types.NewErrorResponse(err))
 		return
 	}
-
-	resp, err := h.Service.CreateItem(c.Request.Context(), req)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	resp, err := h.Service.CreateItem(ctx, req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, types.NewErrorResponse(err))
 		return
@@ -47,8 +50,9 @@ func (h *InventoryHandler) CreateItem(c *gin.Context) {
 // @Router /inventory/{id} [get]
 func (h *InventoryHandler) GetItem(c *gin.Context) {
 	id := c.Param("id")
-
-	resp, err := h.Service.GetItem(c.Request.Context(), id)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	resp, err := h.Service.GetItem(ctx, id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, types.NewErrorResponse(err))
 		return
@@ -66,7 +70,9 @@ func (h *InventoryHandler) GetItem(c *gin.Context) {
 // @Failure 404 {object} types.ErrorResponse
 // @Router /inventory/ [get]
 func (h *InventoryHandler) GetItems(c *gin.Context) {
-	resp, err := h.Service.GetItems(c.Request.Context())
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	resp, err := h.Service.GetItems(ctx)
 	if err != nil {
 		c.JSON(http.StatusNotFound, types.NewErrorResponse(err))
 		return
@@ -86,8 +92,9 @@ func (h *InventoryHandler) GetItems(c *gin.Context) {
 // @Router /inventory/type/{type} [get]
 func (h *InventoryHandler) ListItemsByType(c *gin.Context) {
 	itemType := c.Param("type")
-
-	resp, err := h.Service.ListItemsByType(c.Request.Context(), itemType)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	resp, err := h.Service.ListItemsByType(ctx, itemType)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, types.NewErrorResponse(err))
 		return
@@ -108,8 +115,9 @@ func (h *InventoryHandler) ListItemsByType(c *gin.Context) {
 // @Router /inventory/status/{status} [get]
 func (h *InventoryHandler) ListItemsByStatus(c *gin.Context) {
 	status := c.Param("status")
-
-	resp, err := h.Service.ListItemsByStatus(c.Request.Context(), status)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	resp, err := h.Service.ListItemsByStatus(ctx, status)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, types.NewErrorResponse(err))
 		return
@@ -130,8 +138,9 @@ func (h *InventoryHandler) ListItemsByStatus(c *gin.Context) {
 // @Router /inventory/category/{category} [get]
 func (h *InventoryHandler) ListItemsByCategory(c *gin.Context) {
 	category := c.Param("category")
-
-	resp, err := h.Service.ListItemsByCategory(c.Request.Context(), category)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	resp, err := h.Service.ListItemsByCategory(ctx, category)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, types.NewErrorResponse(err))
 		return
@@ -154,13 +163,14 @@ func (h *InventoryHandler) ListItemsByCategory(c *gin.Context) {
 // @Router /inventory/ [put]
 func (h *InventoryHandler) UpdateItem(c *gin.Context) {
 	var req types.UpdateItemRequest
-
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, types.NewErrorResponse(err))
 		return
 	}
-
-	resp, err := h.Service.UpdateItem(c.Request.Context(), req)
+	
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	resp, err := h.Service.UpdateItem(ctx, req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, types.NewErrorResponse(err))
 		return
@@ -181,8 +191,9 @@ func (h *InventoryHandler) UpdateItem(c *gin.Context) {
 // @Router /inventory/{id} [delete]
 func (h *InventoryHandler) DeleteItem(c *gin.Context) {
 	id := c.Param("id")
-
-	resp, err := h.Service.DeleteItem(c.Request.Context(), id)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	resp, err := h.Service.DeleteItem(ctx, id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, types.NewErrorResponse(err))
 		return

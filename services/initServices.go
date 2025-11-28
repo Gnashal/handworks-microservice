@@ -30,14 +30,17 @@ func NewInventoryService(db *pgxpool.Pool, logger *utils.Logger) *InventoryServi
 }
 
 // --- Booking Service ---
+
+
 type BookingService struct {
 	DB     *pgxpool.Pool
 	Logger *utils.Logger
 	Tasks * tasks.BookingTasks
+	PaymentPort tasks.PaymentPort
 }
 
-func NewBookingService(db *pgxpool.Pool, logger *utils.Logger) *BookingService {
-	return &BookingService{DB: db, Logger: logger, Tasks: &tasks.BookingTasks{}}
+func NewBookingService(db *pgxpool.Pool, logger *utils.Logger, paymentPort tasks.PaymentPort) *BookingService {
+	return &BookingService{DB: db, Logger: logger, Tasks: &tasks.BookingTasks{}, PaymentPort: paymentPort}
 }
 
 

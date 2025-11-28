@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"context"
 	"handworks-api/types"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,8 +26,9 @@ func (h *AccountHandler) SignUpCustomer(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, types.NewErrorResponse(err))
 		return
 	}
-
-	resp, err := h.Service.SignUpCustomer(c.Request.Context(), req)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	resp, err := h.Service.SignUpCustomer(ctx, req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, types.NewErrorResponse(err))
 		return
@@ -46,8 +49,9 @@ func (h *AccountHandler) SignUpCustomer(c *gin.Context) {
 // @Router /account/customer/{id} [get]
 func (h *AccountHandler) GetCustomer(c *gin.Context) {
 	id := c.Param("id")
-
-	resp, err := h.Service.GetCustomer(c.Request.Context(), id)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()	
+	resp, err := h.Service.GetCustomer(ctx, id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, types.NewErrorResponse(err))
 		return
@@ -77,8 +81,9 @@ func (h *AccountHandler) UpdateCustomer(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, types.NewErrorResponse(err))
 		return
 	}
-
-	resp, err := h.Service.UpdateCustomer(c.Request.Context(), req)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	resp, err := h.Service.UpdateCustomer(ctx, req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, types.NewErrorResponse(err))
 		return
@@ -101,7 +106,9 @@ func (h *AccountHandler) UpdateCustomer(c *gin.Context) {
 func (h *AccountHandler) DeleteCustomer(c *gin.Context) {
 	id := c.Param("id")
 	accId := c.Param("accId")
-	resp, err := h.Service.DeleteCustomer(c.Request.Context(), id, accId)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	resp, err := h.Service.DeleteCustomer(ctx, id, accId)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, types.NewErrorResponse(err))
 		return
@@ -127,8 +134,9 @@ func (h *AccountHandler) SignUpEmployee(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, types.NewErrorResponse(err))
 		return
 	}
-
-	resp, err := h.Service.SignUpEmployee(c.Request.Context(), req)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	resp, err := h.Service.SignUpEmployee(ctx, req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, types.NewErrorResponse(err))
 		return
@@ -149,8 +157,9 @@ func (h *AccountHandler) SignUpEmployee(c *gin.Context) {
 // @Router /account/employee/{id} [get]
 func (h *AccountHandler) GetEmployee(c *gin.Context) {
 	id := c.Param("id")
-
-	resp, err := h.Service.GetEmployee(c.Request.Context(), id)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	resp, err := h.Service.GetEmployee(ctx, id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, types.NewErrorResponse(err))
 		return
@@ -180,8 +189,9 @@ func (h *AccountHandler) UpdateEmployee(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, types.NewErrorResponse(err))
 		return
 	}
-
-	resp, err := h.Service.UpdateEmployee(c.Request.Context(), req)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	resp, err := h.Service.UpdateEmployee(ctx, req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, types.NewErrorResponse(err))
 		return
@@ -211,8 +221,9 @@ func (h *AccountHandler) UpdateEmployeePerformanceScore(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, types.NewErrorResponse(err))
 		return
 	}
-
-	resp, err := h.Service.UpdateEmployeePerformanceScore(c.Request.Context(), req)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	resp, err := h.Service.UpdateEmployeePerformanceScore(ctx, req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, types.NewErrorResponse(err))
 		return
@@ -242,8 +253,9 @@ func (h *AccountHandler) UpdateEmployeeStatus(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, types.NewErrorResponse(err))
 		return
 	}
-
-	resp, err := h.Service.UpdateEmployeeStatus(c.Request.Context(), req)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	resp, err := h.Service.UpdateEmployeeStatus(ctx, req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, types.NewErrorResponse(err))
 		return
@@ -266,7 +278,9 @@ func (h *AccountHandler) UpdateEmployeeStatus(c *gin.Context) {
 func (h *AccountHandler) DeleteEmployee(c *gin.Context) {
 	id := c.Param("id")
 	empId := c.Param("empId")
-	resp, err := h.Service.DeleteEmployee(c.Request.Context(), id, empId)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	resp, err := h.Service.DeleteEmployee(ctx, id, empId)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, types.NewErrorResponse(err))
 		return

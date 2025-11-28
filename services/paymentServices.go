@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"handworks-api/types"
+	"time"
 
 	"github.com/jackc/pgx/v5"
 )
@@ -27,26 +28,45 @@ func (s *PaymentService) withTx(
 	return fn(tx)
 }
 
+func (s *PaymentService) GetQuotePrices(ctx context.Context, quoteId string) (*types.CleaningPrices, error) {
+	dbCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	var prices *types.CleaningPrices
+	if err := s.withTx(dbCtx, func(tx pgx.Tx) error {
+		cleaningPrices, err := s.Tasks.VerifyQuoteAndFetchPrices(ctx, tx, quoteId)
+		if err != nil {
+			return err
+		}
+		prices = cleaningPrices
+		return nil
+	}); err != nil {
+		s.Logger.Error("Failed to Get Quote Prices: %v", err)
+		return nil, err
+	}
+	return prices, nil
+}
+
+func (s* PaymentService) MakePublicQuotation(ctx context.Context, req types.QuoteRequest) (*types.QuoteResponse, error) {
+	s.Logger.Info("Generating Quote Preview")
+	quotePrev, err := s.Tasks.CalculateQuotePreview(ctx, &req)
+	if err != nil {
+		s.Logger.Error("Failed to genearte Quote Preview: %v", err)
+		return nil, fmt.Errorf("failed to genearte Quote Preview: %v", err)
+	}
+	addonsBreakdown := s.Tasks.MapAddonstoAddonBreakdown(&quotePrev.Addons)
+	return &types.QuoteResponse{
+		QuoteId: quotePrev.ID,
+		MainServiceName: quotePrev.MainService,
+		MainServiceTotal: quotePrev.TotalPrice,
+		TotalPrice: quotePrev.TotalPrice,
+		AddonTotal: quotePrev.AddonTotal,
+		Addons: addonsBreakdown,
+	}, nil
+}
+
+
 func (s *PaymentService) MakeQuotation(ctx context.Context, req types.QuoteRequest) (*types.QuoteResponse, error) {
 	var quoteResponse types.QuoteResponse
-
-	if req.CustomerID == "" {
-		s.Logger.Info("Generating Quote Preview")
-		quotePrev, err := s.Tasks.CalculateQuotePreview(ctx, &req)
-		if err != nil {
-			s.Logger.Error("Failed to genearte Quote Preview: %v", err)
-			return nil, fmt.Errorf("failed to genearte Quote Preview: %v", err)
-		}
-		addonsBreakdown := s.Tasks.MapAddonstoAddonBreakdown(&quotePrev.Addons)
-		return &types.QuoteResponse{
-			QuoteId: quotePrev.ID,
-			MainServiceName: quotePrev.MainService,
-			MainServiceTotal: quotePrev.TotalPrice,
-			TotalPrice: quotePrev.TotalPrice,
-			AddonTotal: quotePrev.AddonTotal,
-			Addons: addonsBreakdown,
-		}, nil
-	}
 	if err := s.withTx(ctx, func (tx pgx.Tx) error {
 		quote, err := s.Tasks.CreateQuote(ctx, tx, &req)
 		if err != nil {

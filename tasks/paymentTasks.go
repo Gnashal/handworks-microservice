@@ -266,3 +266,51 @@ func (p *PaymentTasks) CreateQuote(c context.Context, tx pgx.Tx, in *types.Quote
 	dbQuote.Addons = dbAddons
 	return &dbQuote, nil
 }
+func(t* PaymentTasks) VerifyQuoteAndFetchPrices(ctx context.Context, tx pgx.Tx, quoteId string) (*types.CleaningPrices, error) {
+	var prices types.CleaningPrices
+
+	var dbQuote types.Quote
+	err := tx.QueryRow(ctx, `
+		SELECT total_price, is_valid
+		FROM payment.quotes
+		WHERE id = $1
+	`, quoteId).Scan(
+		&dbQuote.TotalPrice,
+		&dbQuote.IsValid,
+	)
+	if err != nil {
+		return &prices, fmt.Errorf("fetch main quote: %w", err)
+	}
+	if !dbQuote.IsValid {
+		return &types.CleaningPrices{}, fmt.Errorf("quote is no longer valied")
+	}
+	rows, err := tx.Query(ctx, `
+		SELECT service_type, addon_price
+		FROM payment.quote_addons
+		WHERE quote_id = $1
+	`, quoteId)
+	if err != nil {
+		return &prices, fmt.Errorf("fetch addons: %w", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var addon types.QuoteAddon
+		if err := rows.Scan(
+			&addon.ServiceType,
+			&addon.AddonPrice,
+		); err != nil {
+			return &prices, fmt.Errorf("scan addon: %w", err)
+		}
+		dbQuote.Addons = append(dbQuote.Addons, &addon)
+	}
+
+	for _, a := range dbQuote.Addons {
+		prices.AddonPrices = append(prices.AddonPrices, types.AddonCleaningPrice{
+			AddonName:  a.ServiceType,
+			AddonPrice: a.AddonPrice,
+		})
+	}
+	prices.MainServicePrice = dbQuote.TotalPrice
+	return &prices, nil
+}

@@ -511,6 +511,11 @@ const docTemplate = `{
         },
         "/booking": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Creates a booking record",
                 "consumes": [
                     "application/json"
@@ -529,8 +534,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/types.CreateBookingRequest"
                         }
                     }
                 ],
@@ -538,10 +542,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/types.Booking"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
                         }
                     }
                 }
@@ -549,6 +562,11 @@ const docTemplate = `{
         },
         "/booking/user/{uid}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Retrieve all bookings for a specific user",
                 "consumes": [
                     "application/json"
@@ -585,6 +603,11 @@ const docTemplate = `{
         },
         "/booking/{id}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Retrieve booking information by its database ID",
                 "consumes": [
                     "application/json"
@@ -616,6 +639,11 @@ const docTemplate = `{
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Update booking information",
                 "consumes": [
                     "application/json"
@@ -659,6 +687,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Remove booking by ID",
                 "consumes": [
                     "application/json"
@@ -1038,7 +1071,58 @@ const docTemplate = `{
         },
         "/payment/quote": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Generate a new quotation for a customer",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Payment"
+                ],
+                "summary": "Create a quotation",
+                "parameters": [
+                    {
+                        "description": "Quote details",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.QuoteRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.QuoteResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/payment/quote/preview": {
+            "post": {
+                "description": "Generate a new quotation",
                 "consumes": [
                     "application/json"
                 ],
@@ -1190,6 +1274,169 @@ const docTemplate = `{
                 }
             }
         },
+        "types.AddOns": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "serviceDetail": {
+                    "$ref": "#/definitions/types.ServiceDetails"
+                }
+            }
+        },
+        "types.Address": {
+            "type": "object",
+            "properties": {
+                "addressHuman": {
+                    "type": "string"
+                },
+                "addressLat": {
+                    "type": "number"
+                },
+                "addressLng": {
+                    "type": "number"
+                }
+            }
+        },
+        "types.BaseBookingDetails": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "$ref": "#/definitions/types.Address"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "custId": {
+                    "type": "string"
+                },
+                "customerFirstName": {
+                    "type": "string"
+                },
+                "customerLastName": {
+                    "type": "string"
+                },
+                "dirtyScale": {
+                    "type": "integer"
+                },
+                "endSched": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "paymentStatus": {
+                    "type": "string"
+                },
+                "photos": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "quoteId": {
+                    "type": "string"
+                },
+                "reviewStatus": {
+                    "type": "string"
+                },
+                "startSched": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.BaseBookingDetailsRequest": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "$ref": "#/definitions/types.Address"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "custId": {
+                    "type": "string"
+                },
+                "customerFirstName": {
+                    "type": "string"
+                },
+                "customerLastName": {
+                    "type": "string"
+                },
+                "dirtyScale": {
+                    "type": "integer"
+                },
+                "endSched": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "photos": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "quoteId": {
+                    "type": "string"
+                },
+                "startSched": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.Booking": {
+            "type": "object",
+            "properties": {
+                "addons": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.AddOns"
+                    }
+                },
+                "base": {
+                    "$ref": "#/definitions/types.BaseBookingDetails"
+                },
+                "cleaners": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.CleanerAssigned"
+                    }
+                },
+                "equipments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.CleaningEquipment"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "mainService": {
+                    "$ref": "#/definitions/types.ServiceDetails"
+                },
+                "resources": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.CleaningResources"
+                    }
+                },
+                "totalPrice": {
+                    "type": "number"
+                }
+            }
+        },
         "types.CarCleaningDetails": {
             "type": "object",
             "properties": {
@@ -1212,6 +1459,57 @@ const docTemplate = `{
                 },
                 "quantity": {
                     "type": "integer"
+                }
+            }
+        },
+        "types.CleanerAssigned": {
+            "type": "object",
+            "properties": {
+                "cleanerFirstName": {
+                    "type": "string"
+                },
+                "cleanerLastName": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "pfpUrl": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.CleaningEquipment": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "photoUrl": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.CleaningResources": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "photoUrl": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
                 }
             }
         },
@@ -1246,6 +1544,23 @@ const docTemplate = `{
                 },
                 "widthCm": {
                     "type": "integer"
+                }
+            }
+        },
+        "types.CreateBookingRequest": {
+            "type": "object",
+            "properties": {
+                "addons": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.AddOnRequest"
+                    }
+                },
+                "base": {
+                    "$ref": "#/definitions/types.BaseBookingDetailsRequest"
+                },
+                "mainService": {
+                    "$ref": "#/definitions/types.ServicesRequest"
                 }
             }
         },
@@ -1603,6 +1918,18 @@ const docTemplate = `{
                 },
                 "post": {
                     "$ref": "#/definitions/types.PostConstructionDetails"
+                }
+            }
+        },
+        "types.ServiceDetails": {
+            "type": "object",
+            "properties": {
+                "details": {},
+                "id": {
+                    "type": "string"
+                },
+                "serviceType": {
+                    "type": "string"
                 }
             }
         },

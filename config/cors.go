@@ -12,7 +12,6 @@ func NewCors() cors.Config {
 			"https://handworks-cleaning.com",
             "http://localhost:3000",
 			// electron renderer process
-            "app://handworks",
             "http://localhost:5173", // Electron dev server
 
 		},

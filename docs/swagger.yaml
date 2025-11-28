@@ -35,6 +35,113 @@ definitions:
       serviceDetail:
         $ref: '#/definitions/types.ServicesRequest'
     type: object
+  types.AddOns:
+    properties:
+      id:
+        type: string
+      price:
+        type: number
+      serviceDetail:
+        $ref: '#/definitions/types.ServiceDetails'
+    type: object
+  types.Address:
+    properties:
+      addressHuman:
+        type: string
+      addressLat:
+        type: number
+      addressLng:
+        type: number
+    type: object
+  types.BaseBookingDetails:
+    properties:
+      address:
+        $ref: '#/definitions/types.Address'
+      createdAt:
+        type: string
+      custId:
+        type: string
+      customerFirstName:
+        type: string
+      customerLastName:
+        type: string
+      dirtyScale:
+        type: integer
+      endSched:
+        type: string
+      id:
+        type: string
+      paymentStatus:
+        type: string
+      photos:
+        items:
+          type: string
+        type: array
+      quoteId:
+        type: string
+      reviewStatus:
+        type: string
+      startSched:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  types.BaseBookingDetailsRequest:
+    properties:
+      address:
+        $ref: '#/definitions/types.Address'
+      createdAt:
+        type: string
+      custId:
+        type: string
+      customerFirstName:
+        type: string
+      customerLastName:
+        type: string
+      dirtyScale:
+        type: integer
+      endSched:
+        type: string
+      id:
+        type: string
+      photos:
+        items:
+          type: string
+        type: array
+      quoteId:
+        type: string
+      startSched:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  types.Booking:
+    properties:
+      addons:
+        items:
+          $ref: '#/definitions/types.AddOns'
+        type: array
+      base:
+        $ref: '#/definitions/types.BaseBookingDetails'
+      cleaners:
+        items:
+          $ref: '#/definitions/types.CleanerAssigned'
+        type: array
+      equipments:
+        items:
+          $ref: '#/definitions/types.CleaningEquipment'
+        type: array
+      id:
+        type: string
+      mainService:
+        $ref: '#/definitions/types.ServiceDetails'
+      resources:
+        items:
+          $ref: '#/definitions/types.CleaningResources'
+        type: array
+      totalPrice:
+        type: number
+    type: object
   types.CarCleaningDetails:
     properties:
       childSeats:
@@ -50,6 +157,39 @@ definitions:
         type: string
       quantity:
         type: integer
+    type: object
+  types.CleanerAssigned:
+    properties:
+      cleanerFirstName:
+        type: string
+      cleanerLastName:
+        type: string
+      id:
+        type: string
+      pfpUrl:
+        type: string
+    type: object
+  types.CleaningEquipment:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      photoUrl:
+        type: string
+      type:
+        type: string
+    type: object
+  types.CleaningResources:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      photoUrl:
+        type: string
+      type:
+        type: string
     type: object
   types.CouchCleaningDetails:
     properties:
@@ -72,6 +212,17 @@ definitions:
         type: integer
       widthCm:
         type: integer
+    type: object
+  types.CreateBookingRequest:
+    properties:
+      addons:
+        items:
+          $ref: '#/definitions/types.AddOnRequest'
+        type: array
+      base:
+        $ref: '#/definitions/types.BaseBookingDetailsRequest'
+      mainService:
+        $ref: '#/definitions/types.ServicesRequest'
     type: object
   types.CreateItemRequest:
     properties:
@@ -315,6 +466,14 @@ definitions:
         $ref: '#/definitions/types.MattressCleaningDetails'
       post:
         $ref: '#/definitions/types.PostConstructionDetails'
+    type: object
+  types.ServiceDetails:
+    properties:
+      details: {}
+      id:
+        type: string
+      serviceType:
+        type: string
     type: object
   types.ServicesRequest:
     properties:
@@ -813,17 +972,24 @@ paths:
         name: input
         required: true
         schema:
-          additionalProperties: true
-          type: object
+          $ref: '#/definitions/types.CreateBookingRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/types.Booking'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Create a new booking
       tags:
       - Booking
@@ -847,6 +1013,8 @@ paths:
             additionalProperties:
               type: string
             type: object
+      security:
+      - BearerAuth: []
       summary: Delete a booking
       tags:
       - Booking
@@ -868,6 +1036,8 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: Get booking by ID
       tags:
       - Booking
@@ -897,6 +1067,8 @@ paths:
             additionalProperties:
               type: string
             type: object
+      security:
+      - BearerAuth: []
       summary: Update a booking
       tags:
       - Booking
@@ -921,6 +1093,8 @@ paths:
               additionalProperties: true
               type: object
             type: array
+      security:
+      - BearerAuth: []
       summary: Get booking by user ID
       tags:
       - Booking
@@ -1167,6 +1341,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Create a quotation
       tags:
       - Payment
@@ -1201,6 +1377,36 @@ paths:
       security:
       - BearerAuth: []
       summary: Get all quotations for a customer
+      tags:
+      - Payment
+  /payment/quote/preview:
+    post:
+      consumes:
+      - application/json
+      description: Generate a new quotation
+      parameters:
+      - description: Quote details
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/types.QuoteRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.QuoteResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Create a quotation
       tags:
       - Payment
 securityDefinitions:

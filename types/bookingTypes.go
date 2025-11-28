@@ -2,6 +2,15 @@ package types
 
 import "time"
 
+type BookingAllocation struct{
+	CleaningAllocation *CleaningAllocation
+	CleanerAssigned []CleanerAssigned
+	CleaningPrices *CleaningPrices
+}
+type CleaningAllocation struct {
+	CleaningEquipment []CleaningEquipment
+	CleaningResources []CleaningResources
+}
 type CleaningEquipment struct {
 	ID       string `json:"id"`
 	Name     string `json:"name"`
@@ -39,8 +48,6 @@ type ServiceDetail struct {
 	Post     *PostConstructionDetails    `json:"post,omitempty"`
 }
 
-// because of course this is fucking different
-// totally refactoring our detail logic because gubot jud kaayu siya
 type ServiceDetails struct {
 	ID          string `json:"id"`
 	ServiceType string `json:"serviceType"`
@@ -128,6 +135,20 @@ type BaseBookingDetails struct {
 	UpdatedAt         *time.Time `json:"updatedAt,omitempty"`
 	QuoteId           string     `json:"quoteId"`
 }
+type BaseBookingDetailsRequest struct {
+	ID                string     `json:"id"`
+	CustID            string     `json:"custId"`
+	CustomerFirstName string     `json:"customerFirstName"`
+	CustomerLastName  string     `json:"customerLastName"`
+	Address           Address    `json:"address"`
+	StartSched        time.Time  `json:"startSched"`
+	EndSched          time.Time  `json:"endSched"`
+	DirtyScale        int32      `json:"dirtyScale"`
+	Photos            []string   `json:"photos"`
+	CreatedAt         time.Time  `json:"createdAt"`
+	UpdatedAt         *time.Time `json:"updatedAt,omitempty"`
+	QuoteId           string     `json:"quoteId"`
+}
 type Address struct {
 	AddressHuman string  `json:"addressHuman"`
 	AddressLat   float64 `json:"addressLat"`
@@ -161,8 +182,8 @@ type AddOnRequest struct {
 	ServiceDetail ServicesRequest `json:"serviceDetail"`
 }
 
-type CreateBookingEvent struct {
-	Base        BaseBookingDetails `json:"base"`
+type CreateBookingRequest struct {
+	Base        BaseBookingDetailsRequest `json:"base"`
 	MainService ServicesRequest    `json:"mainService"`
 	Addons      []AddOnRequest     `json:"addons"`
 }
@@ -173,7 +194,7 @@ type AddOns struct {
 }
 type Booking struct {
 	ID          string              `json:"id"`
-	Base        BaseBookingDetails   `json:"base"`
+	Base        BaseBookingDetails  `json:"base"`
 	MainService ServiceDetails      `json:"mainService"`
 	Addons      []AddOns            `json:"addons"`
 	Equipments  []CleaningEquipment `json:"equipments"`
